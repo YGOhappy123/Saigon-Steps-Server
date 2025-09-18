@@ -1,0 +1,40 @@
+model Order {
+    orderId          Int                    @id @default(autoincrement())
+    customerId       Int
+    customer         Customer               @relation(fields: [customerId], references: [customerId])
+    status           OrderStatus            @default(PENDING)
+    totalAmount      Decimal
+    recipientName    String?
+    deliveryPhone    String?
+    deliveryAddress  String?
+    note             String?
+    createdAt        DateTime               @default(now())
+    statusUpdateLogs OrderStatusUpdateLog[]
+    orderItems       OrderItem[]
+
+    @@map("orders")
+}
+
+model OrderItem {
+    orderId       Int
+    order         Order       @relation(fields: [orderId], references: [orderId])
+    productItemId Int
+    productItem   ProductItem @relation(fields: [productItemId], references: [productItemId])
+    price         Decimal
+    quantity      Int
+
+    @@id([orderId, productItemId])
+    @@map("order_items")
+}
+
+model OrderStatusUpdateLog {
+    logId          Int         @id @default(autoincrement())
+    orderId        Int
+    order          Order       @relation(fields: [orderId], references: [orderId])
+    status         OrderStatus
+    updatedAt      DateTime    @default(now())
+    updatedBy      Int
+    updatedByStaff Staff       @relation(fields: [updatedBy], references: [staffId])
+
+    @@map("order_status_update_logs")
+}

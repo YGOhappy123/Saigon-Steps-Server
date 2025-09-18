@@ -1,0 +1,141 @@
+model Account {
+    accountId Int       @id @default(autoincrement())
+    username  String
+    password  String
+    isActive  Boolean   @default(true)
+    customer  Customer?
+    staff     Staff?
+
+    @@map("accounts")
+}
+
+model Customer {
+    customerId   Int               @id @default(autoincrement())
+    name         String
+    email        String?
+    avatar       String?
+    createdAt    DateTime          @default(now())
+    accountId    Int               @unique
+    account      Account           @relation(fields: [accountId], references: [accountId])
+    addresses    CustomerAddress[]
+    carts        CustomerCart[]
+    orders       Order[]
+    conversation Conversation?
+
+    @@index([email])
+    @@map("customers")
+}
+
+model Staff {
+    staffId                  Int                     @id @default(autoincrement())
+    name                     String
+    email                    String?
+    avatar                   String?
+    createdAt                DateTime                @default(now())
+    accountId                Int                     @unique
+    account                  Account                 @relation(fields: [accountId], references: [accountId])
+    roleId                   Int
+    role                     StaffRole               @relation(fields: [roleId], references: [roleId])
+    createdBy                Int?
+    createdByStaff           Staff?                  @relation("StaffCreator", fields: [createdBy], references: [staffId])
+    createdStaffs            Staff[]                 @relation("StaffCreator")
+    createdCategories        Category[]
+    createdProducts          RootProduct[]
+    createdPromotions        Promotion[]
+    createdCoupons           Coupon[]
+    sentMessages             ChatMessage[]
+    updatedOrderStatuses     OrderStatusUpdateLog[]
+    trackedImports           ProductImport[]
+    reportedInventoryDamages InventoryDamageReport[]
+
+    @@map("staffs")
+}
+
+model StaffRole {
+    roleId      Int              @id @default(autoincrement())
+    name        String           @unique
+    isImmutable Boolean          @default(false)
+    staffs      Staff[]
+    permissions RolePermission[]
+
+    @@map("staff_roles")
+}
+
+model AppPermission {
+    permissionId Int              @id @default(autoincrement())
+    name         String           @unique
+    code         String           @unique
+    roles        RolePermission[]
+
+    @@map("app_permissions")
+}
+
+model RolePermission {
+    roleId       Int
+    role         StaffRole     @relation(fields: [roleId], references: [roleId])
+    permissionId Int
+    permission   AppPermission @relation(fields: [permissionId], references: [permissionId])
+
+    @@id([roleId, permissionId])
+    @@map("role_permission")
+}
+
+model CustomerAddress {
+    addressId     Int      @id @default(autoincrement())
+    customerId    Int
+    customer      Customer @relation(fields: [customerId], references: [customerId])
+    recipientName String
+    phoneNumber   String
+    city          String
+    ward          String
+    addressLine   String
+    isDefault     Boolean  @default(false)
+
+    @@unique([customerId, recipientName, phoneNumber, city, ward, addressLine])
+    @@map("customer_addresses")
+}
+
+model CustomerCart {
+    cartId     Int        @id @default(autoincrement())
+    customerId Int
+    customer   Customer   @relation(fields: [customerId], references: [customerId])
+    status     CartStatus @default(ACTIVE)
+    updatedAt  DateTime   @default(now())
+    items      CartItem[]
+
+    @@map("customer_carts")
+}
+
+model CartItem {
+    cartId        Int
+    cart          CustomerCart @relation(fields: [cartId], references: [cartId])
+    productItemId Int
+    productItem   ProductItem  @relation(fields: [productItemId], references: [productItemId])
+    quantity      Int
+
+    @@id([cartId, productItemId])
+    @@map("cart_items")
+}
+
+model Conversation {
+    conversationId Int           @id @default(autoincrement())
+    customerId     Int           @unique
+    customer       Customer      @relation(fields: [customerId], references: [customerId])
+    messages       ChatMessage[]
+
+    @@map("conversations")
+}
+
+model ChatMessage {
+    messageId      Int          @id @default(autoincrement())
+    conversationId Int
+    conversation   Conversation @relation(fields: [conversationId], references: [conversationId])
+    senderStaffId  Int?
+    senderStaff    Staff?       @relation(fields: [staffStaffId], references: [staffId])
+    textContent    String?
+    imageContent   String?
+    sentAt         DateTime     @default(now())
+    staffStaffId   Int?
+
+    @@map("chat_messages")
+}

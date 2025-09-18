@@ -1,0 +1,40 @@
+model Promotion {
+    promotionId    Int                @id @default(autoincrement())
+    name           String             @unique
+    description    String
+    discountRate   Float
+    startDate      DateTime
+    endDate        DateTime
+    isActive       Boolean            @default(true)
+    createdAt      DateTime           @default(now())
+    createdBy      Int
+    createdByStaff Staff              @relation(fields: [createdBy], references: [staffId])
+    products       ProductPromotion[]
+
+    @@map("promotions")
+}
+
+model ProductPromotion {
+    promotionId   Int
+    promotion     Promotion   @relation(fields: [promotionId], references: [promotionId])
+    rootProductId Int
+    rootProduct   RootProduct @relation(fields: [rootProductId], references: [rootProductId])
+
+    @@id([promotionId, rootProductId])
+    @@map("promotion_product")
+}
+
+model Coupon {
+    couponId       Int        @id @default(autoincrement())
+    code           String     @unique
+    type           CouponType @default(FIXED)
+    amount         Decimal
+    maxUsage       Int?
+    isActive       Boolean    @default(true)
+    expiredAt      DateTime?
+    createdAt      DateTime   @default(now())
+    createdBy      Int
+    createdByStaff Staff      @relation(fields: [createdBy], references: [staffId])
+
+    @@map("coupons")
+}

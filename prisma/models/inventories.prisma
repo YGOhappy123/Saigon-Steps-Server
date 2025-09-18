@@ -1,0 +1,50 @@
+model ProductImport {
+    importId       Int          @id @default(autoincrement())
+    invoiceNumber  String       @unique
+    totalCost      Decimal
+    importDate     DateTime
+    trackedAt      DateTime     @default(now())
+    trackedBy      Int
+    trackedByStaff Staff        @relation(fields: [trackedBy], references: [staffId])
+    importItems    ImportItem[]
+
+    @@index([invoiceNumber])
+    @@map("product_imports")
+}
+
+model ImportItem {
+    importId      Int
+    import        ProductImport @relation(fields: [importId], references: [importId])
+    productItemId Int
+    productItem   ProductItem   @relation(fields: [productItemId], references: [productItemId])
+    cost          Decimal
+    quantity      Int
+
+    @@id([importId, productItemId])
+    @@map("import_items")
+}
+
+model InventoryDamageReport {
+    reportId          Int                   @id @default(autoincrement())
+    totalExpectedCost Decimal
+    reason            InventoryDamageReason
+    note              String?
+    reportedAt        DateTime              @default(now())
+    reportedBy        Int
+    reportedByStaff   Staff                 @relation(fields: [reportedBy], references: [staffId])
+    reportItems       DamageReportItem[]
+
+    @@map("inventory_damage_reports")
+}
+
+model DamageReportItem {
+    reportId      Int
+    report        InventoryDamageReport @relation(fields: [reportId], references: [reportId])
+    productItemId Int
+    productItem   ProductItem           @relation(fields: [productItemId], references: [productItemId])
+    expectedCost  Decimal
+    quantity      Int
+
+    @@id([reportId, productItemId])
+    @@map("damage_report_items")
+}

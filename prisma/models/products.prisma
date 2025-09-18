@@ -1,0 +1,52 @@
+model RootProduct {
+    rootProductId  Int                @id @default(autoincrement())
+    categoryId     Int
+    category       Category           @relation(fields: [categoryId], references: [categoryId])
+    name           String             @unique
+    slug           String             @unique
+    description    String
+    price          Decimal
+    createdAt      DateTime           @default(now())
+    createdBy      Int
+    createdByStaff Staff              @relation(fields: [createdBy], references: [staffId])
+    productItems   ProductItem[]
+    images         ProductImage[]
+    promotions     ProductPromotion[]
+
+    @@index([name, slug])
+    @@map("root_products")
+}
+
+model ProductItem {
+    productItemId     Int                @id @default(autoincrement())
+    rootProductId     Int
+    rootProduct       RootProduct        @relation(fields: [rootProductId], references: [rootProductId])
+    stock             Int
+    cartItems         CartItem[]
+    orderItems        OrderItem[]
+    importItems       ImportItem[]
+    damageReportItems DamageReportItem[]
+
+    @@map("product_items")
+}
+
+model ProductImage {
+    imageId       Int         @id @default(autoincrement())
+    rootProductId Int
+    rootProduct   RootProduct @relation(fields: [rootProductId], references: [rootProductId])
+    url           String
+
+    @@map("product_images")
+}
+
+model Category {
+    categoryId     Int           @id @default(autoincrement())
+    name           String        @unique
+    createdAt      DateTime      @default(now())
+    createdBy      Int
+    createdByStaff Staff         @relation(fields: [createdBy], references: [staffId])
+    rootProducts   RootProduct[]
+
+    @@index([name])
+    @@map("categories")
+}
