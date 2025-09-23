@@ -39,7 +39,7 @@ model Staff {
     createdBy                Int?
     createdByStaff           Staff?                  @relation("StaffCreator", fields: [createdBy], references: [staffId])
     createdStaffs            Staff[]                 @relation("StaffCreator")
-    createdCategories        Category[]
+    createdCategories        ShoeCategory[]
     createdProducts          RootProduct[]
     createdPromotions        Promotion[]
     createdCoupons           Coupon[]
@@ -91,7 +91,6 @@ model CustomerAddress {
     addressLine   String
     isDefault     Boolean  @default(false)
 
-    @@unique([customerId, recipientName, phoneNumber, city, ward, addressLine])
     @@map("customer_addresses")
 }
 

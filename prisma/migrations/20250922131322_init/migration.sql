@@ -7,7 +7,6 @@ CREATE TABLE `product_imports` (
     `trackedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `trackedBy` INTEGER NOT NULL,
 
-    UNIQUE INDEX `product_imports_invoiceNumber_key`(`invoiceNumber`),
     INDEX `product_imports_invoiceNumber_idx`(`invoiceNumber`),
     PRIMARY KEY (`importId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -48,6 +47,7 @@ CREATE TABLE `damage_report_items` (
 CREATE TABLE `orders` (
     `orderId` INTEGER NOT NULL AUTO_INCREMENT,
     `customerId` INTEGER NOT NULL,
+    `couponId` INTEGER NOT NULL,
     `status` ENUM('pending', 'accepted', 'packed', 'dispatched', 'delivery_success', 'delivery_failed', 'cancelled', 'returned') NOT NULL DEFAULT 'pending',
     `totalAmount` DECIMAL(65, 30) NOT NULL,
     `recipientName` VARCHAR(191) NULL,
@@ -83,11 +83,12 @@ CREATE TABLE `order_status_update_logs` (
 -- CreateTable
 CREATE TABLE `root_products` (
     `rootProductId` INTEGER NOT NULL AUTO_INCREMENT,
-    `categoryId` INTEGER NOT NULL,
+    `brandId` INTEGER NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
     `price` DECIMAL(65, 30) NOT NULL,
+    `isAccessory` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `createdBy` INTEGER NOT NULL,
 
@@ -102,7 +103,9 @@ CREATE TABLE `product_items` (
     `productItemId` INTEGER NOT NULL AUTO_INCREMENT,
     `rootProductId` INTEGER NOT NULL,
     `stock` INTEGER NOT NULL,
+    `size` VARCHAR(191) NULL,
 
+    UNIQUE INDEX `product_items_rootProductId_size_key`(`rootProductId`, `size`),
     PRIMARY KEY (`productItemId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -116,14 +119,49 @@ CREATE TABLE `product_images` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `categories` (
+CREATE TABLE `product_brands` (
+    `brandId` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `logoUrl` VARCHAR(191) NULL,
+
+    INDEX `product_brands_name_idx`(`name`),
+    PRIMARY KEY (`brandId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `shoe_products` (
+    `shoeProductId` INTEGER NOT NULL,
+    `categoryId` INTEGER NOT NULL,
+    `gender` ENUM('male', 'female', 'unisex') NOT NULL DEFAULT 'unisex',
+    `upperMaterial` VARCHAR(191) NOT NULL,
+    `soleMaterial` VARCHAR(191) NOT NULL,
+    `liningMaterial` VARCHAR(191) NOT NULL,
+    `careInstruction` VARCHAR(191) NOT NULL,
+    `closureType` VARCHAR(191) NOT NULL,
+    `toeShape` VARCHAR(191) NOT NULL,
+    `waterResistant` VARCHAR(191) NOT NULL,
+    `breathability` VARCHAR(191) NOT NULL,
+    `pattern` VARCHAR(191) NOT NULL,
+    `countryOfOrigin` VARCHAR(191) NOT NULL,
+    `primaryColor` VARCHAR(191) NOT NULL,
+    `secondaryColor` VARCHAR(191) NULL,
+    `heelHeight` DOUBLE NOT NULL,
+    `durabilityRating` DOUBLE NOT NULL,
+    `releaseYear` INTEGER NOT NULL,
+
+    PRIMARY KEY (`shoeProductId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `shoe_categories` (
     `categoryId` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `createdBy` INTEGER NOT NULL,
 
-    UNIQUE INDEX `categories_name_key`(`name`),
-    INDEX `categories_name_idx`(`name`),
+    UNIQUE INDEX `shoe_categories_name_key`(`name`),
+    INDEX `shoe_categories_name_idx`(`name`),
     PRIMARY KEY (`categoryId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -246,7 +284,6 @@ CREATE TABLE `customer_addresses` (
     `addressLine` VARCHAR(191) NOT NULL,
     `isDefault` BOOLEAN NOT NULL DEFAULT false,
 
-    UNIQUE INDEX `customer_addresses_customerId_recipientName_phoneNumber_city_key`(`customerId`, `recipientName`, `phoneNumber`, `city`, `ward`, `addressLine`),
     PRIMARY KEY (`addressId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -313,6 +350,9 @@ ALTER TABLE `damage_report_items` ADD CONSTRAINT `damage_report_items_productIte
 ALTER TABLE `orders` ADD CONSTRAINT `orders_customerId_fkey` FOREIGN KEY (`customerId`) REFERENCES `customers`(`customerId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `orders` ADD CONSTRAINT `orders_couponId_fkey` FOREIGN KEY (`couponId`) REFERENCES `coupons`(`couponId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `order_items` ADD CONSTRAINT `order_items_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `orders`(`orderId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -325,7 +365,7 @@ ALTER TABLE `order_status_update_logs` ADD CONSTRAINT `order_status_update_logs_
 ALTER TABLE `order_status_update_logs` ADD CONSTRAINT `order_status_update_logs_updatedBy_fkey` FOREIGN KEY (`updatedBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `root_products` ADD CONSTRAINT `root_products_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `categories`(`categoryId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `root_products` ADD CONSTRAINT `root_products_brandId_fkey` FOREIGN KEY (`brandId`) REFERENCES `product_brands`(`brandId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `root_products` ADD CONSTRAINT `root_products_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -337,7 +377,13 @@ ALTER TABLE `product_items` ADD CONSTRAINT `product_items_rootProductId_fkey` FO
 ALTER TABLE `product_images` ADD CONSTRAINT `product_images_rootProductId_fkey` FOREIGN KEY (`rootProductId`) REFERENCES `root_products`(`rootProductId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `categories` ADD CONSTRAINT `categories_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `shoe_products` ADD CONSTRAINT `shoe_products_shoeProductId_fkey` FOREIGN KEY (`shoeProductId`) REFERENCES `root_products`(`rootProductId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `shoe_products` ADD CONSTRAINT `shoe_products_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `shoe_categories`(`categoryId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `shoe_categories` ADD CONSTRAINT `shoe_categories_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `promotions` ADD CONSTRAINT `promotions_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;

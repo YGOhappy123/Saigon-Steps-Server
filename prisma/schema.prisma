@@ -35,3 +35,9 @@ enum InventoryDamageReason {
   DEFECTIVE @map("defective")
   OTHER     @map("other")
 }
+
+enum ShoeGender {
+  MALE   @map("male")
+  FEMALE @map("female")
+  UNISEX @map("unisex")
+}

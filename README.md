@@ -78,14 +78,14 @@ Before running the project, make sure to set up the database and environment var
 4. Apply the migrations to create the necessary database tables. Use the following command in the terminal:
 
     ```bash
-    npm run migrate
+    npm run db:migrate
     ```
 
     This command will apply the existing migrations to the specified database, ensuring your local database is synchronized with the schema file and required tables are created.
 
     **Notes:**
 
-    - Your database must be created before applying any migrations.
+    - Your database is automatically created before applying migrations, so you don't need to create it manually.
     - You need to repeat this process whenever there is a change in models definition (schema file).
 
 5. Verify the synchronized database:

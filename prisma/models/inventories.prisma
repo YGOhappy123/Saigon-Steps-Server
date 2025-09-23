@@ -1,6 +1,6 @@
 model ProductImport {
     importId       Int          @id @default(autoincrement())
-    invoiceNumber  String       @unique
+    invoiceNumber  String
     totalCost      Decimal
     importDate     DateTime
     trackedAt      DateTime     @default(now())

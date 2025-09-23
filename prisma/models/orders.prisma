@@ -2,6 +2,8 @@ model Order {
     orderId          Int                    @id @default(autoincrement())
     customerId       Int
     customer         Customer               @relation(fields: [customerId], references: [customerId])
+    couponId         Int
+    coupon           Coupon                 @relation(fields: [couponId], references: [couponId])
     status           OrderStatus            @default(PENDING)
     totalAmount      Decimal
     recipientName    String?

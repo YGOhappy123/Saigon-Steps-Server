@@ -1,17 +1,19 @@
 model RootProduct {
     rootProductId  Int                @id @default(autoincrement())
-    categoryId     Int
-    category       Category           @relation(fields: [categoryId], references: [categoryId])
+    brandId        Int
+    brand          ProductBrand       @relation(fields: [brandId], references: [brandId])
     name           String             @unique
     slug           String             @unique
     description    String
     price          Decimal
+    isAccessory    Boolean            @default(false)
     createdAt      DateTime           @default(now())
     createdBy      Int
     createdByStaff Staff              @relation(fields: [createdBy], references: [staffId])
     productItems   ProductItem[]
     images         ProductImage[]
     promotions     ProductPromotion[]
+    shoeProduct    ShoeProduct?
 
     @@index([name, slug])
     @@map("root_products")
@@ -22,11 +24,13 @@ model ProductItem {
     rootProductId     Int
     rootProduct       RootProduct        @relation(fields: [rootProductId], references: [rootProductId])
     stock             Int
+    size              String?
     cartItems         CartItem[]
     orderItems        OrderItem[]
     importItems       ImportItem[]
     damageReportItems DamageReportItem[]
 
+    @@unique([rootProductId, size])
     @@map("product_items")
 }
 
@@ -39,14 +43,52 @@ model ProductImage {
     @@map("product_images")
 }
 
-model Category {
+model ProductBrand {
+    brandId      Int           @id @default(autoincrement())
+    name         String
+    description  String
+    logoUrl      String?
+    rootProducts RootProduct[]
+
+    @@index([name])
+    @@map("product_brands")
+}
+
+model ShoeProduct {
+    shoeProductId    Int
+    shoeProduct      RootProduct  @relation(fields: [shoeProductId], references: [rootProductId])
+    categoryId       Int
+    category         ShoeCategory @relation(fields: [categoryId], references: [categoryId])
+    gender           ShoeGender   @default(UNISEX)
+    upperMaterial    String
+    soleMaterial     String
+    liningMaterial   String
+    careInstruction  String
+    closureType      String
+    toeShape         String
+    waterResistant   String
+    breathability    String
+    pattern          String
+    countryOfOrigin  String
+    primaryColor     String
+    secondaryColor   String?
+    heelHeight       Float
+    durabilityRating Float
+    releaseYear      Int
+    // more attributes go here to help with AI training (eg: style tags, occasion tags, color list)
+
+    @@id([shoeProductId])
+    @@map("shoe_products")
+}
+
+model ShoeCategory {
     categoryId     Int           @id @default(autoincrement())
     name           String        @unique
     createdAt      DateTime      @default(now())
     createdBy      Int
     createdByStaff Staff         @relation(fields: [createdBy], references: [staffId])
-    rootProducts   RootProduct[]
+    shoeProducts   ShoeProduct[]
 
     @@index([name])
-    @@map("categories")
+    @@map("shoe_categories")
 }
