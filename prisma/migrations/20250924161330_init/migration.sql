@@ -55,6 +55,8 @@ CREATE TABLE `orders` (
     `deliveryAddress` VARCHAR(191) NULL,
     `note` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `delivered_at` DATETIME(3) NULL,
+    `refunded_at` DATETIME(3) NULL,
 
     PRIMARY KEY (`orderId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -130,14 +132,14 @@ CREATE TABLE `product_brands` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `shoe_products` (
-    `shoeProductId` INTEGER NOT NULL,
+CREATE TABLE `shoe_features` (
+    `shoeFeatureId` INTEGER NOT NULL AUTO_INCREMENT,
+    `rootProductId` INTEGER NOT NULL,
     `categoryId` INTEGER NOT NULL,
     `gender` ENUM('male', 'female', 'unisex') NOT NULL DEFAULT 'unisex',
     `upperMaterial` VARCHAR(191) NOT NULL,
     `soleMaterial` VARCHAR(191) NOT NULL,
     `liningMaterial` VARCHAR(191) NOT NULL,
-    `careInstruction` VARCHAR(191) NOT NULL,
     `closureType` VARCHAR(191) NOT NULL,
     `toeShape` VARCHAR(191) NOT NULL,
     `waterResistant` VARCHAR(191) NOT NULL,
@@ -150,7 +152,42 @@ CREATE TABLE `shoe_products` (
     `durabilityRating` DOUBLE NOT NULL,
     `releaseYear` INTEGER NOT NULL,
 
-    PRIMARY KEY (`shoeProductId`)
+    UNIQUE INDEX `shoe_features_rootProductId_key`(`rootProductId`),
+    PRIMARY KEY (`shoeFeatureId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `occasion_tags` (
+    `occasionTagId` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `occasion_tags_name_key`(`name`),
+    PRIMARY KEY (`occasionTagId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `shoe_feature_occasion_tag` (
+    `shoeFeatureId` INTEGER NOT NULL,
+    `occasionTagId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`shoeFeatureId`, `occasionTagId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `design_tags` (
+    `designTagId` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `design_tags_name_key`(`name`),
+    PRIMARY KEY (`designTagId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `shoe_feature_design_tag` (
+    `shoeFeatureId` INTEGER NOT NULL,
+    `designTagId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`shoeFeatureId`, `designTagId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -377,10 +414,22 @@ ALTER TABLE `product_items` ADD CONSTRAINT `product_items_rootProductId_fkey` FO
 ALTER TABLE `product_images` ADD CONSTRAINT `product_images_rootProductId_fkey` FOREIGN KEY (`rootProductId`) REFERENCES `root_products`(`rootProductId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `shoe_products` ADD CONSTRAINT `shoe_products_shoeProductId_fkey` FOREIGN KEY (`shoeProductId`) REFERENCES `root_products`(`rootProductId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `shoe_features` ADD CONSTRAINT `shoe_features_rootProductId_fkey` FOREIGN KEY (`rootProductId`) REFERENCES `root_products`(`rootProductId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `shoe_products` ADD CONSTRAINT `shoe_products_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `shoe_categories`(`categoryId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `shoe_features` ADD CONSTRAINT `shoe_features_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `shoe_categories`(`categoryId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `shoe_feature_occasion_tag` ADD CONSTRAINT `shoe_feature_occasion_tag_shoeFeatureId_fkey` FOREIGN KEY (`shoeFeatureId`) REFERENCES `shoe_features`(`shoeFeatureId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `shoe_feature_occasion_tag` ADD CONSTRAINT `shoe_feature_occasion_tag_occasionTagId_fkey` FOREIGN KEY (`occasionTagId`) REFERENCES `occasion_tags`(`occasionTagId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `shoe_feature_design_tag` ADD CONSTRAINT `shoe_feature_design_tag_shoeFeatureId_fkey` FOREIGN KEY (`shoeFeatureId`) REFERENCES `shoe_features`(`shoeFeatureId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `shoe_feature_design_tag` ADD CONSTRAINT `shoe_feature_design_tag_designTagId_fkey` FOREIGN KEY (`designTagId`) REFERENCES `design_tags`(`designTagId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `shoe_categories` ADD CONSTRAINT `shoe_categories_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;

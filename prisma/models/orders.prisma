@@ -11,6 +11,8 @@ model Order {
     deliveryAddress  String?
     note             String?
     createdAt        DateTime               @default(now())
+    delivered_at     DateTime?
+    refunded_at      DateTime?
     statusUpdateLogs OrderStatusUpdateLog[]
     orderItems       OrderItem[]
 

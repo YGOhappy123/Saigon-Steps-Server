@@ -13,7 +13,7 @@ model RootProduct {
     productItems   ProductItem[]
     images         ProductImage[]
     promotions     ProductPromotion[]
-    shoeProduct    ShoeProduct?
+    shoeFeature    ShoeFeature?
 
     @@index([name, slug])
     @@map("root_products")
@@ -54,16 +54,16 @@ model ProductBrand {
     @@map("product_brands")
 }
 
-model ShoeProduct {
-    shoeProductId    Int
-    shoeProduct      RootProduct  @relation(fields: [shoeProductId], references: [rootProductId])
+model ShoeFeature {
+    shoeFeatureId    Int                      @id @default(autoincrement())
+    rootProductId    Int                      @unique
+    rootProduct      RootProduct              @relation(fields: [rootProductId], references: [rootProductId])
     categoryId       Int
-    category         ShoeCategory @relation(fields: [categoryId], references: [categoryId])
-    gender           ShoeGender   @default(UNISEX)
+    category         ShoeCategory             @relation(fields: [categoryId], references: [categoryId])
+    gender           ShoeGender               @default(UNISEX)
     upperMaterial    String
     soleMaterial     String
     liningMaterial   String
-    careInstruction  String
     closureType      String
     toeShape         String
     waterResistant   String
@@ -75,10 +75,46 @@ model ShoeProduct {
     heelHeight       Float
     durabilityRating Float
     releaseYear      Int
-    // more attributes go here to help with AI training (eg: style tags, occasion tags, color list)
+    occasionTags     ShoeFeatureOccasionTag[]
+    designTags       ShoeFeatureDesignTag[]
 
-    @@id([shoeProductId])
-    @@map("shoe_products")
+    @@map("shoe_features")
+}
+
+model OccasionTag {
+    occasionTagId Int                      @id @default(autoincrement())
+    name          String                   @unique
+    shoeFeatures  ShoeFeatureOccasionTag[]
+
+    @@map("occasion_tags")
+}
+
+model ShoeFeatureOccasionTag {
+    shoeFeatureId Int
+    shoeFeature   ShoeFeature @relation(fields: [shoeFeatureId], references: [shoeFeatureId])
+    occasionTagId Int
+    occasionTag   OccasionTag @relation(fields: [occasionTagId], references: [occasionTagId])
+
+    @@id([shoeFeatureId, occasionTagId])
+    @@map("shoe_feature_occasion_tag")
+}
+
+model DesignTag {
+    designTagId  Int                    @id @default(autoincrement())
+    name         String                 @unique
+    shoeFeatures ShoeFeatureDesignTag[]
+
+    @@map("design_tags")
+}
+
+model ShoeFeatureDesignTag {
+    shoeFeatureId Int
+    shoeFeature   ShoeFeature @relation(fields: [shoeFeatureId], references: [shoeFeatureId])
+    designTagId   Int
+    designTag     DesignTag   @relation(fields: [designTagId], references: [designTagId])
+
+    @@id([shoeFeatureId, designTagId])
+    @@map("shoe_feature_design_tag")
 }
 
 model ShoeCategory {
@@ -87,7 +123,7 @@ model ShoeCategory {
     createdAt      DateTime      @default(now())
     createdBy      Int
     createdByStaff Staff         @relation(fields: [createdBy], references: [staffId])
-    shoeProducts   ShoeProduct[]
+    shoeFeatures   ShoeFeature[]
 
     @@index([name])
     @@map("shoe_categories")

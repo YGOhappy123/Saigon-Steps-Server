@@ -7,7 +7,7 @@ import {
     resetPasswordValidator,
     changePasswordValidator
 } from '@/validators/auth.validators'
-import { loginRequired, customerOnly } from '@/routes/verifyLogin'
+import { loginRequired, customerOnly } from '@/middlewares/verifyLogin'
 import express from 'express'
 import authController from '@/controllers/auth.controller'
 
