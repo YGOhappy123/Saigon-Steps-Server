@@ -12,8 +12,7 @@
         "start": "node -r tsconfig-paths/register dist/server.js",
         "db:migrate": "prisma migrate dev --skip-seed",
         "db:studio": "prisma studio",
-        "db:seed": "prisma db seed",
-        "postinstall": "prisma generate && prisma migrate deploy"
+        "db:seed": "prisma db seed"
     },
     "prisma": {
         "schema": "./prisma",
