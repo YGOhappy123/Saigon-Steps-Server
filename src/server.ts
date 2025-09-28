@@ -13,6 +13,7 @@ import requestLogger from '@/middlewares/requestLogger'
 import authRoutes from '@/routes/auth.routes'
 import fileRoutes from '@/routes/file.routes'
 import roleRoutes from '@/routes/role.routes'
+import customerRoutes from '@/routes/customer.routes'
 import staffRoutes from '@/routes/staff.routes'
 
 // Middlewares and dependencies configuration
@@ -32,6 +33,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }))
 app.use('/auth', authRoutes)
 app.use('/files', fileRoutes)
 app.use('/roles', roleRoutes)
+app.use('/customers', customerRoutes)
 app.use('/staffs', staffRoutes)
 app.use(errorHandler)
 

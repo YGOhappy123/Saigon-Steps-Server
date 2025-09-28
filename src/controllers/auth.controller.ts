@@ -10,9 +10,7 @@ const authController = {
     signInCustomerAccount: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { username, password } = req.body
             const result = await authService.signInCustomerAccount(username, password)
@@ -29,9 +27,7 @@ const authController = {
     signInStaffAccount: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { username, password } = req.body
             const result = await authService.signInStaffAccount(username, password)
@@ -48,9 +44,7 @@ const authController = {
     signUpCustomerAccount: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { name, username, password } = req.body
             const result = await authService.signUpCustomerAccount(name, username, password)
@@ -67,9 +61,7 @@ const authController = {
     refreshToken: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { refreshToken } = req.body
             const result = await authService.refreshToken(refreshToken)
@@ -86,9 +78,7 @@ const authController = {
     forgotPassword: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { email } = req.body
             await authService.forgotPassword(email)
@@ -104,9 +94,7 @@ const authController = {
     resetPassword: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { token, password } = req.body
             const result = await authService.resetPassword(token, password)
@@ -123,9 +111,7 @@ const authController = {
     loginByGoogleAccount: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { googleAccessToken } = req.body
             const result = await authService.loginByGoogleAccount(googleAccessToken)
@@ -142,9 +128,7 @@ const authController = {
     changePassword: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { userId, roleId } = req.auth!
             const { oldPassword, newPassword } = req.body
@@ -161,9 +145,7 @@ const authController = {
     deactivateCustomerAccount: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { userId } = req.auth!
             await authService.deactivateCustomerAccount(userId)

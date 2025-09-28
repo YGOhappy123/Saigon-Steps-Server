@@ -32,7 +32,6 @@ const cloudinaryService = {
         const folderName = parts[parts.length - 2]
 
         let fullPublicId = publicId
-
         if (folderName) {
             const { folders } = await api.root_folders()
             const matchingFolders = folders.filter((folder: any) => folder.name === folderName || folder.path === folderName)
@@ -41,7 +40,9 @@ const cloudinaryService = {
             }
         }
 
-        return await uploader.destroy(fullPublicId)
+        const deleteResult = await uploader.destroy(fullPublicId)
+
+        return deleteResult
     }
 }
 

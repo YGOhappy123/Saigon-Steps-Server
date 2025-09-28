@@ -10,9 +10,7 @@ const fileController = {
     uploadFileImage: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const image = (req.files as Express.Multer.File[])[0]
             const folder = req.body.folder ?? req.query.folder?.toString()
@@ -37,15 +35,11 @@ const fileController = {
     uploadBase64Image: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { base64Image } = req.body
             const matches = base64Image.match(/^data:(.+);base64,(.+)$/)
-            if (!matches || matches.length !== 3) {
-                throw new HttpException(402, errorMessage.UPLOAD_IMAGE_FAILED)
-            }
+            if (!matches || matches.length !== 3) throw new HttpException(402, errorMessage.UPLOAD_IMAGE_FAILED)
 
             const folder = req.body.folder ?? req.query.folder?.toString()
             const mimeType = matches[1]
@@ -70,9 +64,7 @@ const fileController = {
     deleteImage: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { imageUrl } = req.body
             await cloudinaryService.deleteFileByUrl(imageUrl)

@@ -10,9 +10,7 @@ export const signUpValidator = [
     body('username').trim().isString().isLength({ min: 8, max: 20 }),
     body('password').trim().isString().isLength({ min: 8, max: 20 }),
     body('confirmPassword').custom((value, { req }) => {
-        if (value !== req.body.password) {
-            throw new Error('Passwords do not match')
-        }
+        if (value !== req.body.password) throw new Error('Passwords do not match')
         return true
     })
 ]
@@ -22,12 +20,10 @@ export const refreshTokenValidator = [body('refreshToken').matches(JWT_REGEX_PAT
 export const forgotPasswordValidator = [body('email').isEmail()]
 
 export const resetPasswordValidator = [
-    body('token').matches(JWT_REGEX_PATTERN),
+    body('token').trim().matches(JWT_REGEX_PATTERN),
     body('password').trim().isString().isLength({ min: 8, max: 20 }),
     body('confirmPassword').custom((value, { req }) => {
-        if (value !== req.body.password) {
-            throw new Error('Passwords do not match')
-        }
+        if (value !== req.body.password) throw new Error('Passwords do not match')
         return true
     })
 ]
@@ -36,9 +32,7 @@ export const changePasswordValidator = [
     body('oldPassword').trim().isString(),
     body('newPassword').trim().isString().isLength({ min: 8, max: 20 }),
     body('confirmPassword').custom((value, { req }) => {
-        if (value !== req.body.newPassword) {
-            throw new Error('Passwords do not match')
-        }
+        if (value !== req.body.newPassword) throw new Error('Passwords do not match')
         return true
     })
 ]

@@ -112,8 +112,7 @@ const authService = {
             where: {
                 email: email,
                 account: { isActive: true }
-            },
-            include: { account: true }
+            }
         })
         if (!customer) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
 
@@ -127,8 +126,7 @@ const authService = {
         const account = await prisma.account.findFirst({
             where: {
                 customer: { email: email }
-            },
-            include: { customer: true }
+            }
         })
         if (!account || !account.isActive) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
 
@@ -153,8 +151,7 @@ const authService = {
             where: {
                 email: email,
                 account: { isActive: true }
-            },
-            include: { account: true }
+            }
         })
         if (!customer) {
             const randomUsername = generateRandomString()
@@ -202,35 +199,33 @@ const authService = {
     },
 
     changePassword: async (oldPassword: string, newPassword: string, userId: number, roleId?: number) => {
-        const targetAccount = await prisma.account.findFirst({
-            where: roleId ? { staff: { staffId: userId } } : { customer: { customerId: userId } },
-            include: { staff: true, customer: true }
+        const account = await prisma.account.findFirst({
+            where: roleId ? { staff: { staffId: userId } } : { customer: { customerId: userId } }
         })
-        if (!targetAccount || !targetAccount.isActive) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
+        if (!account || !account.isActive) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
 
-        const isPasswordMatching = await bcrypt.compare(oldPassword, targetAccount.password)
+        const isPasswordMatching = await bcrypt.compare(oldPassword, account.password)
         if (!isPasswordMatching) throw new HttpException(400, errorMessage.INCORRECT_USERNAME_OR_PASSWORD)
 
         const hashedPassword = await bcrypt.hash(newPassword, 10)
         await prisma.account.update({
-            where: { accountId: targetAccount.accountId },
+            where: { accountId: account.accountId },
             data: { password: hashedPassword }
         })
     },
 
-    deactivateCustomerAccount: async (userId: number) => {
-        const targetAccount = await prisma.account.findFirst({
-            where: { customer: { customerId: userId } },
-            include: { customer: true }
+    deactivateCustomerAccount: async (customerId: number) => {
+        const account = await prisma.account.findFirst({
+            where: { customer: { customerId: customerId } }
         })
-        if (!targetAccount || !targetAccount.isActive) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
+        if (!account || !account.isActive) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
 
         await prisma.account.update({
-            where: { accountId: targetAccount.accountId },
+            where: { accountId: account.accountId },
             data: { isActive: false }
         })
 
-        const activeCart = await cartService.getCustomerActiveCart(userId)
+        const activeCart = await cartService.getCustomerActiveCart(customerId)
         if (activeCart != null) {
             await prisma.customerCart.update({
                 where: { cartId: activeCart.cartId },

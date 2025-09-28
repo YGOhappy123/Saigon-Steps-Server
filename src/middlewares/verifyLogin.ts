@@ -7,9 +7,7 @@ import errorMessage from '@/configs/errorMessage'
 export const loginRequired = (req: RequestWithAuthData, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization
-        if (!authHeader?.startsWith('Bearer ')) {
-            throw new HttpException(401, errorMessage.NO_CREDENTIALS)
-        }
+        if (!authHeader?.startsWith('Bearer ')) throw new HttpException(401, errorMessage.NO_CREDENTIALS)
 
         const token = authHeader.split(' ')[1]
         const decodedToken = verifyAccessToken(token) as AuthJwtPayload
@@ -24,16 +22,11 @@ export const loginRequired = (req: RequestWithAuthData, res: Response, next: Nex
 export const customerOnly = (req: RequestWithAuthData, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization
-        if (!authHeader?.startsWith('Bearer ')) {
-            throw new HttpException(401, errorMessage.NO_CREDENTIALS)
-        }
+        if (!authHeader?.startsWith('Bearer ')) throw new HttpException(401, errorMessage.NO_CREDENTIALS)
 
         const token = authHeader.split(' ')[1]
         const decodedToken = verifyAccessToken(token) as AuthJwtPayload
-
-        if (decodedToken.roleId != null) {
-            throw new HttpException(403, errorMessage.NO_PERMISSION)
-        }
+        if (decodedToken.roleId != null) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
         req.auth = decodedToken
         next()
@@ -45,16 +38,11 @@ export const customerOnly = (req: RequestWithAuthData, res: Response, next: Next
 export const staffOnly = (req: RequestWithAuthData, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization
-        if (!authHeader?.startsWith('Bearer ')) {
-            throw new HttpException(401, errorMessage.NO_CREDENTIALS)
-        }
+        if (!authHeader?.startsWith('Bearer ')) throw new HttpException(401, errorMessage.NO_CREDENTIALS)
 
         const token = authHeader.split(' ')[1]
         const decodedToken = verifyAccessToken(token) as AuthJwtPayload
-
-        if (decodedToken.roleId == null) {
-            throw new HttpException(403, errorMessage.NO_PERMISSION)
-        }
+        if (decodedToken.roleId == null) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
         req.auth = decodedToken
         next()

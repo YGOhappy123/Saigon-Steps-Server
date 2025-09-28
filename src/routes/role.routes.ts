@@ -1,5 +1,5 @@
 import { staffOnly } from '@/middlewares/verifyLogin'
-import { addNewRoleValidator, updateRoleValidator, verifyPermissionValidator } from '@/validators/role.validators'
+import { addNewRoleValidator, updateRoleValidator } from '@/validators/user.validators'
 import express from 'express'
 import roleController from '@/controllers/role.controller'
 
@@ -11,6 +11,6 @@ router.post('/', staffOnly, addNewRoleValidator, roleController.addNewRole)
 router.patch('/:roleId', staffOnly, updateRoleValidator, roleController.updateRole)
 router.delete('/:roleId', staffOnly, roleController.deleteRole)
 router.get('/permissions', staffOnly, roleController.getAllPermissions)
-router.get('/verify-permission', staffOnly, verifyPermissionValidator, roleController.verifyPermission)
+router.get('/verify-permission', staffOnly, roleController.verifyPermission)
 
 export default router

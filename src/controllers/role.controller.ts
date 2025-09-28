@@ -55,15 +55,11 @@ const roleController = {
     addNewRole: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { roleId } = req.auth!
             const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.ADD_NEW_ROLE)
-            if (!hasPermission) {
-                throw new HttpException(403, errorMessage.NO_PERMISSION)
-            }
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             const { name, permissions } = req.body
             await roleService.addNewRole(name, permissions)
@@ -79,15 +75,11 @@ const roleController = {
     updateRole: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { roleId } = req.auth!
             const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.UPDATE_ROLE)
-            if (!hasPermission) {
-                throw new HttpException(403, errorMessage.NO_PERMISSION)
-            }
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             const { roleId: targetRoleId } = req.params
             const { name, permissions } = req.body
@@ -104,15 +96,11 @@ const roleController = {
     deleteRole: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
             const { roleId } = req.auth!
             const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.REMOVE_ROLE)
-            if (!hasPermission) {
-                throw new HttpException(403, errorMessage.NO_PERMISSION)
-            }
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             const { roleId: targetRoleId } = req.params
             await roleService.deleteRole(parseInt(targetRoleId))
@@ -127,18 +115,11 @@ const roleController = {
 
     verifyPermission: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-            }
-
             const { roleId } = req.auth!
             const { permission } = req.query
-            const result = await roleService.verifyPermission(roleId!, permission as string)
+            const hasPermission = await roleService.verifyPermission(roleId!, permission as string)
 
-            if (!result) {
-                throw new HttpException(403, errorMessage.NO_PERMISSION)
-            }
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             res.status(200).json({
                 message: successMessage.VERIFY_PERMISSION_SUCCESSFULLY

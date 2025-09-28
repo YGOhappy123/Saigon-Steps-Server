@@ -1,7 +1,7 @@
 model ProductImport {
     importId       Int          @id @default(autoincrement())
     invoiceNumber  String
-    totalCost      Decimal
+    totalCost      Float
     importDate     DateTime
     trackedAt      DateTime     @default(now())
     trackedBy      Int
@@ -17,7 +17,7 @@ model ImportItem {
     import        ProductImport @relation(fields: [importId], references: [importId])
     productItemId Int
     productItem   ProductItem   @relation(fields: [productItemId], references: [productItemId])
-    cost          Decimal
+    cost          Float
     quantity      Int
 
     @@id([importId, productItemId])
@@ -26,7 +26,7 @@ model ImportItem {
 
 model InventoryDamageReport {
     reportId          Int                   @id @default(autoincrement())
-    totalExpectedCost Decimal
+    totalExpectedCost Float
     reason            InventoryDamageReason
     note              String?
     reportedAt        DateTime              @default(now())
@@ -42,7 +42,7 @@ model DamageReportItem {
     report        InventoryDamageReport @relation(fields: [reportId], references: [reportId])
     productItemId Int
     productItem   ProductItem           @relation(fields: [productItemId], references: [productItemId])
-    expectedCost  Decimal
+    expectedCost  Float
     quantity      Int
 
     @@id([reportId, productItemId])

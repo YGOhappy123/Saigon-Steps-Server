@@ -52,7 +52,7 @@ const nodemailerService = {
             subject: title,
             html: content
         }
-        return await sendEmail(mailOptions)
+        await sendEmail(mailOptions)
     },
 
     sendGoogleRegistrationMail: async (emailTo: string, name: string, username: string, password: string, changePasswordUrl: string) => {
@@ -71,7 +71,7 @@ const nodemailerService = {
             subject: title,
             html: content
         }
-        return await sendEmail(mailOptions)
+        await sendEmail(mailOptions)
     },
 
     sendWelcomeNewStaffMail: async (emailTo: string, name: string, role: string, username: string, password: string, changePasswordUrl: string) => {
@@ -91,7 +91,7 @@ const nodemailerService = {
             subject: title,
             html: content
         }
-        return await sendEmail(mailOptions)
+        await sendEmail(mailOptions)
     }
 }
 

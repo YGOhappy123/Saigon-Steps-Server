@@ -2,10 +2,10 @@ model Order {
     orderId          Int                    @id @default(autoincrement())
     customerId       Int
     customer         Customer               @relation(fields: [customerId], references: [customerId])
-    couponId         Int
-    coupon           Coupon                 @relation(fields: [couponId], references: [couponId])
+    couponId         Int?
+    coupon           Coupon?                @relation(fields: [couponId], references: [couponId])
     status           OrderStatus            @default(PENDING)
-    totalAmount      Decimal
+    totalAmount      Float
     recipientName    String?
     deliveryPhone    String?
     deliveryAddress  String?
@@ -24,7 +24,7 @@ model OrderItem {
     order         Order       @relation(fields: [orderId], references: [orderId])
     productItemId Int
     productItem   ProductItem @relation(fields: [productItemId], references: [productItemId])
-    price         Decimal
+    price         Float
     quantity      Int
 
     @@id([orderId, productItemId])

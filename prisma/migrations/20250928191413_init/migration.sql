@@ -2,7 +2,7 @@
 CREATE TABLE `product_imports` (
     `importId` INTEGER NOT NULL AUTO_INCREMENT,
     `invoiceNumber` VARCHAR(191) NOT NULL,
-    `totalCost` DECIMAL(65, 30) NOT NULL,
+    `totalCost` DOUBLE NOT NULL,
     `importDate` DATETIME(3) NOT NULL,
     `trackedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `trackedBy` INTEGER NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE `product_imports` (
 CREATE TABLE `import_items` (
     `importId` INTEGER NOT NULL,
     `productItemId` INTEGER NOT NULL,
-    `cost` DECIMAL(65, 30) NOT NULL,
+    `cost` DOUBLE NOT NULL,
     `quantity` INTEGER NOT NULL,
 
     PRIMARY KEY (`importId`, `productItemId`)
@@ -24,7 +24,7 @@ CREATE TABLE `import_items` (
 -- CreateTable
 CREATE TABLE `inventory_damage_reports` (
     `reportId` INTEGER NOT NULL AUTO_INCREMENT,
-    `totalExpectedCost` DECIMAL(65, 30) NOT NULL,
+    `totalExpectedCost` DOUBLE NOT NULL,
     `reason` ENUM('lost', 'broken', 'defective', 'other') NOT NULL,
     `note` VARCHAR(191) NULL,
     `reportedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -37,7 +37,7 @@ CREATE TABLE `inventory_damage_reports` (
 CREATE TABLE `damage_report_items` (
     `reportId` INTEGER NOT NULL,
     `productItemId` INTEGER NOT NULL,
-    `expectedCost` DECIMAL(65, 30) NOT NULL,
+    `expectedCost` DOUBLE NOT NULL,
     `quantity` INTEGER NOT NULL,
 
     PRIMARY KEY (`reportId`, `productItemId`)
@@ -47,9 +47,9 @@ CREATE TABLE `damage_report_items` (
 CREATE TABLE `orders` (
     `orderId` INTEGER NOT NULL AUTO_INCREMENT,
     `customerId` INTEGER NOT NULL,
-    `couponId` INTEGER NOT NULL,
+    `couponId` INTEGER NULL,
     `status` ENUM('pending', 'accepted', 'packed', 'dispatched', 'delivery_success', 'delivery_failed', 'cancelled', 'returned') NOT NULL DEFAULT 'pending',
-    `totalAmount` DECIMAL(65, 30) NOT NULL,
+    `totalAmount` DOUBLE NOT NULL,
     `recipientName` VARCHAR(191) NULL,
     `deliveryPhone` VARCHAR(191) NULL,
     `deliveryAddress` VARCHAR(191) NULL,
@@ -65,7 +65,7 @@ CREATE TABLE `orders` (
 CREATE TABLE `order_items` (
     `orderId` INTEGER NOT NULL,
     `productItemId` INTEGER NOT NULL,
-    `price` DECIMAL(65, 30) NOT NULL,
+    `price` DOUBLE NOT NULL,
     `quantity` INTEGER NOT NULL,
 
     PRIMARY KEY (`orderId`, `productItemId`)
@@ -89,7 +89,7 @@ CREATE TABLE `root_products` (
     `name` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
-    `price` DECIMAL(65, 30) NOT NULL,
+    `price` DOUBLE NOT NULL,
     `isAccessory` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `createdBy` INTEGER NOT NULL,
@@ -104,8 +104,8 @@ CREATE TABLE `root_products` (
 CREATE TABLE `product_items` (
     `productItemId` INTEGER NOT NULL AUTO_INCREMENT,
     `rootProductId` INTEGER NOT NULL,
+    `size` VARCHAR(191) NOT NULL DEFAULT 'Mặc định',
     `stock` INTEGER NOT NULL,
-    `size` VARCHAR(191) NULL,
 
     UNIQUE INDEX `product_items_rootProductId_size_key`(`rootProductId`, `size`),
     PRIMARY KEY (`productItemId`)
@@ -117,6 +117,7 @@ CREATE TABLE `product_images` (
     `rootProductId` INTEGER NOT NULL,
     `url` VARCHAR(191) NOT NULL,
 
+    UNIQUE INDEX `product_images_rootProductId_url_key`(`rootProductId`, `url`),
     PRIMARY KEY (`imageId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -231,7 +232,7 @@ CREATE TABLE `coupons` (
     `couponId` INTEGER NOT NULL AUTO_INCREMENT,
     `code` VARCHAR(191) NOT NULL,
     `type` ENUM('fixed', 'percentage') NOT NULL DEFAULT 'fixed',
-    `amount` DECIMAL(65, 30) NOT NULL,
+    `amount` DOUBLE NOT NULL,
     `maxUsage` INTEGER NULL,
     `isActive` BOOLEAN NOT NULL DEFAULT true,
     `expiredAt` DATETIME(3) NULL,
@@ -387,7 +388,7 @@ ALTER TABLE `damage_report_items` ADD CONSTRAINT `damage_report_items_productIte
 ALTER TABLE `orders` ADD CONSTRAINT `orders_customerId_fkey` FOREIGN KEY (`customerId`) REFERENCES `customers`(`customerId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `orders` ADD CONSTRAINT `orders_couponId_fkey` FOREIGN KEY (`couponId`) REFERENCES `coupons`(`couponId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `orders` ADD CONSTRAINT `orders_couponId_fkey` FOREIGN KEY (`couponId`) REFERENCES `coupons`(`couponId`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `order_items` ADD CONSTRAINT `order_items_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `orders`(`orderId`) ON DELETE RESTRICT ON UPDATE CASCADE;

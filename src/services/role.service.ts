@@ -125,8 +125,7 @@ const roleService = {
             where: {
                 roleId: roleId,
                 permission: { code: permissionCode }
-            },
-            include: { permission: true }
+            }
         })
 
         return !!rolePermission
