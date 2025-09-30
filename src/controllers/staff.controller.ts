@@ -98,12 +98,12 @@ const staffController = {
 
     deactivateStaffAccount: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
-            const { roleId: authRoleId } = req.auth!
+            const { userId, roleId: authRoleId } = req.auth!
             const hasPermission = await roleService.verifyPermission(authRoleId!, appPermissions.DEACTIVATE_STAFF_ACCOUNT)
             if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             const { staffId } = req.params
-            await staffService.deactivateStaffAccount(parseInt(staffId))
+            await staffService.deactivateStaffAccount(parseInt(staffId), userId)
 
             res.status(200).json({
                 message: successMessage.DEACTIVATE_ACCOUNT_SUCCESSFULLY

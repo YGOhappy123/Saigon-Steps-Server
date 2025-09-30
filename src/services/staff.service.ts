@@ -107,9 +107,10 @@ const staffService = {
         })
     },
 
-    deactivateStaffAccount: async (staffId: number) => {
-        const staff = await prisma.staff.findFirst({ where: { staffId: staffId, account: { isActive: true } } })
+    deactivateStaffAccount: async (staffId: number, authStaffId: number) => {
+        const staff = await prisma.staff.findFirst({ where: { staffId: staffId, account: { isActive: true } }, include: { role: true } })
         if (!staff) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
+        if (staff.role.isImmutable || staff.staffId === authStaffId) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
         await prisma.account.update({
             where: { accountId: staff.accountId },
