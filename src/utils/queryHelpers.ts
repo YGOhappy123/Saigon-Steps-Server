@@ -46,15 +46,15 @@ export const buildWhereStatement = (filter: string = '{}') => {
                     break
 
                 case 'name':
-                    where.name = { contains: parsedFilter[criteria], mode: 'insensitive' }
+                    where.name = { contains: parsedFilter[criteria] }
                     break
 
                 case 'email':
-                    where.email = { contains: parsedFilter[criteria], mode: 'insensitive' }
+                    where.email = { contains: parsedFilter[criteria] }
                     break
 
                 case 'phoneNumber':
-                    where.phoneNumber = { contains: parsedFilter[criteria], mode: 'insensitive' }
+                    where.phoneNumber = { contains: parsedFilter[criteria] }
                     break
 
                 case 'permissions':
@@ -64,6 +64,32 @@ export const buildWhereStatement = (filter: string = '{}') => {
                             permissions: { some: { permissionId: permissionId } }
                         }))
                     ]
+                    break
+
+                case 'minPrice':
+                    where.price = {
+                        ...(where.price || {}),
+                        gte: parsedFilter[criteria]
+                    }
+                    break
+
+                case 'maxPrice':
+                    where.price = {
+                        ...(where.price || {}),
+                        lte: parsedFilter[criteria]
+                    }
+                    break
+
+                case 'categoryId':
+                    where.shoeFeature = { categoryId: parsedFilter[criteria] }
+                    break
+
+                case 'inStock':
+                    if ([true, 'true', 1].includes(parsedFilter[criteria])) {
+                        where.productItems = { some: { stock: { gt: 0 } } }
+                    } else if ([false, 'false', 0].includes(parsedFilter[criteria])) {
+                        where.productItems = { every: { stock: 0 } }
+                    }
                     break
 
                 default:

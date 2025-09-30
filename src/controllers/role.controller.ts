@@ -95,9 +95,6 @@ const roleController = {
 
     deleteRole: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-
             const { roleId } = req.auth!
             const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.REMOVE_ROLE)
             if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)

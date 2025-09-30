@@ -96,6 +96,9 @@ const roleService = {
         if (!role) throw new HttpException(404, errorMessage.ROLE_NOT_FOUND)
         if (role.isImmutable) throw new HttpException(400, errorMessage.ROLE_IS_IMMUTABLE)
 
+        const staffsWithThisRole = await prisma.staff.count({ where: { roleId: roleId } })
+        if (staffsWithThisRole > 0) throw new HttpException(400, errorMessage.ROLE_BEING_USED)
+
         await prisma.rolePermission.deleteMany({ where: { roleId: roleId } })
         await prisma.staffRole.delete({
             where: { roleId: roleId }

@@ -24,7 +24,7 @@ model ProductItem {
     rootProductId     Int
     rootProduct       RootProduct        @relation(fields: [rootProductId], references: [rootProductId])
     size              String             @default("Mặc định")
-    stock             Int
+    stock             Int                @default(0)
     cartItems         CartItem[]
     orderItems        OrderItem[]
     importItems       ImportItem[]

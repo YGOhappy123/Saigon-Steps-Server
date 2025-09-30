@@ -4,17 +4,13 @@ import multer from 'multer'
 import dotenv from 'dotenv'
 dotenv.config()
 
+import * as routes from '@/routes'
 import { parsedEnv } from '@/env'
 import { prisma } from '@/prisma'
 import corsOptions from '@/configs/corsOptions'
 import pinoLogger from '@/configs/pinoLogger'
 import errorHandler from '@/middlewares/errorHandler'
 import requestLogger from '@/middlewares/requestLogger'
-import authRoutes from '@/routes/auth.routes'
-import fileRoutes from '@/routes/file.routes'
-import roleRoutes from '@/routes/role.routes'
-import customerRoutes from '@/routes/customer.routes'
-import staffRoutes from '@/routes/staff.routes'
 
 // Middlewares and dependencies configuration
 const app = express()
@@ -30,11 +26,18 @@ app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ limit: '10mb', extended: true }))
 
 // Route handlers
-app.use('/auth', authRoutes)
-app.use('/files', fileRoutes)
-app.use('/roles', roleRoutes)
-app.use('/customers', customerRoutes)
-app.use('/staffs', staffRoutes)
+app.use('/auth', routes.authRoutes)
+app.use('/files', routes.fileRoutes)
+app.use('/roles', routes.roleRoutes)
+app.use('/customers', routes.customerRoutes)
+app.use('/staffs', routes.staffRoutes)
+app.use('/brands', routes.brandRoutes)
+app.use('/categories', routes.categoryRoutes)
+app.use('/products', routes.productRoutes)
+app.use('/promotions', routes.promotionRoutes)
+app.use('/orders', routes.orderRoutes)
+app.use('/imports', routes.importRoutes)
+app.use('/reports', routes.reportRoutes)
 app.use(errorHandler)
 
 // Database connection and server initialization

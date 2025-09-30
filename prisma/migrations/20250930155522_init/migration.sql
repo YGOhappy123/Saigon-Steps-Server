@@ -105,7 +105,7 @@ CREATE TABLE `product_items` (
     `productItemId` INTEGER NOT NULL AUTO_INCREMENT,
     `rootProductId` INTEGER NOT NULL,
     `size` VARCHAR(191) NOT NULL DEFAULT 'Mặc định',
-    `stock` INTEGER NOT NULL,
+    `stock` INTEGER NOT NULL DEFAULT 0,
 
     UNIQUE INDEX `product_items_rootProductId_size_key`(`rootProductId`, `size`),
     PRIMARY KEY (`productItemId`)

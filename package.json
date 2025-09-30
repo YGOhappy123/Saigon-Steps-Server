@@ -12,6 +12,7 @@
         "start": "node -r tsconfig-paths/register dist/server.js",
         "db:migrate": "prisma migrate dev --skip-seed",
         "db:studio": "prisma studio",
+        "db:reset": "prisma migrate reset --force",
         "db:seed": "prisma db seed"
     },
     "prisma": {
