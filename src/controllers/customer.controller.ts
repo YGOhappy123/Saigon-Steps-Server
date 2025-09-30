@@ -22,7 +22,28 @@ const customerController = {
                 filter
             } as ISearchParams)
 
-            res.status(200).json({ data: customers, total, took: customers.length })
+            res.status(200).json({
+                data: customers,
+                total,
+                took: customers.length
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    updateCustomerInfo: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
+
+            const { userId } = req.auth!
+            const { name, email, avatar } = req.body
+            await customerService.updateCustomerInfo(userId, name, email, avatar)
+
+            res.status(200).json({
+                message: successMessage.UPDATE_USER_SUCCESSFULLY
+            })
         } catch (error) {
             next(error)
         }
@@ -134,7 +155,11 @@ const customerController = {
                 userId
             )
 
-            res.status(200).json({ data: addresses, total, took: addresses.length })
+            res.status(200).json({
+                data: addresses,
+                total,
+                took: addresses.length
+            })
         } catch (error) {
             next(error)
         }

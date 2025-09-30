@@ -20,7 +20,11 @@ const categoryController = {
                 filter
             } as ISearchParams)
 
-            res.status(200).json({ data: categories, total, took: categories.length })
+            res.status(200).json({
+                data: categories,
+                total,
+                took: categories.length
+            })
         } catch (error) {
             next(error)
         }

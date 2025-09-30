@@ -28,6 +28,25 @@ const customerService = {
         }
     },
 
+    updateCustomerInfo: async (customerId: number, name: string, email: string, avatar: string) => {
+        const customer = await prisma.customer.findFirst({ where: { customerId: customerId, account: { isActive: true } } })
+        if (!customer) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
+
+        const customerWithThisEmail = await prisma.customer.findFirst({
+            where: { email: email, account: { isActive: true }, NOT: { customerId: customerId } }
+        })
+        if (customerWithThisEmail) throw new HttpException(400, errorMessage.EMAIL_EXISTED)
+
+        await prisma.customer.update({
+            where: { customerId: customerId },
+            data: {
+                name: capitalizeWords(name),
+                email: email,
+                avatar: avatar
+            }
+        })
+    },
+
     getCustomerAddresses: async ({ skip = 0, limit, filter = '{}', sort = '{}' }: ISearchParams, customerId: number) => {
         const whereStatement = { ...buildWhereStatement(filter), customerId: customerId }
 
@@ -93,9 +112,19 @@ const customerService = {
 
         if (!address.isDefault) {
             const defaultAddress = await prisma.customerAddress.findFirst({ where: { customerId: customerId, isDefault: true } })
-            await prisma.customerAddress.update({ where: { addressId: defaultAddress?.addressId }, data: { isDefault: false } })
+            await prisma.customerAddress.update({
+                where: { addressId: defaultAddress?.addressId },
+                data: {
+                    isDefault: false
+                }
+            })
 
-            await prisma.customerAddress.update({ where: { addressId: addressId }, data: { isDefault: true } })
+            await prisma.customerAddress.update({
+                where: { addressId: addressId },
+                data: {
+                    isDefault: true
+                }
+            })
         }
     },
 

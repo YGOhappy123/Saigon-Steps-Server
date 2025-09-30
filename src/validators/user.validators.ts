@@ -17,3 +17,18 @@ export const addCustomerAddressValidator = [
     body('ward').trim().isString(),
     body('addressLine').trim().isString()
 ]
+
+export const updateUserProfileValidator = [
+    body('name').trim().isString().isLength({ min: 2, max: 255 }),
+    body('email').trim().isEmail(),
+    body('avatar').trim().isURL()
+]
+
+export const addNewStaffValidator = [
+    body('name').trim().isString().isLength({ min: 2, max: 255 }),
+    body('email').trim().isEmail(),
+    body('avatar').trim().isURL(),
+    body('roleId').isInt({ min: 1 })
+]
+
+export const changeStaffRoleValidator = [body('roleId').isInt({ min: 1 })]

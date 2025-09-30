@@ -133,7 +133,9 @@ const authService = {
         const hashedPassword = await bcrypt.hash(newPassword, 10)
         await prisma.account.update({
             where: { accountId: account.accountId },
-            data: { password: hashedPassword }
+            data: {
+                password: hashedPassword
+            }
         })
     },
 
@@ -210,7 +212,9 @@ const authService = {
         const hashedPassword = await bcrypt.hash(newPassword, 10)
         await prisma.account.update({
             where: { accountId: account.accountId },
-            data: { password: hashedPassword }
+            data: {
+                password: hashedPassword
+            }
         })
     },
 
@@ -222,7 +226,9 @@ const authService = {
 
         await prisma.account.update({
             where: { accountId: account.accountId },
-            data: { isActive: false }
+            data: {
+                isActive: false
+            }
         })
 
         const activeCart = await cartService.getCustomerActiveCart(customerId)

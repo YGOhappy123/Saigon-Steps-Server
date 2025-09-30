@@ -20,7 +20,11 @@ const productController = {
                 filter
             } as ISearchParams)
 
-            res.status(200).json({ data: products, total, took: products.length })
+            res.status(200).json({
+                data: products,
+                total,
+                took: products.length
+            })
         } catch (error) {
             next(error)
         }
@@ -31,7 +35,9 @@ const productController = {
             const { productId } = req.params
             const product = await productService.getProductById(parseInt(productId))
 
-            res.status(200).json({ data: product })
+            res.status(200).json({
+                data: product
+            })
         } catch (error) {
             next(error)
         }
@@ -42,7 +48,9 @@ const productController = {
             const { slug } = req.params
             const product = await productService.getProductBySlug(slug as string)
 
-            res.status(200).json({ data: product })
+            res.status(200).json({
+                data: product
+            })
         } catch (error) {
             next(error)
         }
@@ -55,7 +63,11 @@ const productController = {
                 Array.isArray(ids) ? ids.map(id => parseInt(id as string)) : [parseInt(ids as string)]
             )
 
-            res.status(200).json({ data: productItems, total, took: productItems.length })
+            res.status(200).json({
+                data: productItems,
+                total,
+                took: productItems.length
+            })
         } catch (error) {
             next(error)
         }
@@ -66,7 +78,11 @@ const productController = {
             const { searchTerm } = req.query
             const { products, total } = await productService.searchProductsByName(searchTerm as string)
 
-            res.status(200).json({ data: products, total, took: products.length })
+            res.status(200).json({
+                data: products,
+                total,
+                took: products.length
+            })
         } catch (error) {
             next(error)
         }

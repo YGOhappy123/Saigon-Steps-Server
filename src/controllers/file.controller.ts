@@ -69,7 +69,9 @@ const fileController = {
             const { imageUrl } = req.body
             await cloudinaryService.deleteFileByUrl(imageUrl)
 
-            res.status(200).json({ message: successMessage.DELETE_IMAGE_SUCCESSFULLY })
+            res.status(200).json({
+                message: successMessage.DELETE_IMAGE_SUCCESSFULLY
+            })
         } catch (error) {
             next(error)
         }

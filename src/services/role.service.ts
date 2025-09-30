@@ -82,7 +82,9 @@ const roleService = {
 
         await prisma.staffRole.update({
             where: { roleId: roleId },
-            data: { name: capitalizeWords(name) }
+            data: {
+                name: capitalizeWords(name)
+            }
         })
         await prisma.rolePermission.deleteMany({ where: { roleId: roleId } })
         await prisma.rolePermission.createMany({

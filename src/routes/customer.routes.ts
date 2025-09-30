@@ -1,5 +1,5 @@
 import { customerOnly, staffOnly } from '@/middlewares/verifyLogin'
-import { addCartItemValidator, updateCartItemValidator, addCustomerAddressValidator } from '@/validators/user.validators'
+import { addCartItemValidator, updateCartItemValidator, addCustomerAddressValidator, updateUserProfileValidator } from '@/validators/user.validators'
 import express from 'express'
 import customerController from '@/controllers/customer.controller'
 
@@ -14,7 +14,7 @@ router.patch('/cart/:productItemId', customerOnly, updateCartItemValidator, cust
 router.delete('/cart/:productItemId', customerOnly, customerController.deleteCartItem)
 router.post('/cart/reset', customerOnly, customerController.resetCustomerCart)
 
-router.patch('/update-profile', customerOnly)
+router.patch('/', customerOnly, updateUserProfileValidator, customerController.updateCustomerInfo)
 router.get('/address', customerOnly, customerController.getCustomerAddresses)
 router.post('/address', customerOnly, addCustomerAddressValidator, customerController.addCustomerAddress)
 router.patch('/address/:addressId', customerOnly, customerController.setCustomerAddressAsDefault)

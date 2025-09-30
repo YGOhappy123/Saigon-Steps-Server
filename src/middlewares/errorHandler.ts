@@ -6,7 +6,9 @@ const errorHandler = (error: any, req: Request, res: Response, next: NextFunctio
         const status = error.status || error.statusCode || 500
         const message = error.message || errorMessage.INTERNAL_SERVER_ERROR
 
-        res.status(status).json({ message: message })
+        res.status(status).json({
+            message: message
+        })
     } catch (err) {
         next(err)
     }

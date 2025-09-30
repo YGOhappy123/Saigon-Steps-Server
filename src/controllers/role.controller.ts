@@ -19,7 +19,11 @@ const roleController = {
                 filter
             } as ISearchParams)
 
-            res.status(200).json({ data: roles, total, took: roles.length })
+            res.status(200).json({
+                data: roles,
+                total,
+                took: roles.length
+            })
         } catch (error) {
             next(error)
         }
@@ -30,7 +34,9 @@ const roleController = {
             const { roleId } = req.params
             const role = await roleService.getRoleById(parseInt(roleId))
 
-            res.status(200).json({ data: role })
+            res.status(200).json({
+                data: role
+            })
         } catch (error) {
             next(error)
         }
@@ -46,7 +52,11 @@ const roleController = {
                 filter
             } as ISearchParams)
 
-            res.status(200).json({ data: permissions, total, took: permissions.length })
+            res.status(200).json({
+                data: permissions,
+                total,
+                took: permissions.length
+            })
         } catch (error) {
             next(error)
         }

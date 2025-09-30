@@ -20,7 +20,11 @@ const brandController = {
                 filter
             } as ISearchParams)
 
-            res.status(200).json({ data: brands, total, took: brands.length })
+            res.status(200).json({
+                data: brands,
+                total,
+                took: brands.length
+            })
         } catch (error) {
             next(error)
         }

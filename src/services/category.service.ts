@@ -44,7 +44,9 @@ const categoryService = {
 
         await prisma.shoeCategory.update({
             where: { categoryId: categoryId },
-            data: { name: name }
+            data: {
+                name: name
+            }
         })
     },
 
