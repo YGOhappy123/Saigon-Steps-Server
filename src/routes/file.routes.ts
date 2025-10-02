@@ -1,4 +1,4 @@
-import { loginRequired } from '@/middlewares/verifyLogin'
+import { loginRequired } from '@/middlewares/auth.middleware'
 import { deleteImageValidator } from '@/validators/file.validators'
 import express from 'express'
 import fileController from '@/controllers/file.controller'

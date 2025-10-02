@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import errorMessage from '@/configs/errorMessage'
 
-const errorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
     try {
         const status = error.status || error.statusCode || 500
         const message = error.message || errorMessage.INTERNAL_SERVER_ERROR
@@ -13,5 +13,3 @@ const errorHandler = (error: any, req: Request, res: Response, next: NextFunctio
         next(err)
     }
 }
-
-export default errorHandler

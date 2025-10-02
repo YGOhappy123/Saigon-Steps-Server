@@ -8,7 +8,6 @@ import errorMessage from '@/configs/errorMessage'
 import staffService from '@/services/staff.service'
 import roleService from '@/services/role.service'
 import appPermissions from '@/configs/appPermissions'
-import authService from '@/services/auth.service'
 
 const staffController = {
     getAllStaffs: async (req: Request, res: Response, next: NextFunction) => {

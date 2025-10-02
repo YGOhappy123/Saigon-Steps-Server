@@ -184,6 +184,20 @@ const cartService = {
                 status: CartStatus.ABANDONED
             }
         })
+    },
+
+    convertActiveCart: async (customerId: number) => {
+        const activeCart = await prisma.customerCart.findFirst({ where: { customerId: customerId, status: CartStatus.ACTIVE } })
+
+        if (activeCart) {
+            await prisma.customerCart.update({
+                where: { cartId: activeCart.cartId },
+                data: {
+                    updatedAt: new Date(),
+                    status: CartStatus.CONVERTED
+                }
+            })
+        }
     }
 }
 

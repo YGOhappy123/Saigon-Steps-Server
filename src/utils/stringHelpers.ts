@@ -19,6 +19,13 @@ export const capitalizeFirstWord = (input: string) => {
     return input.trim().charAt(0).toUpperCase() + input.trim().replace(MULTI_SPACE_REGEX, ' ').substring(1).toLowerCase()
 }
 
+export const uppercaseWords = (input: string) => {
+    const MULTI_SPACE_REGEX = /\s+/g
+
+    if (!input.trim()) return ''
+    return input.trim().replace(MULTI_SPACE_REGEX, ' ').toUpperCase()
+}
+
 export const generateRandomString = (length?: number) => {
     const RANDOM_STRING_LENGTH = 16
 

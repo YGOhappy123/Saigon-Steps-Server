@@ -249,6 +249,47 @@ const productService = {
         }
     },
 
+    getDetailedProductItemById: async (productItemId: number) => {
+        const productItem = await prisma.productItem.findFirst({
+            where: { productItemId: productItemId },
+            include: {
+                rootProduct: {
+                    include: {
+                        images: true,
+                        brand: true,
+                        createdByStaff: true,
+                        shoeFeature: {
+                            include: {
+                                category: true,
+                                occasionTags: { include: { occasionTag: true } },
+                                designTags: { include: { designTag: true } }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        if (productItem == null) return null
+
+        const { discountRate } = await productService.getProductPromotions(productItem.rootProductId)
+        return {
+            ...productItem,
+            discountRate: discountRate,
+            rootProduct: {
+                ...productItem.rootProduct,
+                images: productItem.rootProduct.images.map(image => image.url),
+                shoeFeature:
+                    productItem.rootProduct.shoeFeature == null
+                        ? null
+                        : {
+                              ...productItem.rootProduct.shoeFeature,
+                              occasionTags: productItem.rootProduct.shoeFeature.occasionTags.map(tag => tag.occasionTag.name),
+                              designTags: productItem.rootProduct.shoeFeature.designTags.map(tag => tag.designTag.name)
+                          }
+            }
+        }
+    },
+
     getProductPromotions: async (rootProductId: number) => {
         const currentTime = getNow()
 

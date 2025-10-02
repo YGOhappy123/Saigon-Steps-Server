@@ -1,4 +1,4 @@
-import { staffOnly } from '@/middlewares/verifyLogin'
+import { staffOnly } from '@/middlewares/auth.middleware'
 import { addNewProductBrandValidator, updateProductBrandValidator } from '@/validators/product.validators'
 import express from 'express'
 import brandController from '@/controllers/brand.controller'

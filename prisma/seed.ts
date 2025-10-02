@@ -241,26 +241,23 @@ const seedData = async () => {
             { code: 'ADD_NEW_IMPORT', name: 'Thêm đơn nhập hàng mới' },
 
             // Promotions
-            { code: 'ACCESS_PROMOTION_DASHBOARD_PAGE', name: 'Truy cập trang quản lý chương trình khuyến mãi' },
-            { code: 'ADD_NEW_PROMOTION', name: 'Thêm chương trình khuyến mãi mới' }, //20
-            { code: 'UPDATE_PROMOTION', name: 'Cập nhật chương trình khuyến mãi' },
+            { code: 'ADD_NEW_PROMOTION', name: 'Thêm chương trình khuyến mãi mới' },
+            { code: 'UPDATE_PROMOTION', name: 'Cập nhật chương trình khuyến mãi' }, //30
             { code: 'DISABLE_PROMOTION', name: 'Dừng chương trình khuyến mãi' },
 
             // Coupons
             { code: 'ACCESS_COUPON_DASHBOARD_PAGE', name: 'Truy cập trang quản lý phiếu giảm giá' },
             { code: 'ADD_NEW_COUPON', name: 'Thêm phiếu giảm giá mới' },
-            { code: 'UPDATE_COUPON', name: 'Cập nhật phiếu giảm giá' }, //35
             { code: 'DISABLE_COUPON', name: 'Khóa phiếu giảm giá' },
 
             // Stock
-            { code: 'ACCESS_INVENTORY_DASHBOARD_PAGE', name: 'Truy cập trang quản lý hàng tồn kho' },
+            { code: 'ACCESS_INVENTORY_DASHBOARD_PAGE', name: 'Truy cập trang quản lý hàng tồn kho' }, //35
             { code: 'ACCESS_DAMAGE_REPORT_DASHBOARD_PAGE', name: 'Truy cập trang quản lý báo cáo thiệt hại' },
             { code: 'ADD_NEW_DAMAGE_REPORT', name: 'Thêm báo cáo thiệt hại mới' },
-            { code: 'UPDATE_DAMAGE_REPORT', name: 'Cập nhật báo cáo thiệt hại' }, //40
 
             // Statistics
             { code: 'ACCESS_PRODUCT_STATISTIC_PAGE', name: 'Truy cập trang thống kê sản phẩm' },
-            { code: 'ACCESS_REVENUE_STATISTIC_PAGE', name: 'Truy cập trang thống kê doanh thu' } //42
+            { code: 'ACCESS_REVENUE_STATISTIC_PAGE', name: 'Truy cập trang thống kê doanh thu' } //39
         ]
     })
 
@@ -307,29 +304,24 @@ const seedData = async () => {
             { roleId: 1, permissionId: 37 },
             { roleId: 1, permissionId: 38 },
             { roleId: 1, permissionId: 39 },
-            { roleId: 1, permissionId: 40 },
-            { roleId: 1, permissionId: 41 },
-            { roleId: 1, permissionId: 42 },
 
             // Warehouse Staff - inventory and damage report management
             { roleId: 2, permissionId: 27 },
             { roleId: 2, permissionId: 28 },
+            { roleId: 2, permissionId: 35 },
+            { roleId: 2, permissionId: 36 },
             { roleId: 2, permissionId: 37 },
-            { roleId: 2, permissionId: 38 },
-            { roleId: 2, permissionId: 39 },
-            { roleId: 2, permissionId: 40 },
 
             // Order Processing Staff - order management
             { roleId: 3, permissionId: 25 },
             { roleId: 3, permissionId: 26 },
-            { roleId: 3, permissionId: 37 },
+            { roleId: 3, permissionId: 35 },
 
             // Advisory Staff - customer care and advisory
             { roleId: 4, permissionId: 5 },
             { roleId: 4, permissionId: 7 },
             { roleId: 4, permissionId: 8 },
-            { roleId: 4, permissionId: 29 },
-            { roleId: 4, permissionId: 33 },
+            { roleId: 4, permissionId: 32 },
 
             // Marketing Staff - promotions and coupons
             { roleId: 5, permissionId: 29 },
@@ -338,9 +330,7 @@ const seedData = async () => {
             { roleId: 5, permissionId: 32 },
             { roleId: 5, permissionId: 33 },
             { roleId: 5, permissionId: 34 },
-            { roleId: 5, permissionId: 35 },
-            { roleId: 5, permissionId: 36 },
-            { roleId: 5, permissionId: 41 }
+            { roleId: 5, permissionId: 38 }
         ]
     })
 
@@ -903,7 +893,7 @@ const seedData = async () => {
                     "Biti's tưng bừng chào mừng Quốc Khánh 2/9 với chương trình ưu đãi đặc biệt dành cho mọi khách hàng. Đây là dịp để bạn lựa chọn những đôi giày trẻ trung, bền bỉ và thoải mái với mức giá hấp dẫn hơn bao giờ hết. Hãy nhanh tay ghé cửa hàng hoặc mua sắm trực tuyến để cùng Biti's hòa chung không khí rộn ràng, rinh giày mới xinh xắn và tận hưởng trọn vẹn niềm vui ngày lễ lớn.",
                 discountRate: 30,
                 startDate: new Date('2025-09-01T00:00:00+07:00'),
-                endDate: new Date('2025-09-30T23:59:59+07:00'),
+                endDate: new Date('2025-09-05T23:59:59+07:00'),
                 createdAt: new Date('2025-08-27T07:00:00+07:00'),
                 createdBy: 2
             },

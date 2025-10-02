@@ -1,4 +1,4 @@
-import { customerOnly, staffOnly } from '@/middlewares/verifyLogin'
+import { customerOnly, staffOnly } from '@/middlewares/auth.middleware'
 import { addCartItemValidator, updateCartItemValidator, addCustomerAddressValidator, updateUserProfileValidator } from '@/validators/user.validators'
 import express from 'express'
 import customerController from '@/controllers/customer.controller'

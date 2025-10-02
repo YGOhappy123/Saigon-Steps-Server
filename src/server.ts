@@ -7,10 +7,10 @@ dotenv.config()
 import * as routes from '@/routes'
 import { parsedEnv } from '@/env'
 import { prisma } from '@/prisma'
+import { errorHandler } from '@/middlewares/error.middleware'
+import { requestLogger } from '@/middlewares/logger.middleware'
 import corsOptions from '@/configs/corsOptions'
 import pinoLogger from '@/configs/pinoLogger'
-import errorHandler from '@/middlewares/errorHandler'
-import requestLogger from '@/middlewares/requestLogger'
 
 // Middlewares and dependencies configuration
 const app = express()
