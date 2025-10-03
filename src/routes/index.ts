@@ -8,7 +8,6 @@ import categoryRoutes from '@/routes/category.routes'
 import productRoutes from '@/routes/product.routes'
 import promotionRoutes from '@/routes/promotion.routes'
 import orderRoutes from '@/routes/order.routes'
-import importRoutes from '@/routes/import.routes'
 import reportRoutes from '@/routes/report.routes'
 
 export {
@@ -22,6 +21,5 @@ export {
     productRoutes,
     promotionRoutes,
     orderRoutes,
-    importRoutes,
     reportRoutes
 }

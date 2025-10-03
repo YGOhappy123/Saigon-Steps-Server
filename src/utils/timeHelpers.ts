@@ -10,7 +10,7 @@ dayjs.extend(localizedFormat)
 dayjs.tz.setDefault('Asia/Ho_Chi_Minh')
 dayjs.locale('vi')
 
-type TimeType = 'daily' | 'weekly' | 'monthly' | 'yearly'
+export type TimeType = 'daily' | 'weekly' | 'monthly' | 'yearly'
 
 export const getStartOfTimeByType = (timestamp: string | number | Date | Dayjs, type: TimeType) => {
     const date = dayjs.tz(timestamp)

@@ -134,6 +134,66 @@ const customerService = {
         if (address.isDefault) throw new HttpException(400, errorMessage.CANNOT_DELETE_DEFAULT_ADDRESS)
 
         await prisma.customerAddress.delete({ where: { addressId: addressId } })
+    },
+
+    getCustomersRegisteredInTimeRange: async (startDate: Date, endDate: Date) => {
+        const customers = await prisma.customer.findMany({
+            where: { createdAt: { gte: startDate, lt: endDate } }
+        })
+
+        return customers
+    },
+
+    getCustomersWithHighestOrderCountInTimeRange: async (startDate: Date, endDate: Date, limit: number | undefined = undefined) => {
+        const highestOrderCountCustomerIds = await prisma.order.groupBy({
+            by: ['customerId'],
+            where: { createdAt: { gte: startDate, lt: endDate } },
+            _count: { _all: true },
+            orderBy: { _count: { customerId: 'desc' } },
+            take: limit
+        })
+
+        const mappedCustomers = await Promise.all(
+            highestOrderCountCustomerIds.map(async item => {
+                const customerInfo = await prisma.customer.findFirst({ where: { customerId: item.customerId }, include: { account: true } })
+
+                if (customerInfo) {
+                    return {
+                        ...customerInfo,
+                        isActive: customerInfo.account.isActive,
+                        orderCount: item._count._all
+                    }
+                }
+            })
+        )
+
+        return mappedCustomers.filter(item => item !== undefined) as any[]
+    },
+
+    getCustomersWithHighestSpendingInTimeRange: async (startDate: Date, endDate: Date, limit: number | undefined = undefined) => {
+        const highestOrderAmountCustomerIds = await prisma.order.groupBy({
+            by: ['customerId'],
+            where: { deliveredAt: { gte: startDate, lt: endDate } },
+            _sum: { totalAmount: true },
+            orderBy: { _sum: { totalAmount: 'desc' } },
+            take: limit
+        })
+
+        const mappedCustomers = await Promise.all(
+            highestOrderAmountCustomerIds.map(async item => {
+                const customerInfo = await prisma.customer.findFirst({ where: { customerId: item.customerId }, include: { account: true } })
+
+                if (customerInfo) {
+                    return {
+                        ...customerInfo,
+                        isActive: customerInfo.account.isActive,
+                        orderAmount: item._sum.totalAmount
+                    }
+                }
+            })
+        )
+
+        return mappedCustomers.filter(item => item !== undefined) as any[]
     }
 }
 

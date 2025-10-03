@@ -276,8 +276,8 @@ const orderService = {
             where: { orderId: orderId },
             data: {
                 status: newStatus,
-                delivered_at: isSuccess ? new Date() : order.delivered_at,
-                refunded_at: isRefunded ? new Date() : order.refunded_at
+                deliveredAt: isSuccess ? new Date() : order.deliveredAt,
+                refundedAt: isRefunded ? new Date() : order.refundedAt
             }
         })
         await prisma.orderStatusUpdateLog.create({
@@ -300,6 +300,30 @@ const orderService = {
         }
 
         return true
+    },
+
+    getOrdersPlacedInTimeRange: async (startDate: Date, endDate: Date) => {
+        const orders = await prisma.order.findMany({
+            where: { createdAt: { gte: startDate, lt: endDate } }
+        })
+
+        return orders
+    },
+
+    getOrdersAccountedInTimeRange: async (startDate: Date, endDate: Date) => {
+        const orders = await prisma.order.findMany({
+            where: { deliveredAt: { gte: startDate, lt: endDate } }
+        })
+
+        return orders
+    },
+
+    getOrdersRefundedInTimeRange: async (startDate: Date, endDate: Date) => {
+        const orders = await prisma.order.findMany({
+            where: { refundedAt: { gte: startDate, lt: endDate } }
+        })
+
+        return orders
     }
 }
 

@@ -80,8 +80,24 @@ export const buildWhereStatement = (filter: string = '{}') => {
                     }
                     break
 
+                case 'brand':
+                    where.brand = { name: parsedFilter[criteria] }
+                    break
+
                 case 'categoryId':
                     where.shoeFeature = { categoryId: parsedFilter[criteria] }
+                    break
+
+                case 'category':
+                    where.shoeFeature = { category: { name: parsedFilter[criteria] } }
+                    break
+
+                case 'occasion':
+                    where.shoeFeature = { occasionTags: { some: { occasionTag: { name: parsedFilter[criteria] } } } }
+                    break
+
+                case 'design':
+                    where.shoeFeature = { designTags: { some: { designTag: { name: parsedFilter[criteria] } } } }
                     break
 
                 case 'inStock':

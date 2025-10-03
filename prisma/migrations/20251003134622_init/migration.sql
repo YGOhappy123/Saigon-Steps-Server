@@ -55,8 +55,8 @@ CREATE TABLE `orders` (
     `deliveryAddress` VARCHAR(191) NULL,
     `note` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `delivered_at` DATETIME(3) NULL,
-    `refunded_at` DATETIME(3) NULL,
+    `deliveredAt` DATETIME(3) NULL,
+    `refundedAt` DATETIME(3) NULL,
 
     PRIMARY KEY (`orderId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

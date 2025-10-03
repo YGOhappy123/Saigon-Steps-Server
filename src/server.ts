@@ -36,7 +36,6 @@ app.use('/categories', routes.categoryRoutes)
 app.use('/products', routes.productRoutes)
 app.use('/promotions', routes.promotionRoutes)
 app.use('/orders', routes.orderRoutes)
-app.use('/imports', routes.importRoutes)
 app.use('/reports', routes.reportRoutes)
 app.use(errorHandler)
 

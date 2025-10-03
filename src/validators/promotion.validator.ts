@@ -5,6 +5,7 @@ export const addNewPromotionValidator = [
     body('description').optional().trim().isString(),
     body('discountRate').isFloat({ min: 0, max: 100 }),
     body('startDate')
+        .trim()
         .isISO8601()
         .custom(value => {
             const today = new Date()
@@ -15,6 +16,7 @@ export const addNewPromotionValidator = [
             return true
         }),
     body('endDate')
+        .trim()
         .isISO8601()
         .custom((value, { req }) => {
             const start = new Date(req.body.startDate)
@@ -32,6 +34,7 @@ export const updatePromotionValidator = [
     body('description').optional().trim().isString(),
     body('discountRate').isFloat({ min: 0, max: 100 }),
     body('startDate')
+        .trim()
         .isISO8601()
         .custom(value => {
             const today = new Date()
@@ -42,6 +45,7 @@ export const updatePromotionValidator = [
             return true
         }),
     body('endDate')
+        .trim()
         .isISO8601()
         .custom((value, { req }) => {
             const start = new Date(req.body.startDate)
@@ -65,6 +69,7 @@ export const addNewCouponValidator = [
         }),
     body('maxUsage').optional().isInt({ min: 1 }),
     body('expiredAt')
+        .trim()
         .optional()
         .isISO8601()
         .custom(value => {
