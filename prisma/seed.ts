@@ -251,13 +251,12 @@ const seedData = async () => {
             { code: 'DISABLE_COUPON', name: 'Khóa phiếu giảm giá' },
 
             // Stock
-            { code: 'ACCESS_INVENTORY_DASHBOARD_PAGE', name: 'Truy cập trang quản lý hàng tồn kho' }, //35
-            { code: 'ACCESS_DAMAGE_REPORT_DASHBOARD_PAGE', name: 'Truy cập trang quản lý báo cáo thiệt hại' },
+            { code: 'ACCESS_DAMAGE_REPORT_DASHBOARD_PAGE', name: 'Truy cập trang quản lý báo cáo thiệt hại' }, //35
             { code: 'ADD_NEW_DAMAGE_REPORT', name: 'Thêm báo cáo thiệt hại mới' },
 
             // Statistics
             { code: 'ACCESS_PRODUCT_STATISTIC_PAGE', name: 'Truy cập trang thống kê sản phẩm' },
-            { code: 'ACCESS_REVENUE_STATISTIC_PAGE', name: 'Truy cập trang thống kê doanh thu' } //39
+            { code: 'ACCESS_REVENUE_STATISTIC_PAGE', name: 'Truy cập trang thống kê doanh thu' } //38
         ]
     })
 
@@ -303,19 +302,16 @@ const seedData = async () => {
             { roleId: 1, permissionId: 36 },
             { roleId: 1, permissionId: 37 },
             { roleId: 1, permissionId: 38 },
-            { roleId: 1, permissionId: 39 },
 
             // Warehouse Staff - inventory and damage report management
             { roleId: 2, permissionId: 27 },
             { roleId: 2, permissionId: 28 },
             { roleId: 2, permissionId: 35 },
             { roleId: 2, permissionId: 36 },
-            { roleId: 2, permissionId: 37 },
 
             // Order Processing Staff - order management
             { roleId: 3, permissionId: 25 },
             { roleId: 3, permissionId: 26 },
-            { roleId: 3, permissionId: 35 },
 
             // Advisory Staff - customer care and advisory
             { roleId: 4, permissionId: 5 },
@@ -330,7 +326,7 @@ const seedData = async () => {
             { roleId: 5, permissionId: 32 },
             { roleId: 5, permissionId: 33 },
             { roleId: 5, permissionId: 34 },
-            { roleId: 5, permissionId: 38 }
+            { roleId: 5, permissionId: 37 }
         ]
     })
 

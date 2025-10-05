@@ -4,7 +4,7 @@ model RootProduct {
     brand          ProductBrand       @relation(fields: [brandId], references: [brandId])
     name           String             @unique
     slug           String             @unique
-    description    String
+    description    String             @db.Text
     price          Float
     isAccessory    Boolean            @default(false)
     createdAt      DateTime           @default(now())
@@ -47,7 +47,7 @@ model ProductImage {
 model ProductBrand {
     brandId      Int           @id @default(autoincrement())
     name         String
-    description  String
+    description  String        @db.Text
     logoUrl      String?
     rootProducts RootProduct[]
 

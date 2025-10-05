@@ -37,6 +37,7 @@ app.use('/products', routes.productRoutes)
 app.use('/promotions', routes.promotionRoutes)
 app.use('/orders', routes.orderRoutes)
 app.use('/reports', routes.reportRoutes)
+app.use('/statistics', routes.statisticRoutes)
 app.use(errorHandler)
 
 // Database connection and server initialization

@@ -9,6 +9,7 @@ import productRoutes from '@/routes/product.routes'
 import promotionRoutes from '@/routes/promotion.routes'
 import orderRoutes from '@/routes/order.routes'
 import reportRoutes from '@/routes/report.routes'
+import statisticRoutes from '@/routes/statistic.routes'
 
 export {
     authRoutes,
@@ -21,5 +22,6 @@ export {
     productRoutes,
     promotionRoutes,
     orderRoutes,
-    reportRoutes
+    reportRoutes,
+    statisticRoutes
 }

@@ -11,9 +11,4 @@ router.post('/imports', staffOnly, trackNewProductImportValidator, reportControl
 router.get('/damages', staffOnly, reportController.getAllDamageReports)
 router.post('/damages', staffOnly, reportNewDamageValidator, reportController.reportNewDamage)
 
-router.get('/statistics/summary', staffOnly, reportController.getSummaryStatistic)
-router.get('/statistics/key-customers', staffOnly, reportController.getKeyCustomersStatistic)
-router.get('/statistics/revenues', staffOnly, reportController.getRevenueChart)
-router.get('/statistics/products/:productId', staffOnly, reportController.getProductStatistic)
-
 export default router
