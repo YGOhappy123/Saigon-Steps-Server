@@ -474,6 +474,16 @@ const seedData = async () => {
                 price: 1095000,
                 isAccessory: false,
                 createdBy: 1
+            },
+            {
+                brandId: 3,
+                name: 'Reebok Classic Leather Legacy - White / Black',
+                slug: 'reebok-classic-leather-legacy-white-black',
+                description:
+                    'Reebok Classic Leather Legacy - White / Black mang phong cách cổ điển pha chút hiện đại, hoàn hảo cho những ai yêu thích sự tối giản nhưng vẫn nổi bật. Thiết kế da cao cấp kết hợp tông trắng – đen tinh tế mang đến vẻ ngoài thời thượng và dễ phối đồ. Đế EVA êm ái giúp di chuyển nhẹ nhàng, thoải mái suốt cả ngày. Một lựa chọn lý tưởng cho phong cách năng động và cá tính.',
+                price: 1500000,
+                isAccessory: false,
+                createdBy: 2
             }
         ]
     })
@@ -536,7 +546,16 @@ const seedData = async () => {
             { rootProductId: 10, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1758997000/product/HSM013500KEL_4_beoij6.jpg' },
             { rootProductId: 10, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1758997001/product/HSM013500KEL_5_bgf3rh.jpg' },
             { rootProductId: 10, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1758997000/product/HSM013500KEL_6_iqp5nq.jpg' },
-            { rootProductId: 10, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1758997000/product/HSM013500KEL_7_pe2b0n.jpg' }
+            { rootProductId: 10, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1758997000/product/HSM013500KEL_7_pe2b0n.jpg' },
+            { rootProductId: 11, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1759768208/product/rebook_club_1_f6zxob.jpg' },
+            { rootProductId: 11, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1759768207/product/rebook_club_2_eqckmf.jpg' },
+            { rootProductId: 11, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1759768207/product/rebook_club_3_yvnflt.jpg' },
+            { rootProductId: 11, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1759768207/product/rebook_club_4_hxnzoz.jpg' },
+            { rootProductId: 11, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1759768209/product/rebook_club_5_nqxbml.jpg' },
+            { rootProductId: 11, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1759768202/product/rebook_club_6_uoqxhb.jpg' },
+            { rootProductId: 11, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1759768207/product/rebook_club_7_xxgt5n.jpg' },
+            { rootProductId: 11, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1759768203/product/rebook_club_8_lcqjhb.jpg' },
+            { rootProductId: 11, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1759768202/product/rebook_club_9_slxz8f.jpg' }
         ]
     })
 
@@ -578,7 +597,12 @@ const seedData = async () => {
             { rootProductId: 10, size: '41', stock: 12 },
             { rootProductId: 10, size: '42', stock: 35 },
             { rootProductId: 10, size: '43', stock: 35 },
-            { rootProductId: 10, size: '44', stock: 20 }
+            { rootProductId: 10, size: '44', stock: 20 },
+            { rootProductId: 11, size: '42', stock: 30 },
+            { rootProductId: 11, size: '42.5', stock: 10 },
+            { rootProductId: 11, size: '43', stock: 20 },
+            { rootProductId: 11, size: '44', stock: 20 },
+            { rootProductId: 11, size: '44.5', stock: 10 }
         ]
     })
 
@@ -694,6 +718,25 @@ const seedData = async () => {
                 heelHeight: 4.0,
                 durabilityRating: 8.5,
                 releaseYear: 2025
+            },
+            {
+                rootProductId: 11,
+                categoryId: 1,
+                gender: 'UNISEX',
+                upperMaterial: 'Da tổng hợp',
+                soleMaterial: 'Cao su',
+                liningMaterial: 'Vải dệt mềm',
+                closureType: 'Dây buộc',
+                toeShape: 'Tròn',
+                waterResistant: 'Không',
+                breathability: 'Tốt',
+                pattern: 'Trơn, điểm nhấn logo Reebok',
+                countryOfOrigin: 'Việt Nam',
+                primaryColor: '#d6d7d9',
+                secondaryColor: '#43504b',
+                heelHeight: 2.5,
+                durabilityRating: 4.5,
+                releaseYear: 2023
             }
         ]
     })
@@ -750,7 +793,14 @@ const seedData = async () => {
             { shoeFeatureId: 5, occasionTagId: 4 },
             { shoeFeatureId: 5, occasionTagId: 7 },
             { shoeFeatureId: 5, occasionTagId: 8 },
-            { shoeFeatureId: 5, occasionTagId: 9 }
+            { shoeFeatureId: 5, occasionTagId: 9 },
+            { shoeFeatureId: 6, occasionTagId: 1 },
+            { shoeFeatureId: 6, occasionTagId: 2 },
+            { shoeFeatureId: 6, occasionTagId: 4 },
+            { shoeFeatureId: 6, occasionTagId: 5 },
+            { shoeFeatureId: 6, occasionTagId: 7 },
+            { shoeFeatureId: 6, occasionTagId: 8 },
+            { shoeFeatureId: 6, occasionTagId: 9 }
         ]
     })
 
@@ -800,7 +850,12 @@ const seedData = async () => {
             { shoeFeatureId: 5, designTagId: 5 },
             { shoeFeatureId: 5, designTagId: 6 },
             { shoeFeatureId: 5, designTagId: 9 },
-            { shoeFeatureId: 5, designTagId: 11 }
+            { shoeFeatureId: 5, designTagId: 11 },
+            { shoeFeatureId: 6, designTagId: 2 },
+            { shoeFeatureId: 6, designTagId: 3 },
+            { shoeFeatureId: 6, designTagId: 5 },
+            { shoeFeatureId: 6, designTagId: 6 },
+            { shoeFeatureId: 6, designTagId: 9 }
         ]
     })
 
