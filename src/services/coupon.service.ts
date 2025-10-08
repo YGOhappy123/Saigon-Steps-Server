@@ -50,8 +50,9 @@ const couponService = {
     },
 
     disableCoupon: async (couponId: number) => {
-        const existingCoupon = await prisma.coupon.findUnique({ where: { couponId: couponId } })
-        if (!existingCoupon) throw new HttpException(404, errorMessage.COUPON_NOT_FOUND)
+        const coupon = await prisma.coupon.findUnique({ where: { couponId: couponId } })
+        if (!coupon) throw new HttpException(404, errorMessage.COUPON_NOT_FOUND)
+        if (!coupon.isActive) throw new HttpException(400, errorMessage.COUPON_NO_LONGER_AVAILABLE)
 
         await prisma.coupon.update({
             where: { couponId: couponId },

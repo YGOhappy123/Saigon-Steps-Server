@@ -16,7 +16,9 @@ const promotionService = {
                 products: {
                     include: {
                         rootProduct: {
-                            include: { images: true }
+                            include: {
+                                images: { orderBy: { imageId: 'asc' } }
+                            }
                         }
                     }
                 }
@@ -46,7 +48,7 @@ const promotionService = {
         discountRate: number,
         startDate: string,
         endDate: string,
-        productIds: number[],
+        products: number[],
         staffId: number
     ) => {
         const promotionWithSameName = await prisma.promotion.findFirst({ where: { name: { equals: name } } })
@@ -60,7 +62,7 @@ const promotionService = {
                 startDate: getStartOfTimeByType(startDate, 'daily').toDate(),
                 endDate: getEndOfTimeByType(endDate, 'daily').toDate(),
                 products: {
-                    create: productIds.map(productId => ({
+                    create: products.map(productId => ({
                         rootProduct: { connect: { rootProductId: productId } }
                     }))
                 },
@@ -71,17 +73,10 @@ const promotionService = {
         })
     },
 
-    updatePromotion: async (
-        promotionId: number,
-        name: string,
-        description: string,
-        discountRate: number,
-        startDate: string,
-        endDate: string,
-        productIds: number[]
-    ) => {
+    updatePromotion: async (promotionId: number, name: string, description: string, discountRate: number, endDate: string, products: number[]) => {
         const promotion = await prisma.promotion.findUnique({ where: { promotionId: promotionId } })
         if (!promotion) throw new HttpException(404, errorMessage.PROMOTION_NOT_FOUND)
+        if (!promotion.isActive) throw new HttpException(400, errorMessage.PROMOTION_NO_LONGER_AVAILABLE)
 
         const promotionWithSameName = await prisma.promotion.findFirst({ where: { name: { equals: name }, NOT: { promotionId: promotionId } } })
         if (promotionWithSameName) throw new HttpException(409, errorMessage.PROMOTION_EXISTED)
@@ -92,13 +87,12 @@ const promotionService = {
                 name: name,
                 description: description,
                 discountRate: discountRate,
-                startDate: getStartOfTimeByType(startDate, 'daily').toDate(),
                 endDate: getEndOfTimeByType(endDate, 'daily').toDate()
             }
         })
         await prisma.productPromotion.deleteMany({ where: { promotionId: promotionId } })
         await prisma.productPromotion.createMany({
-            data: productIds.map(productId => ({ promotionId: promotionId, rootProductId: productId })),
+            data: products.map(productId => ({ promotionId: promotionId, rootProductId: productId })),
             skipDuplicates: true
         })
     },
@@ -106,6 +100,7 @@ const promotionService = {
     disablePromotion: async (promotionId: number) => {
         const promotion = await prisma.promotion.findUnique({ where: { promotionId: promotionId } })
         if (!promotion) throw new HttpException(404, errorMessage.PROMOTION_NOT_FOUND)
+        if (!promotion.isActive) throw new HttpException(400, errorMessage.PROMOTION_NO_LONGER_AVAILABLE)
 
         await prisma.promotion.update({
             where: { promotionId: promotionId },

@@ -40,8 +40,8 @@ const promotionController = {
             const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.ADD_NEW_PROMOTION)
             if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
-            const { name, description, discountRate, startDate, endDate, productIds } = req.body
-            await promotionService.addNewPromotion(name, description, discountRate, startDate, endDate, productIds, userId)
+            const { name, description, discountRate, startDate, endDate, products } = req.body
+            await promotionService.addNewPromotion(name, description, discountRate, startDate, endDate, products, userId)
 
             res.status(201).json({
                 message: successMessage.CREATE_PROMOTION_SUCCESSFULLY
@@ -61,8 +61,8 @@ const promotionController = {
             if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             const { promotionId } = req.params
-            const { name, description, discountRate, startDate, endDate, productIds } = req.body
-            await promotionService.updatePromotion(parseInt(promotionId), name, description, discountRate, startDate, endDate, productIds)
+            const { name, description, discountRate, endDate, products } = req.body
+            await promotionService.updatePromotion(parseInt(promotionId), name, description, discountRate, endDate, products)
 
             res.status(200).json({
                 message: successMessage.UPDATE_PROMOTION_SUCCESSFULLY

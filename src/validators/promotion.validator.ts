@@ -3,7 +3,7 @@ import { body } from 'express-validator'
 export const addNewPromotionValidator = [
     body('name').trim().isString().notEmpty(),
     body('description').optional().trim().isString(),
-    body('discountRate').isFloat({ min: 0, max: 100 }),
+    body('discountRate').isFloat({ min: 1, max: 100 }),
     body('startDate')
         .trim()
         .isISO8601()
@@ -25,14 +25,14 @@ export const addNewPromotionValidator = [
             if (end < start) throw new Error('End date must be greater than or equal to start date')
             return true
         }),
-    body('productIds').isArray({ min: 1 }),
-    body('productIds.*').isInt({ min: 1 })
+    body('products').isArray({ min: 1 }),
+    body('products.*').isInt({ min: 1 })
 ]
 
 export const updatePromotionValidator = [
     body('name').trim().isString().notEmpty(),
     body('description').optional().trim().isString(),
-    body('discountRate').isFloat({ min: 0, max: 100 }),
+    body('discountRate').isFloat({ min: 1, max: 100 }),
     body('startDate')
         .trim()
         .isISO8601()
@@ -54,17 +54,18 @@ export const updatePromotionValidator = [
             if (end < start) throw new Error('End date must be greater than or equal to start date')
             return true
         }),
-    body('productIds').isArray({ min: 1 }),
-    body('productIds.*').isInt({ min: 1 })
+    body('products').isArray({ min: 1 }),
+    body('products.*').isInt({ min: 1 })
 ]
 
 export const addNewCouponValidator = [
     body('code').trim().isString().isLength({ min: 3, max: 50 }),
     body('type').isIn(['PERCENTAGE', 'FIXED']),
     body('amount')
-        .isFloat({ min: 0 })
+        .isFloat({ min: 1 })
         .custom((value, { req }) => {
-            if (req.body.type === 'PERCENTAGE' && value > 100) throw new Error('For percentage type, amount must be between 0 and 100')
+            if (req.body.type === 'PERCENTAGE' && value > 100) throw new Error('For percentage type, amount must be between 1 and 100')
+            if (req.body.type === 'FIXED' && value % 1000 !== 0) throw new Error('For fixed type, amount must be a multiple of 1000')
             return true
         }),
     body('maxUsage').optional().isInt({ min: 1 }),

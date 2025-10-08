@@ -40,13 +40,28 @@ export const buildWhereStatement = (filter: string = '{}') => {
                     }
                     break
 
-                case 'isWorking':
+                case 'startApplyTime':
+                    where.endDate = { gte: parseTime(parsedFilter[criteria]) }
+                    break
+
+                case 'endApplyTime':
+                    where.startDate = { lte: parseTime(parsedFilter[criteria]) }
+                    break
+
                 case 'isActive':
                     where.account = { isActive: [true, 'true', 1].includes(parsedFilter[criteria]) }
                     break
 
+                case 'isAvailable':
+                    where.isActive = [true, 'true', 1].includes(parsedFilter[criteria])
+                    break
+
                 case 'name':
                     where.name = { contains: parsedFilter[criteria] }
+                    break
+
+                case 'customerName':
+                    where.customer = { name: { contains: parsedFilter[criteria] } }
                     break
 
                 case 'email':
@@ -66,6 +81,15 @@ export const buildWhereStatement = (filter: string = '{}') => {
                     ]
                     break
 
+                case 'products':
+                    where.AND = [
+                        ...(where.AND || []),
+                        ...parsedFilter[criteria].map((productId: number) => ({
+                            products: { some: { rootProductId: productId } }
+                        }))
+                    ]
+                    break
+
                 case 'minPrice':
                     where.price = {
                         ...(where.price || {}),
@@ -76,6 +100,20 @@ export const buildWhereStatement = (filter: string = '{}') => {
                 case 'maxPrice':
                     where.price = {
                         ...(where.price || {}),
+                        lte: parsedFilter[criteria]
+                    }
+                    break
+
+                case 'minTotalAmount':
+                    where.totalAmount = {
+                        ...(where.totalAmount || {}),
+                        gte: parsedFilter[criteria]
+                    }
+                    break
+
+                case 'maxTotalAmount':
+                    where.totalAmount = {
+                        ...(where.totalAmount || {}),
                         lte: parsedFilter[criteria]
                     }
                     break

@@ -2,7 +2,7 @@ import { prisma, OrderStatus } from '@/prisma'
 import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
-import { capitalizeFirstWord, capitalizeWords } from '@/utils/stringHelpers'
+import { capitalizeFirstWord, capitalizeWords, uppercaseWords } from '@/utils/stringHelpers'
 import { getProductSlug } from '@/utils/slugifyHelpers'
 import { getNow } from '@/utils/timeHelpers'
 import errorMessage from '@/configs/errorMessage'
@@ -35,7 +35,7 @@ const productService = {
         const products = await prisma.rootProduct.findMany({
             where: whereStatement,
             include: {
-                images: true,
+                images: { orderBy: { imageId: 'asc' } },
                 brand: true,
                 createdByStaff: true,
                 productItems: true,
@@ -83,7 +83,7 @@ const productService = {
         const product = await prisma.rootProduct.findFirst({
             where: { rootProductId: rootProductId },
             include: {
-                images: true,
+                images: { orderBy: { imageId: 'asc' } },
                 brand: true,
                 createdByStaff: true,
                 productItems: true,
@@ -118,7 +118,7 @@ const productService = {
         const product = await prisma.rootProduct.findFirst({
             where: { slug: slug },
             include: {
-                images: true,
+                images: { orderBy: { imageId: 'asc' } },
                 brand: true,
                 createdByStaff: true,
                 productItems: true,
@@ -157,7 +157,7 @@ const productService = {
         const products = await prisma.rootProduct.findMany({
             where: whereStatement,
             include: {
-                images: true,
+                images: { orderBy: { imageId: 'asc' } },
                 brand: true,
                 createdByStaff: true,
                 productItems: true,
@@ -205,7 +205,7 @@ const productService = {
             include: {
                 rootProduct: {
                     include: {
-                        images: true,
+                        images: { orderBy: { imageId: 'asc' } },
                         brand: true,
                         createdByStaff: true,
                         shoeFeature: {
@@ -255,7 +255,7 @@ const productService = {
             include: {
                 rootProduct: {
                     include: {
-                        images: true,
+                        images: { orderBy: { imageId: 'asc' } },
                         brand: true,
                         createdByStaff: true,
                         shoeFeature: {
@@ -360,7 +360,7 @@ const productService = {
             await prisma.productItem.createMany({
                 data: sizes!.map(size => ({
                     rootProductId: newProduct.rootProductId,
-                    size: size
+                    size: uppercaseWords(size)
                 }))
             })
 
@@ -523,6 +523,9 @@ const productService = {
         await prisma.productImage.deleteMany({
             where: { rootProductId: productId }
         })
+        await prisma.cartItem.deleteMany({
+            where: { productItem: { rootProductId: productId } }
+        })
         await prisma.productItem.deleteMany({
             where: { rootProductId: productId }
         })
@@ -532,6 +535,13 @@ const productService = {
     },
 
     isProductDeletable: async (rootProductId: number) => {
+        const hasRootReferences = await prisma.rootProduct.findFirst({
+            where: {
+                rootProductId: rootProductId,
+                OR: [{ promotions: { some: {} } }]
+            }
+        })
+
         const hasItemsReferences = await prisma.productItem.findFirst({
             where: {
                 rootProductId: rootProductId,
@@ -543,7 +553,7 @@ const productService = {
             where: { rootProductId: rootProductId }
         })
 
-        return !hasItemsReferences && !hasPromotions
+        return !hasRootReferences && !hasItemsReferences && !hasPromotions
     },
 
     getProductStatisticInTimeRange: async (productId: number, startDate: Date, endDate: Date) => {
