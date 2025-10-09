@@ -64,6 +64,14 @@ export const buildWhereStatement = (filter: string = '{}') => {
                     where.customer = { name: { contains: parsedFilter[criteria] } }
                     break
 
+                case 'code':
+                    where.code = { contains: parsedFilter[criteria] }
+                    break
+
+                case 'invoiceNumber':
+                    where.invoiceNumber = { contains: parsedFilter[criteria] }
+                    break
+
                 case 'email':
                     where.email = { contains: parsedFilter[criteria] }
                     break
@@ -114,6 +122,34 @@ export const buildWhereStatement = (filter: string = '{}') => {
                 case 'maxTotalAmount':
                     where.totalAmount = {
                         ...(where.totalAmount || {}),
+                        lte: parsedFilter[criteria]
+                    }
+                    break
+
+                case 'minTotalCost':
+                    where.totalCost = {
+                        ...(where.totalCost || {}),
+                        gte: parsedFilter[criteria]
+                    }
+                    break
+
+                case 'maxTotalCost':
+                    where.totalCost = {
+                        ...(where.totalCost || {}),
+                        lte: parsedFilter[criteria]
+                    }
+                    break
+
+                case 'minTotalExpectedCost':
+                    where.totalExpectedCost = {
+                        ...(where.totalExpectedCost || {}),
+                        gte: parsedFilter[criteria]
+                    }
+                    break
+
+                case 'maxTotalExpectedCost':
+                    where.totalExpectedCost = {
+                        ...(where.totalExpectedCost || {}),
                         lte: parsedFilter[criteria]
                     }
                     break

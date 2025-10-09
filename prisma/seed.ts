@@ -970,7 +970,7 @@ const seedData = async () => {
             { promotionId: 1, rootProductId: 9 },
             { promotionId: 1, rootProductId: 10 },
             { promotionId: 2, rootProductId: 1 },
-            { promotionId: 2, rootProductId: 2 },
+            { promotionId: 2, rootProductId: 4 },
             { promotionId: 3, rootProductId: 8 },
             { promotionId: 3, rootProductId: 9 },
             { promotionId: 3, rootProductId: 10 },

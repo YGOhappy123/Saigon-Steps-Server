@@ -22,7 +22,7 @@ const damageService = {
         const mappedReports = await Promise.all(
             reports.map(async productImport => ({
                 ...productImport,
-                importItems: await Promise.all(
+                reportItems: await Promise.all(
                     productImport.reportItems.map(async item => {
                         const productItemData = await productService.getDetailedProductItemById(item.productItemId)
 

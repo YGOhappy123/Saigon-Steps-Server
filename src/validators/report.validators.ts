@@ -22,7 +22,7 @@ export const reportNewDamageValidator = [
     body('items.*.expectedCost')
         .isInt({ min: 1 })
         .custom(value => {
-            if (value % 1000 !== 0) throw new Error('Cost must be divisible by 1000')
+            if (value % 100 !== 0) throw new Error('Cost must be divisible by 100')
             return true
         })
 ]
