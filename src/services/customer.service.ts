@@ -70,6 +70,7 @@ const customerService = {
         if (isDuplicate) throw new HttpException(409, errorMessage.ADDRESS_EXISTED)
 
         const defaultAddress = await prisma.customerAddress.findFirst({ where: { customerId: customerId, isDefault: true } })
+        const hasDefaultAddress = defaultAddress != null
 
         await prisma.customerAddress.create({
             data: {
@@ -79,7 +80,7 @@ const customerService = {
                 city: capitalizeWords(city),
                 ward: capitalizeWords(ward),
                 addressLine: capitalizeWords(addressLine),
-                isDefault: defaultAddress == null
+                isDefault: !hasDefaultAddress
             }
         })
     },
