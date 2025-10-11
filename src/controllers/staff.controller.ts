@@ -61,7 +61,7 @@ const staffController = {
 
             const { staffId } = req.params
             const hasUpdatePersonalInfoPermission = await roleService.verifyPermission(userId!, appPermissions.MODIFY_PERSONAL_INFORMATION)
-            if (parseInt(staffId) === userId || !hasUpdatePersonalInfoPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
+            if (parseInt(staffId) === userId && !hasUpdatePersonalInfoPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             const { name, email, avatar } = req.body
             await staffService.updateStaffInfo(parseInt(staffId), name, email, avatar)

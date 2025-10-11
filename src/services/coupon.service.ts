@@ -34,8 +34,8 @@ const couponService = {
         expiryDate: string | undefined,
         staffId: number
     ) => {
-        const existingCoupon = await prisma.coupon.findUnique({ where: { code: code } })
-        if (existingCoupon) throw new HttpException(409, errorMessage.COUPON_EXISTED)
+        const couponWithSameCode = await prisma.coupon.findUnique({ where: { code: code } })
+        if (couponWithSameCode) throw new HttpException(409, errorMessage.COUPON_EXISTED)
 
         await prisma.coupon.create({
             data: {
