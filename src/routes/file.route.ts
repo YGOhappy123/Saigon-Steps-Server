@@ -1,5 +1,5 @@
 import { loginRequired } from '@/middlewares/auth.middleware'
-import { deleteImageValidator } from '@/validators/file.validators'
+import { deleteImageValidator } from '@/validators/file.validator'
 import express from 'express'
 import fileController from '@/controllers/file.controller'
 

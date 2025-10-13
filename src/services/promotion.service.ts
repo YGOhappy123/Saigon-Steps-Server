@@ -27,7 +27,6 @@ const promotionService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.promotion.count({ where: whereStatement })
 
         return {

@@ -1,5 +1,5 @@
 import { staffOnly } from '@/middlewares/auth.middleware'
-import { addNewRoleValidator, updateRoleValidator } from '@/validators/user.validators'
+import { addNewRoleValidator, updateRoleValidator } from '@/validators/user.validator'
 import express from 'express'
 import roleController from '@/controllers/role.controller'
 

@@ -81,7 +81,6 @@ const orderService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.order.count({ where: whereStatement })
 
         const mappedOrders = await Promise.all(
@@ -129,7 +128,6 @@ const orderService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.order.count({ where: whereStatement })
 
         const mappedOrders = await Promise.all(
@@ -139,6 +137,7 @@ const orderService = {
                 orderItems: await Promise.all(
                     order.orderItems.map(async item => {
                         const productItemData = await productService.getDetailedProductItemById(item.productItemId)
+
                         return {
                             price: item.price,
                             quantity: item.quantity,
@@ -217,7 +216,7 @@ const orderService = {
         }
 
         await cartService.convertActiveCart(customerId)
-        await prisma.order.create({
+        const newOrder = await prisma.order.create({
             data: {
                 customerId: customerId,
                 couponId: couponId,
@@ -231,6 +230,8 @@ const orderService = {
                 }
             }
         })
+
+        return { orderId: newOrder.orderId }
     },
 
     updateOrderStatus: async (orderId: number, newStatus: OrderStatus, staffId: number) => {

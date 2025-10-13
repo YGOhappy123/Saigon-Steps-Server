@@ -56,11 +56,24 @@ const productService = {
         const mappedProducts = await Promise.all(
             products.map(async product => {
                 const { discountRate } = await productService.getProductPromotions(product.rootProductId)
+                const mappedItems = await Promise.all(
+                    product.productItems.map(async item => {
+                        const currentStock = await productService.getProductItemCurrentStock(item.productItemId)
+
+                        return {
+                            productItemId: item.productItemId,
+                            size: item.size,
+                            stock: item.stock,
+                            availableStock: currentStock
+                        }
+                    })
+                )
 
                 return {
                     ...product,
                     discountRate: discountRate,
                     images: product.images.map(image => image.url),
+                    productItems: mappedItems,
                     shoeFeature:
                         product.shoeFeature == null
                             ? null
@@ -77,41 +90,6 @@ const productService = {
             products: mappedProducts,
             total: total
         }
-    },
-
-    getProductById: async (rootProductId: number) => {
-        const product = await prisma.rootProduct.findFirst({
-            where: { rootProductId: rootProductId },
-            include: {
-                images: { orderBy: { imageId: 'asc' } },
-                brand: true,
-                createdByStaff: true,
-                productItems: true,
-                shoeFeature: {
-                    include: {
-                        category: true,
-                        occasionTags: { include: { occasionTag: true } },
-                        designTags: { include: { designTag: true } }
-                    }
-                }
-            }
-        })
-        const { promotions } = await productService.getProductPromotions(rootProductId)
-
-        return product == null
-            ? null
-            : {
-                  ...product,
-                  promotions: promotions,
-                  images: product.images.map(image => image.url),
-                  shoeFeature: product.shoeFeature
-                      ? {
-                            ...product.shoeFeature,
-                            occasionTags: product.shoeFeature.occasionTags.map(tag => tag.occasionTag.name),
-                            designTags: product.shoeFeature.designTags.map(tag => tag.designTag.name)
-                        }
-                      : null
-              }
     },
 
     getProductBySlug: async (slug: string) => {
@@ -134,11 +112,24 @@ const productService = {
         if (product == null) return null
 
         const { promotions } = await productService.getProductPromotions(product.rootProductId)
+        const mappedItems = await Promise.all(
+            product.productItems.map(async item => {
+                const currentStock = await productService.getProductItemCurrentStock(item.productItemId)
+
+                return {
+                    productItemId: item.productItemId,
+                    size: item.size,
+                    stock: item.stock,
+                    availableStock: currentStock
+                }
+            })
+        )
 
         return product == null
             ? null
             : {
                   ...product,
+                  productItems: mappedItems,
                   promotions: promotions,
                   images: product.images.map(image => image.url),
                   shoeFeature: product.shoeFeature
@@ -152,7 +143,7 @@ const productService = {
     },
 
     searchProductsByName: async (searchTerm: string) => {
-        const whereStatement = { name: { contains: searchTerm } }
+        const whereStatement = { OR: [{ name: { contains: searchTerm } }, { brand: { name: { contains: searchTerm } } }] }
 
         const products = await prisma.rootProduct.findMany({
             where: whereStatement,
@@ -175,8 +166,22 @@ const productService = {
         const mappedProducts = await Promise.all(
             products.map(async product => {
                 const { discountRate } = await productService.getProductPromotions(product.rootProductId)
+                const mappedItems = await Promise.all(
+                    product.productItems.map(async item => {
+                        const currentStock = await productService.getProductItemCurrentStock(item.productItemId)
+
+                        return {
+                            productItemId: item.productItemId,
+                            size: item.size,
+                            stock: item.stock,
+                            availableStock: currentStock
+                        }
+                    })
+                )
+
                 return {
                     ...product,
+                    productItems: mappedItems,
                     discountRate: discountRate,
                     images: product.images.map(image => image.url),
                     shoeFeature:
@@ -207,7 +212,6 @@ const productService = {
                     include: {
                         images: { orderBy: { imageId: 'asc' } },
                         brand: true,
-                        createdByStaff: true,
                         shoeFeature: {
                             include: {
                                 category: true,
@@ -224,11 +228,14 @@ const productService = {
         const mappedProductItems = await Promise.all(
             productItems.map(async item => {
                 const { discountRate } = await productService.getProductPromotions(item.rootProductId)
+                const currentStock = await productService.getProductItemCurrentStock(item.productItemId)
+
                 return {
                     ...item,
-                    discountRate: discountRate,
+                    availableStock: currentStock,
                     rootProduct: {
                         ...item.rootProduct,
+                        discountRate: discountRate,
                         images: item.rootProduct.images.map(image => image.url),
                         shoeFeature:
                             item.rootProduct.shoeFeature == null
@@ -272,6 +279,7 @@ const productService = {
         if (productItem == null) return null
 
         const { discountRate } = await productService.getProductPromotions(productItem.rootProductId)
+
         return {
             ...productItem,
             discountRate: discountRate,

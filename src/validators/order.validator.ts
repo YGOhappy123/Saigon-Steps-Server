@@ -1,5 +1,5 @@
 import { body } from 'express-validator'
-import { PHONE_NUMBER_REGEX_PATTERN } from '@/validators/user.validators'
+import { PHONE_NUMBER_REGEX_PATTERN } from '@/validators/user.validator'
 
 export const verifyCouponValidator = [body('code').trim().isString()]
 

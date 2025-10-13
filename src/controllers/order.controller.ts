@@ -78,9 +78,10 @@ const orderController = {
 
             const { userId } = req.auth!
             const { note, coupon, recipientName, deliveryAddress, deliveryPhone, items } = req.body
-            await orderService.placeNewOrder(note, coupon, recipientName, deliveryAddress, deliveryPhone, items, userId)
+            const result = await orderService.placeNewOrder(note, coupon, recipientName, deliveryAddress, deliveryPhone, items, userId)
 
             res.status(201).json({
+                data: { orderId: result.orderId },
                 message: successMessage.PLACE_ORDER_SUCCESSFULLY
             })
         } catch (error) {
