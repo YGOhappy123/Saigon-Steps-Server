@@ -21,7 +21,9 @@ const envSchema = z.object({
 
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
-    CLOUDINARY_CLOUD_NAME: z.string().min(1)
+    CLOUDINARY_CLOUD_NAME: z.string().min(1),
+
+    ARCJET_KEY: z.string().min(1)
 })
 
 export const parsedEnv = envSchema.parse(process.env)

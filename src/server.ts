@@ -8,6 +8,7 @@ import { parsedEnv } from '@/env'
 import { prisma } from '@/prisma'
 import { errorHandler } from '@/middlewares/error.middleware'
 import { requestLogger } from '@/middlewares/logger.middleware'
+import { arcjetProtection } from '@/middlewares/security.middleware'
 import corsOptions from '@/configs/corsOptions'
 import pinoLogger from '@/configs/pinoLogger'
 
@@ -18,6 +19,8 @@ const upload = multer({ storage: memoryStorage })
 
 if (parsedEnv.NODE_ENV === 'development') {
     app.use(requestLogger)
+} else {
+    app.use(arcjetProtection)
 }
 app.use(upload.array('file'))
 app.use(cors(corsOptions))
