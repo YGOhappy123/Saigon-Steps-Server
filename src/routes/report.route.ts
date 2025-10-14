@@ -1,5 +1,5 @@
 import { staffOnly } from '@/middlewares/auth.middleware'
-import { trackNewProductImportValidator, reportNewDamageValidator } from '@/validators/report.validators'
+import { trackNewProductImportValidator, reportNewDamageValidator } from '@/validators/report.validator'
 import express from 'express'
 import reportController from '@/controllers/report.controller'
 

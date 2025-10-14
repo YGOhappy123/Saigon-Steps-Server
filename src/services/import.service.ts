@@ -17,7 +17,6 @@ const importService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.productImport.count({ where: whereStatement })
 
         const mappedImports = await Promise.all(

@@ -16,7 +16,6 @@ const customerService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.customer.count({ where: whereStatement })
 
         return {
@@ -56,7 +55,6 @@ const customerService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.customerAddress.count({ where: whereStatement })
 
         return {

@@ -1,5 +1,5 @@
 import { customerOnly, staffOnly } from '@/middlewares/auth.middleware'
-import { verifyCouponValidator, placeNewOrderValidator } from '@/validators/order.validators'
+import { verifyCouponValidator, placeNewOrderValidator } from '@/validators/order.validator'
 import express from 'express'
 import orderController from '@/controllers/order.controller'
 

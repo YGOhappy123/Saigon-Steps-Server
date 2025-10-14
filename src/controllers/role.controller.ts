@@ -122,10 +122,12 @@ const roleController = {
 
     verifyPermission: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
-            const { roleId } = req.auth!
-            const { permission } = req.query
-            const hasPermission = await roleService.verifyPermission(roleId!, permission as string)
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
+            const { roleId } = req.auth!
+            const { permission } = req.body
+            const hasPermission = await roleService.verifyPermission(roleId!, permission as string)
             if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             res.status(200).json({

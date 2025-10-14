@@ -16,7 +16,6 @@ const damageService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.inventoryDamageReport.count({ where: whereStatement })
 
         const mappedReports = await Promise.all(

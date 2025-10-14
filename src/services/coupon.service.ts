@@ -17,7 +17,6 @@ const couponService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.coupon.count({ where: whereStatement })
 
         return {

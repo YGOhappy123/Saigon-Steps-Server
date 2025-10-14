@@ -16,7 +16,6 @@ const roleService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.staffRole.count({ where: whereStatement })
 
         return {

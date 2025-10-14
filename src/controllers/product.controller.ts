@@ -30,10 +30,10 @@ const productController = {
         }
     },
 
-    getProductById: async (req: Request, res: Response, next: NextFunction) => {
+    getProductBySlug: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { productId } = req.params
-            const product = await productService.getProductById(parseInt(productId))
+            const { slug } = req.params
+            const product = await productService.getProductBySlug(slug as string)
 
             res.status(200).json({
                 data: product
@@ -43,13 +43,15 @@ const productController = {
         }
     },
 
-    getProductBySlug: async (req: Request, res: Response, next: NextFunction) => {
+    searchProductsByName: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { slug } = req.params
-            const product = await productService.getProductBySlug(slug as string)
+            const { searchTerm } = req.query
+            const { products, total } = await productService.searchProductsByName(searchTerm as string)
 
             res.status(200).json({
-                data: product
+                data: products,
+                total,
+                took: products.length
             })
         } catch (error) {
             next(error)
@@ -67,21 +69,6 @@ const productController = {
                 data: productItems,
                 total,
                 took: productItems.length
-            })
-        } catch (error) {
-            next(error)
-        }
-    },
-
-    searchProductsByName: async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const { searchTerm } = req.query
-            const { products, total } = await productService.searchProductsByName(searchTerm as string)
-
-            res.status(200).json({
-                data: products,
-                total,
-                took: products.length
             })
         } catch (error) {
             next(error)

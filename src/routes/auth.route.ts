@@ -6,7 +6,7 @@ import {
     forgotPasswordValidator,
     resetPasswordValidator,
     changePasswordValidator
-} from '@/validators/auth.validators'
+} from '@/validators/auth.validator'
 import { loginRequired, customerOnly } from '@/middlewares/auth.middleware'
 import express from 'express'
 import authController from '@/controllers/auth.controller'

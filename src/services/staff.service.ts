@@ -23,7 +23,6 @@ const staffService = {
             take: limit,
             orderBy: JSON.parse(sort as string)
         })
-
         const total = await prisma.staff.count({ where: whereStatement })
 
         return {
