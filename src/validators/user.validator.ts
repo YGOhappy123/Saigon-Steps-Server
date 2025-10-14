@@ -32,3 +32,5 @@ export const addNewStaffValidator = [
 ]
 
 export const changeStaffRoleValidator = [body('roleId').isInt({ min: 1 })]
+
+export const verifyPermissionValidator = [body('permission').trim().isString()]
