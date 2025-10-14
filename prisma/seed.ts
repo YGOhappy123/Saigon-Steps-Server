@@ -368,6 +368,12 @@ const seedData = async () => {
                 description:
                     'Kenzo là thương hiệu thời trang cao cấp đến từ Pháp, được nhà thiết kế người Nhật Bản Kenzo Takada sáng lập năm 1970. Thương hiệu nhanh chóng gây ấn tượng nhờ phong cách độc đáo, kết hợp giữa tinh hoa thời trang châu Âu và sự phóng khoáng, rực rỡ của văn hóa châu Á. Kenzo nổi bật với những họa tiết hoa, màu sắc tươi sáng và thiết kế táo bạo, mang đến tinh thần trẻ trung, tự do và sáng tạo. Ngày nay, Kenzo không chỉ được biết đến qua trang phục mà còn qua các dòng nước hoa danh tiếng, trở thành biểu tượng của sự hiện đại và cá tính trong làng thời trang quốc tế.',
                 logoUrl: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1758962938/brand/Kenzo-logo_wp9he4.webp'
+            },
+            {
+                name: 'New Balance',
+                description:
+                    'New Balance là thương hiệu giày thể thao lâu đời đến từ Mỹ, được thành lập năm 1906 tại Boston, Massachusetts. Với triết lý “đặt sự thoải mái và hiệu suất lên hàng đầu”, New Balance nổi tiếng nhờ những đôi giày mang phong cách cổ điển kết hợp công nghệ hiện đại, mang lại cảm giác êm ái và ổn định cho người mang. Thương hiệu này tập trung vào chất lượng, độ bền và sự phù hợp cho mọi hoạt động — từ chạy bộ, tập luyện cho đến thời trang hàng ngày. New Balance cũng được biết đến với việc duy trì sản xuất tại Mỹ và Anh, thể hiện cam kết về tay nghề và giá trị truyền thống.',
+                logoUrl: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760456916/brand/newbalance_sy8bpk.png'
             }
         ]
     })
@@ -684,6 +690,56 @@ const seedData = async () => {
                 price: 275000,
                 isAccessory: false,
                 createdBy: 2
+            },
+            {
+                brandId: 1,
+                name: 'J Balvin x Air Jordan 1 High',
+                slug: 'j-balvin-x-air-jordan-1-high',
+                description:
+                    'J Balvin x Air Jordan 1 High là sự kết hợp độc đáo giữa phong cách thời trang của J Balvin và huyền thoại Air Jordan. Đôi giày nổi bật với phối màu rực rỡ và chi tiết bắt mắt, mang đậm ảnh hưởng văn hóa Latin. Chất liệu cao cấp, đế Air-Sole đem lại sự thoải mái và độ bền lâu dài. Một đôi giày lý tưởng cho những ai yêu thích sự cá tính, khác biệt và phong cách đường phố.',
+                price: 5590000,
+                isAccessory: false,
+                createdBy: 1
+            },
+            {
+                brandId: 2,
+                name: 'adidas Adifom Supernova - Beige',
+                slug: 'adidas-adifom-supernova-beige',
+                description:
+                    'Adidas Adifom Supernova - Beige mang thiết kế hiện đại với sắc beige trung tính, dễ dàng phối hợp với nhiều trang phục. Được làm từ chất liệu cao cấp, giày có phần đệm EVA nhẹ, tạo cảm giác êm ái và thoải mái khi di chuyển. Phần đế cao su bền bỉ giúp tăng độ bám, thích hợp cho các hoạt động thể thao và dạo phố. Một lựa chọn hoàn hảo cho những ai yêu thích sự tối giản nhưng vẫn nổi bật.',
+                price: 1190000,
+                isAccessory: false,
+                createdBy: 1
+            },
+            {
+                brandId: 7,
+                name: 'New Balance 1906 Utility - Eclipse',
+                slug: 'new-balance-1906-utility-eclipse',
+                description:
+                    'New Balance 1906 Utility - Eclipse mang thiết kế thể thao mạnh mẽ với tông màu Eclipse đen huyền bí, dễ dàng kết hợp với nhiều phong cách. Chất liệu cao cấp cùng đệm ABZORB mang lại sự thoải mái tối đa và giảm chấn hiệu quả. Đế ngoài cao su bền bỉ giúp tăng độ bám, phù hợp cho cả chạy bộ và sử dụng hàng ngày. Lựa chọn lý tưởng cho những ai yêu thích sự kết hợp giữa hiệu năng và thời trang.',
+                price: 2250000,
+                isAccessory: false,
+                createdBy: 1
+            },
+            {
+                brandId: 7,
+                name: 'New Balance 2002R - Great Plains',
+                slug: 'new-balance-2002r-great-plains',
+                description:
+                    'New Balance 2002R - Great Plains mang thiết kế cổ điển với tông màu ấm áp, lấy cảm hứng từ vẻ đẹp của vùng đất Great Plains. Đôi giày được làm từ chất liệu da và vải lưới cao cấp, kết hợp công nghệ đệm ABZORB và SBS giúp giảm chấn tối ưu, mang lại cảm giác êm ái khi di chuyển. Đế cao su bền bỉ, phù hợp cho cả hoạt động thể thao lẫn dạo phố. Lựa chọn hoàn hảo cho phong cách năng động và thoải mái.',
+                price: 2000000,
+                isAccessory: false,
+                createdBy: 2
+            },
+            {
+                brandId: 7,
+                name: 'New Balance 2002R - Off White',
+                slug: 'new-balance-2002r-off-white',
+                description:
+                    'New Balance 2002R - Off White sở hữu thiết kế tinh tế với màu sắc trung tính off-white dễ dàng kết hợp cùng nhiều trang phục. Chất liệu da và vải lưới cao cấp kết hợp với công nghệ đệm ABZORB mang đến sự thoải mái và hỗ trợ tối ưu cho đôi chân. Đế cao su bền bỉ, giúp tăng cường độ bám và độ ổn định. Lý tưởng cho những ai yêu thích sự kết hợp giữa phong cách cổ điển và hiện đại.',
+                price: 2000000,
+                isAccessory: false,
+                createdBy: 2
             }
         ]
     })
@@ -928,6 +984,41 @@ const seedData = async () => {
             { rootProductId: 31, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760348372/product/bem002700nau__7_v2msfj.jpg' },
             { rootProductId: 31, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760348373/product/bem002700nau__8_oyduah.jpg' },
             { rootProductId: 31, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760348375/product/bem002700nau__9_oa24jw.jpg' },
+            { rootProductId: 32, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760370053/product/j-balvin-x-air-jordan_1_oz4biq.jpg' },
+            { rootProductId: 32, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760370053/product/j-balvin-x-air-jordan_2_tfhrtr.jpg' },
+            { rootProductId: 32, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760370054/product/j-balvin-x-air-jordan_3_l9olrj.jpg' },
+            { rootProductId: 32, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760370054/product/j-balvin-x-air-jordan_4_dt8xya.jpg' },
+            { rootProductId: 32, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760370060/product/j-balvin-x-air-jordan_5_ucppue.jpg' },
+            { rootProductId: 32, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760370057/product/j-balvin-x-air-jordan_6_wsjiv7.jpg' },
+            { rootProductId: 32, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760370064/product/j-balvin-x-air-jordan_7_tjjsju.png' },
+            { rootProductId: 32, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760370059/product/j-balvin-x-air-jordan_8_kxrl1n.png' },
+            { rootProductId: 32, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760370059/product/j-balvin-x-air-jordan_9_iqwlws.png' },
+            { rootProductId: 33, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760376538/product/adidas-adifom_1_kwtaa5.jpg' },
+            { rootProductId: 33, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760376538/product/adidas-adifom_2_zplnws.jpg' },
+            { rootProductId: 33, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760376538/product/adidas-adifom_3_nubdq2.jpg' },
+            { rootProductId: 33, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760376538/product/adidas-adifom_4_ardkss.jpg' },
+            { rootProductId: 33, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760376538/product/adidas-adifom_5_nggnub.jpg' },
+            { rootProductId: 33, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760376539/product/adidas-adifom_6_jivxcj.jpg' },
+            { rootProductId: 33, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760376539/product/adidas-adifom_7_w3a2op.jpg' },
+            { rootProductId: 33, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760376539/product/adidas-adifom_8_jop6ql.jpg' },
+            { rootProductId: 33, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760376547/product/adidas-adifom_9_oqbgfv.jpg' },
+            { rootProductId: 34, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760457476/product/new-balance-1906_1_swxqzh.jpg' },
+            { rootProductId: 34, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760457525/product/new-balance-1906_2_bew7dw.jpg' },
+            { rootProductId: 34, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760457525/product/new-balance-1906_3_wo7bde.jpg' },
+            { rootProductId: 34, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760457526/product/new-balance-1906_4_zsi6hc.jpg' },
+            { rootProductId: 34, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760457526/product/new-balance-1906_5_hbkcti.jpg' },
+            { rootProductId: 35, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760458583/product/new-balance-2002r_1_xxcpyp.jpg' },
+            { rootProductId: 35, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760458584/product/new-balance-2002r_2_sssmh9.jpg' },
+            { rootProductId: 35, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760458583/product/new-balance-2002r_3_jysxqx.jpg' },
+            { rootProductId: 35, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760458583/product/new-balance-2002r_4_ebzvz2.jpg' },
+            { rootProductId: 35, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760458584/product/new-balance-2002r_5_q7tbhr.jpg' },
+            { rootProductId: 36, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760460268/product/new-balance-2002r_w_1_d7fx4h.jpg' },
+            { rootProductId: 36, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760460268/product/new-balance-2002r_w_2_d5lmbe.jpg' },
+            { rootProductId: 36, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760460269/product/new-balance-2002r_w_3_g0fyuu.jpg' },
+            { rootProductId: 36, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760460269/product/new-balance-2002r_w_4_qjcetp.jpg' },
+            { rootProductId: 36, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760460269/product/new-balance-2002r_w_5_ki9kym.jpg' },
+            { rootProductId: 36, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760460271/product/new-balance-2002r_w_6_rnwa5j.jpg' },
+            { rootProductId: 36, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760460274/product/new-balance-2002r_w_7_uce88e.jpg' }
         ]
     })
 
@@ -1098,7 +1189,41 @@ const seedData = async () => {
             { rootProductId: 31, size: '41', stock: 40 },
             { rootProductId: 31, size: '42', stock: 30 },
             { rootProductId: 31, size: '43', stock: 30 },
-            { rootProductId: 31, size: '44', stock: 20 }
+            { rootProductId: 31, size: '44', stock: 20 },
+            { rootProductId: 32, size: '40', stock: 40 },
+            { rootProductId: 32, size: '41', stock: 30 },
+            { rootProductId: 32, size: '42', stock: 46 },
+            { rootProductId: 32, size: '42.5', stock: 10 },
+            { rootProductId: 32, size: '43', stock: 41 },
+            { rootProductId: 33, size: '39', stock: 20 },
+            { rootProductId: 33, size: '40.5', stock: 25 },
+            { rootProductId: 33, size: '41', stock: 25 },
+            { rootProductId: 33, size: '42', stock: 30 },
+            { rootProductId: 33, size: '43', stock: 25 },
+            { rootProductId: 33, size: '44', stock: 22 },
+            { rootProductId: 33, size: '44.5', stock: 5 },
+            { rootProductId: 34, size: '39', stock: 24 },
+            { rootProductId: 34, size: '40', stock: 41 },
+            { rootProductId: 34, size: '40.5', stock: 25 },
+            { rootProductId: 34, size: '41', stock: 45 },
+            { rootProductId: 34, size: '42', stock: 30 },
+            { rootProductId: 35, size: '38.5', stock: 20 },
+            { rootProductId: 35, size: '39', stock: 30 },
+            { rootProductId: 35, size: '40', stock: 40 },
+            { rootProductId: 35, size: '40.5', stock: 15 },
+            { rootProductId: 35, size: '41', stock: 20 },
+            { rootProductId: 35, size: '42', stock: 33 },
+            { rootProductId: 35, size: '42.5', stock: 10 },
+            { rootProductId: 35, size: '43', stock: 40 },
+            { rootProductId: 35, size: '44', stock: 20 },
+            { rootProductId: 35, size: '45', stock: 10 },
+            { rootProductId: 36, size: '38.5', stock: 15 },
+            { rootProductId: 36, size: '39', stock: 20 },
+            { rootProductId: 36, size: '40', stock: 30 },
+            { rootProductId: 36, size: '40.5', stock: 10 },
+            { rootProductId: 36, size: '41', stock: 40 },
+            { rootProductId: 36, size: '42', stock: 25 },
+            { rootProductId: 36, size: '43', stock: 45 },
         ]
     })
 
@@ -1613,6 +1738,101 @@ const seedData = async () => {
                 heelHeight: 2.2,
                 durabilityRating: 4.7,
                 releaseYear: 2023
+            },
+            {
+                rootProductId: 32,
+                categoryId: 1,
+                gender: 'UNISEX',
+                upperMaterial: 'Vải canvas tie-dye với các lớp da cắt răng cưa',
+                soleMaterial: 'Cao su màu hồng nhạt',
+                liningMaterial: 'Vải tổng hợp mềm mại',
+                closureType: 'Dây buộc',
+                toeShape: 'Tròn',
+                waterResistant: 'Không',
+                breathability: 'Tốt',
+                pattern: 'Thiết kế cầu vồng với các chi tiết cắt rách và đường viền lởm chởm, logo mặt cười thay thế Jumpman',
+                countryOfOrigin: 'Việt Nam',
+                primaryColor: '#ff0000, #4C96E8, #1BB13D, #F6C400, #F86D6D, #FB6D28',
+                secondaryColor: '#1B1B1B, #FFFFFF, #F4C2D1',
+                heelHeight: 3.0,
+                durabilityRating: 4.5,
+                releaseYear: 2020
+            },
+            {
+                rootProductId: 33,
+                categoryId: 1,
+                gender: 'UNISEX',
+                upperMaterial: 'Tổng hợp (foam / vải kỹ thuật tái chế)',
+                soleMaterial: 'Cao su tổng hợp',
+                liningMaterial: 'Vải tổng hợp mềm',
+                closureType: 'Slip-on (không dây)',
+                toeShape: 'Tròn',
+                waterResistant: 'Không',
+                breathability: 'Tốt',
+                pattern: 'Thiết kế tối giản lấy cảm hứng từ giày chạy, chi tiết 3-Stripes đúc',
+                countryOfOrigin: 'Việt Nam',
+                primaryColor: '#f5f0e6',  // màu “beige” sáng
+                secondaryColor: null,
+                heelHeight: 2.5,
+                durabilityRating: 4.3,
+                releaseYear: 2025
+            },
+            {
+                rootProductId: 34,
+                categoryId: 1,
+                gender: 'UNISEX',
+                upperMaterial: 'Da lộn (suede) và vải tổng hợp chống thấm nước',
+                soleMaterial: 'Cao su chống trượt với công nghệ N-ergy và ABZORB SBS',
+                liningMaterial: 'Vải tổng hợp thoáng khí',
+                closureType: 'Dây buộc',
+                toeShape: 'Tròn',
+                waterResistant: 'Có',
+                breathability: 'Tốt',
+                pattern: 'Thiết kế tối giản với phối màu đen và xanh đậm, logo N-Lock đặc trưng',
+                countryOfOrigin: 'Việt Nam',
+                primaryColor: '#23253a',
+                secondaryColor: '#2a2a2a',
+                heelHeight: 3.0,
+                durabilityRating: 4.7,
+                releaseYear: 2025
+            },
+            {
+                rootProductId: 35,
+                categoryId: 1,
+                gender: 'UNISEX',
+                upperMaterial: 'Da lộn (suede) nâu, mesh xám, da tổng hợp Slate Grey',
+                soleMaterial: 'Cao su chống trượt với công nghệ N-ergy và ABZORB SBS',
+                liningMaterial: 'Vải tổng hợp thoáng khí',
+                closureType: 'Dây buộc',
+                toeShape: 'Tròn',
+                waterResistant: 'Không',
+                breathability: 'Tốt',
+                pattern: 'Thiết kế phối màu đất, lấy cảm hứng từ vùng đồng bằng Bắc Mỹ',
+                countryOfOrigin: 'Việt Nam',
+                primaryColor: '#9e7b5e',
+                secondaryColor: '#6e6e6e',
+                heelHeight: 3.0,
+                durabilityRating: 4.7,
+                releaseYear: 2025
+            },
+            {
+                rootProductId: 36,
+                categoryId: 1,
+                gender: 'UNISEX',
+                upperMaterial: 'Da lộn (suede) và mesh thoáng khí',
+                soleMaterial: 'Cao su chống trượt với công nghệ N-ergy và ABZORB',
+                liningMaterial: 'Vải tổng hợp mềm mại',
+                closureType: 'Dây buộc',
+                toeShape: 'Tròn',
+                waterResistant: 'Không',
+                breathability: 'Tốt',
+                pattern: 'Thiết kế tối giản với phối màu trắng ngà, logo N nổi bật',
+                countryOfOrigin: 'Trung Quốc',
+                primaryColor: '#f5f5f5',
+                secondaryColor: '#d3d3d3',
+                heelHeight: 3.0,
+                durabilityRating: 4.8,
+                releaseYear: 2022
             }
         ]
     })
@@ -1771,7 +1991,33 @@ const seedData = async () => {
             { shoeFeatureId: 26, occasionTagId: 5 },
             { shoeFeatureId: 26, occasionTagId: 7 },
             { shoeFeatureId: 26, occasionTagId: 8 },
-            { shoeFeatureId: 26, occasionTagId: 9 }
+            { shoeFeatureId: 26, occasionTagId: 9 },
+            { shoeFeatureId: 27, occasionTagId: 1 },
+            { shoeFeatureId: 27, occasionTagId: 2 },
+            { shoeFeatureId: 27, occasionTagId: 8 },
+            { shoeFeatureId: 28, occasionTagId: 1 },
+            { shoeFeatureId: 28, occasionTagId: 2 },
+            { shoeFeatureId: 28, occasionTagId: 4 },
+            { shoeFeatureId: 28, occasionTagId: 5 },
+            { shoeFeatureId: 28, occasionTagId: 9 },
+            { shoeFeatureId: 29, occasionTagId: 1 },
+            { shoeFeatureId: 29, occasionTagId: 2 },
+            { shoeFeatureId: 29, occasionTagId: 4 },
+            { shoeFeatureId: 29, occasionTagId: 5 },
+            { shoeFeatureId: 29, occasionTagId: 8 },
+            { shoeFeatureId: 29, occasionTagId: 9 },
+            { shoeFeatureId: 30, occasionTagId: 1 },
+            { shoeFeatureId: 30, occasionTagId: 2 },
+            { shoeFeatureId: 30, occasionTagId: 4 },
+            { shoeFeatureId: 30, occasionTagId: 5 },
+            { shoeFeatureId: 30, occasionTagId: 8 },
+            { shoeFeatureId: 30, occasionTagId: 9 },
+            { shoeFeatureId: 31, occasionTagId: 1 },
+            { shoeFeatureId: 31, occasionTagId: 2 },
+            { shoeFeatureId: 31, occasionTagId: 4 },
+            { shoeFeatureId: 31, occasionTagId: 5 },
+            { shoeFeatureId: 31, occasionTagId: 8 },
+            { shoeFeatureId: 31, occasionTagId: 9 }
         ]
     })
 
@@ -1936,7 +2182,39 @@ const seedData = async () => {
             { shoeFeatureId: 26, designTagId: 6 },
             { shoeFeatureId: 26, designTagId: 10 },
             { shoeFeatureId: 26, designTagId: 11 },
-            { shoeFeatureId: 26, designTagId: 12 }
+            { shoeFeatureId: 26, designTagId: 12 },
+            { shoeFeatureId: 27, designTagId: 3 },
+            { shoeFeatureId: 27, designTagId: 5 },
+            { shoeFeatureId: 27, designTagId: 6 },
+            { shoeFeatureId: 27, designTagId: 8 },
+            { shoeFeatureId: 27, designTagId: 10 },
+            { shoeFeatureId: 27, designTagId: 11 },
+            { shoeFeatureId: 28, designTagId: 2 },
+            { shoeFeatureId: 28, designTagId: 3 },
+            { shoeFeatureId: 28, designTagId: 8 },
+            { shoeFeatureId: 28, designTagId: 9 },
+            { shoeFeatureId: 28, designTagId: 10 },
+            { shoeFeatureId: 28, designTagId: 11 },
+            { shoeFeatureId: 29, designTagId: 3 },
+            { shoeFeatureId: 29, designTagId: 5 },
+            { shoeFeatureId: 29, designTagId: 6 },
+            { shoeFeatureId: 29, designTagId: 9 },
+            { shoeFeatureId: 29, designTagId: 10 },
+            { shoeFeatureId: 29, designTagId: 11 },
+            { shoeFeatureId: 29, designTagId: 12 },
+            { shoeFeatureId: 30, designTagId: 3 },
+            { shoeFeatureId: 30, designTagId: 5 },
+            { shoeFeatureId: 30, designTagId: 6 },
+            { shoeFeatureId: 30, designTagId: 9 },
+            { shoeFeatureId: 30, designTagId: 10 },
+            { shoeFeatureId: 30, designTagId: 11 },
+            { shoeFeatureId: 30, designTagId: 12 },
+            { shoeFeatureId: 31, designTagId: 5 },
+            { shoeFeatureId: 31, designTagId: 6 },
+            { shoeFeatureId: 31, designTagId: 9 },
+            { shoeFeatureId: 31, designTagId: 10 },
+            { shoeFeatureId: 31, designTagId: 11 },
+            { shoeFeatureId: 31, designTagId: 12 }
         ]
     })
 
