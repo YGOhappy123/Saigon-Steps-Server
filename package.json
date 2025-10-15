@@ -20,6 +20,8 @@
         "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"
     },
     "dependencies": {
+        "@arcjet/inspect": "^1.0.0-beta.13",
+        "@arcjet/node": "^1.0.0-beta.13",
         "@prisma/client": "^6.16.1",
         "axios": "^1.12.1",
         "bcrypt": "^6.0.0",
