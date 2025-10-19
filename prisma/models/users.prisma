@@ -130,11 +130,10 @@ model ChatMessage {
     conversationId Int
     conversation   Conversation @relation(fields: [conversationId], references: [conversationId])
     senderStaffId  Int?
-    senderStaff    Staff?       @relation(fields: [staffStaffId], references: [staffId])
-    textContent    String?
+    senderStaff    Staff?       @relation(fields: [senderStaffId], references: [staffId])
+    textContent    String?      @db.Text
     imageContent   String?
     sentAt         DateTime     @default(now())
-    staffStaffId   Int?
 
     @@map("chat_messages")
 }

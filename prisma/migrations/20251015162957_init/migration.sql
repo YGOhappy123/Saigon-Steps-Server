@@ -88,7 +88,7 @@ CREATE TABLE `root_products` (
     `brandId` INTEGER NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NOT NULL,
+    `description` TEXT NOT NULL,
     `price` DOUBLE NOT NULL,
     `isAccessory` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -125,7 +125,7 @@ CREATE TABLE `product_images` (
 CREATE TABLE `product_brands` (
     `brandId` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NOT NULL,
+    `description` TEXT NOT NULL,
     `logoUrl` VARCHAR(191) NULL,
 
     INDEX `product_brands_name_idx`(`name`),
@@ -207,7 +207,7 @@ CREATE TABLE `shoe_categories` (
 CREATE TABLE `promotions` (
     `promotionId` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NOT NULL,
+    `description` TEXT NOT NULL,
     `discountRate` DOUBLE NOT NULL,
     `startDate` DATETIME(3) NOT NULL,
     `endDate` DATETIME(3) NOT NULL,
@@ -358,10 +358,9 @@ CREATE TABLE `chat_messages` (
     `messageId` INTEGER NOT NULL AUTO_INCREMENT,
     `conversationId` INTEGER NOT NULL,
     `senderStaffId` INTEGER NULL,
-    `textContent` VARCHAR(191) NULL,
+    `textContent` TEXT NULL,
     `imageContent` VARCHAR(191) NULL,
     `sentAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `staffStaffId` INTEGER NULL,
 
     PRIMARY KEY (`messageId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -484,4 +483,4 @@ ALTER TABLE `conversations` ADD CONSTRAINT `conversations_customerId_fkey` FOREI
 ALTER TABLE `chat_messages` ADD CONSTRAINT `chat_messages_conversationId_fkey` FOREIGN KEY (`conversationId`) REFERENCES `conversations`(`conversationId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `chat_messages` ADD CONSTRAINT `chat_messages_staffStaffId_fkey` FOREIGN KEY (`staffStaffId`) REFERENCES `staffs`(`staffId`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `chat_messages` ADD CONSTRAINT `chat_messages_senderStaffId_fkey` FOREIGN KEY (`senderStaffId`) REFERENCES `staffs`(`staffId`) ON DELETE SET NULL ON UPDATE CASCADE;

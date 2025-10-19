@@ -60,7 +60,10 @@ const successMessage = {
     TRACK_IMPORT_SUCCESSFULLY: 'TRACK_IMPORT_SUCCESSFULLY',
 
     // Reports related
-    REPORT_DAMAGE_SUCCESSFULLY: 'REPORT_DAMAGE_SUCCESSFULLY'
+    REPORT_DAMAGE_SUCCESSFULLY: 'REPORT_DAMAGE_SUCCESSFULLY',
+
+    // Conversations and messages related
+    SEND_MESSAGE_SUCCESSFULLY: 'SEND_MESSAGE_SUCCESSFULLY'
 } as const
 
 export default successMessage
