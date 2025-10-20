@@ -4,6 +4,7 @@ import cors from 'cors'
 import multer from 'multer'
 
 import * as routes from '@/routes'
+import { app, io, server } from '@/socket'
 import { parsedEnv } from '@/env'
 import { prisma } from '@/prisma'
 import { errorHandler } from '@/middlewares/error.middleware'
@@ -13,7 +14,6 @@ import corsOptions from '@/configs/corsOptions'
 import pinoLogger from '@/configs/pinoLogger'
 
 // Middlewares and dependencies configuration
-const app = express()
 const memoryStorage = multer.memoryStorage()
 const upload = multer({ storage: memoryStorage })
 
@@ -40,7 +40,15 @@ app.use('/promotions', routes.promotionRoutes)
 app.use('/orders', routes.orderRoutes)
 app.use('/reports', routes.reportRoutes)
 app.use('/statistics', routes.statisticRoutes)
+app.use('/chats', routes.chatRoutes)
 app.use(errorHandler)
+
+app.get('/:id', (req, res) => {
+    const { id } = req.params
+    io.to(`conversation:${id}`).emit('testMessage', `Hello to conversation ${id} from server`)
+
+    res.status(200).json({ message: `Welcome to Arcjet E-commerce API - ${id}` })
+})
 
 // Database connection and server initialization
 const startServer = async () => {
@@ -50,7 +58,7 @@ const startServer = async () => {
 
         const PORT = parsedEnv.PORT || 5000
         const HOST = '0.0.0.0'
-        app.listen(PORT, HOST, () => {
+        server.listen(PORT, HOST, () => {
             pinoLogger.info(`[SERVER] Server running on port: ${PORT}`)
         })
     } catch (error) {

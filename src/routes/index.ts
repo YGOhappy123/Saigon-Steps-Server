@@ -10,6 +10,7 @@ import promotionRoutes from '@/routes/promotion.route'
 import orderRoutes from '@/routes/order.route'
 import reportRoutes from '@/routes/report.route'
 import statisticRoutes from '@/routes/statistic.route'
+import chatRoutes from '@/routes/chat.route'
 
 export {
     authRoutes,
@@ -23,5 +24,6 @@ export {
     promotionRoutes,
     orderRoutes,
     reportRoutes,
-    statisticRoutes
+    statisticRoutes,
+    chatRoutes
 }

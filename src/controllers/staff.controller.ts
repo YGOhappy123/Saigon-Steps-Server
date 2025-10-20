@@ -55,8 +55,8 @@ const staffController = {
             const errors = validationResult(req)
             if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
 
-            const { userId, roleId: authRoleId } = req.auth!
-            const hasUpdateStaffPermission = await roleService.verifyPermission(authRoleId!, appPermissions.UPDATE_STAFF_INFORMATION)
+            const { userId, roleId } = req.auth!
+            const hasUpdateStaffPermission = await roleService.verifyPermission(roleId!, appPermissions.UPDATE_STAFF_INFORMATION)
             if (!hasUpdateStaffPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             const { staffId } = req.params

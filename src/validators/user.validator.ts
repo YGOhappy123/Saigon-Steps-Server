@@ -34,3 +34,15 @@ export const addNewStaffValidator = [
 export const changeStaffRoleValidator = [body('roleId').isInt({ min: 1 })]
 
 export const verifyPermissionValidator = [body('permission').trim().isString()]
+
+export const sendChatMessageValidator = [
+    body('textContent').optional().trim().isString().isLength({ min: 1, max: 1000 }),
+    body('imageContent').optional().trim().isURL(),
+    body('tempId').isInt(),
+    body().custom(value => {
+        if (!value.textContent && !value.imageContent) {
+            throw new Error('At least one of textContent or imageContent must be provided')
+        }
+        return true
+    })
+]
