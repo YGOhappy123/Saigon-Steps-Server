@@ -81,9 +81,9 @@ const chatController = {
             const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.CHAT_WITH_CUSTOMER)
             if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
-            const { conversationId } = req.params
+            const { customerId } = req.params
             const { textContent, imageContent, tempId } = req.body
-            await chatService.staffSendMessage(parseInt(conversationId), userId, textContent, imageContent, tempId)
+            await chatService.staffSendMessage(parseInt(customerId), userId, textContent, imageContent, tempId)
 
             res.status(201).json({
                 message: successMessage.SEND_MESSAGE_SUCCESSFULLY

@@ -10,6 +10,6 @@ router.post('/', customerOnly, sendChatMessageValidator, chatController.customer
 
 router.get('/', staffOnly, chatController.getAllConversations)
 router.get('/:conversationId', staffOnly, chatController.getConversationById)
-router.post('/:conversationId', staffOnly, sendChatMessageValidator, chatController.staffSendMessage)
+router.post('/:customerId', staffOnly, sendChatMessageValidator, chatController.staffSendMessage)
 
 export default router
