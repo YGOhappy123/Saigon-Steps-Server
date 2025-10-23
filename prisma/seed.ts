@@ -1,5 +1,4 @@
 import { PrismaClient, ShoeGender, CouponType } from '@prisma/client'
-import { url } from 'inspector'
 
 const prisma = new PrismaClient()
 
@@ -22,7 +21,7 @@ const seedData = async () => {
             { username: 'customer0002', password: '$2a$11$KlwjhvWsKbfIi647k3qUr.ia9ZdQLZYcgITuEpueBO52AoyAhU9OK', isActive: true },
             { username: 'customer0003', password: '$2a$11$0BZ2SnQREPsbPRhVOhaaVeeSQAlyzsFADL595pKc70ZFd1zHaCcAa', isActive: true },
             { username: 'customer0004', password: '$2a$11$Oz.G5fwD8zq38K0lUCIYD.QZZ4B2cmqFkJuC47653Ev7PGqs71Zra', isActive: true },
-            { username: 'customer0005', password: '$2a$11$3P2dvTISOITxoKZERhT/je25XYkC5v7TDacTfGO2HUubRLtC/SL9q', isActive: true },
+            { username: 'customer0005', password: '$2b$10$OllPT0huDJmHKRg93KvFKuFzKhadFLA5zP2Q4F4Qp1/5q6w2ddoua', isActive: true },
             { username: 'staff0001', password: '$2a$11$ySwhpRk89aWrAvHI0iRtNuCpABHLbtgYym3ptSBA2ybwUy5H18.A2', isActive: true },
             { username: 'staff0002', password: '$2a$11$tths/WMBffLQUWt33aNrkOPDi2l/m3L2MGOVjn5gaP.SaOpSWu3Xa', isActive: true },
             { username: 'staff0003', password: '$2a$11$yjR8nOPp206keajtK2oupO.5tTICOhPHn/57tzN.MvcFShAQ9sZxe', isActive: true },
@@ -386,7 +385,7 @@ const seedData = async () => {
                 name: 'Nike V2K Run - Vintage Green',
                 slug: 'nike-v2k-run-vintage-green',
                 description:
-                    'Tiến lên. Quay lại. Không quan trọng—đôi giày này đưa phong cách retro bước vào tương lai. V2K tái hiện tất cả những gì bạn yêu thích ở Vomero trong một diện mạo như được lấy thẳng từ catalog giày chạy bộ đầu những năm 2000. Thiết kế được xếp lớp với sự kết hợp của các chi tiết kim loại nổi bật, nhựa mang tính hoài niệm và phần đế giữa mang đậm vẻ cổ điển. Gót giày dày đảm bảo dù bạn đi đâu cũng luôn thoải mái.',
+                    'Tiến lên? Quay lại? Không quan trọng - đôi giày này đưa phong cách retro bước vào tương lai. V2K tái hiện tất cả những gì bạn yêu thích ở Vomero trong một diện mạo như được lấy thẳng từ catalog giày chạy bộ đầu những năm 2000. Thiết kế được xếp lớp với sự kết hợp của các chi tiết kim loại nổi bật, nhựa mang tính hoài niệm và phần đế giữa mang đậm vẻ cổ điển. Gót giày dày đảm bảo dù bạn đi đâu cũng luôn thoải mái.',
                 price: 1760000,
                 isAccessory: false,
                 createdBy: 1
@@ -495,7 +494,7 @@ const seedData = async () => {
                 brandId: 1,
                 name: 'Nike Pegasus 41 - Ole Miss',
                 slug: 'nike-pegasus-41-ole-miss',
-                description: 
+                description:
                     'Nike Pegasus 41 - Ole Miss là phiên bản đặc biệt mang đậm tinh thần thể thao và niềm tự hào đại học Ole Miss. Đôi giày kết hợp giữa hiệu năng vượt trội và phong cách cổ điển, trang bị đệm ZoomX + React cho cảm giác êm ái, phản hồi nhanh nhạy. Thiết kế phối màu xanh – đỏ – trắng đặc trưng giúp nổi bật trên mọi cung đường, lý tưởng cho cả chạy bộ lẫn sử dụng hằng ngày.',
                 price: 1915000,
                 isAccessory: false,
@@ -949,19 +948,58 @@ const seedData = async () => {
             { rootProductId: 20, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760155973/product/reebok_answer_dmx_7_owj2ix.jpg' },
             { rootProductId: 20, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760155974/product/reebok_answer_dmx_8_b6cfou.jpg' },
             { rootProductId: 20, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760155976/product/reebok_answer_dmx_9_fhrg0j.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156773/product/reebok_court_advance_midnight_navy_1_hapfbm.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156774/product/reebok_court_advance_midnight_navy_2_k7znsr.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156775/product/reebok_court_advance_midnight_navy_3_blsn3w.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156774/product/reebok_court_advance_midnight_navy_4_bjzbvw.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156776/product/reebok_court_advance_midnight_navy_5_fr1jn8.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156780/product/reebok_court_advance_midnight_navy_6_baoloo.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156782/product/reebok_court_advance_midnight_navy_7_ky8t2f.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156782/product/reebok_court_advance_midnight_navy_8_e0aaid.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156786/product/reebok_court_advance_midnight_navy_9_yxz7zx.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156784/product/reebok_court_advance_midnight_navy_10_iapyg6.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156791/product/reebok_court_advance_midnight_navy_11_m5hs0i.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156786/product/reebok_court_advance_midnight_navy_12_oedzb4.jpg' },
-            { rootProductId: 21, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156788/product/reebok_court_advance_midnight_navy_13_zyubcz.jpg' },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156773/product/reebok_court_advance_midnight_navy_1_hapfbm.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156774/product/reebok_court_advance_midnight_navy_2_k7znsr.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156775/product/reebok_court_advance_midnight_navy_3_blsn3w.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156774/product/reebok_court_advance_midnight_navy_4_bjzbvw.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156776/product/reebok_court_advance_midnight_navy_5_fr1jn8.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156780/product/reebok_court_advance_midnight_navy_6_baoloo.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156782/product/reebok_court_advance_midnight_navy_7_ky8t2f.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156782/product/reebok_court_advance_midnight_navy_8_e0aaid.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156786/product/reebok_court_advance_midnight_navy_9_yxz7zx.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156784/product/reebok_court_advance_midnight_navy_10_iapyg6.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156791/product/reebok_court_advance_midnight_navy_11_m5hs0i.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156786/product/reebok_court_advance_midnight_navy_12_oedzb4.jpg'
+            },
+            {
+                rootProductId: 21,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760156788/product/reebok_court_advance_midnight_navy_13_zyubcz.jpg'
+            },
             { rootProductId: 22, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760201404/product/giay_tay_bitis_1_ph01ru.jpg' },
             { rootProductId: 22, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760201404/product/giay_tay_bitis_2_knsc0t.jpg' },
             { rootProductId: 22, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760201404/product/giay_tay_bitis_3_alaieo.jpg' },
@@ -1097,12 +1135,30 @@ const seedData = async () => {
             { rootProductId: 39, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760494484/product/new-balance-550_4_ypxpoj.jpg' },
             { rootProductId: 39, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760494484/product/new-balance-550_5_ncyhii.jpg' },
             { rootProductId: 39, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760494484/product/new-balance-550_6_mcdiqj.jpg' },
-            { rootProductId: 40, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495349/product/new-balance-fresh-foam-arish_1_hvripf.jpg' },
-            { rootProductId: 40, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495358/product/new-balance-fresh-foam-arish_2_eu1klw.jpg' },
-            { rootProductId: 40, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495359/product/new-balance-fresh-foam-arish_3_vmvlcf.jpg' },
-            { rootProductId: 40, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495359/product/new-balance-fresh-foam-arish_4_hyy42m.jpg' },
-            { rootProductId: 40, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495360/product/new-balance-fresh-foam-arish_5_cc4pux.jpg' },
-            { rootProductId: 40, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495360/product/new-balance-fresh-foam-arish_6_bhmbgl.jpg' },
+            {
+                rootProductId: 40,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495349/product/new-balance-fresh-foam-arish_1_hvripf.jpg'
+            },
+            {
+                rootProductId: 40,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495358/product/new-balance-fresh-foam-arish_2_eu1klw.jpg'
+            },
+            {
+                rootProductId: 40,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495359/product/new-balance-fresh-foam-arish_3_vmvlcf.jpg'
+            },
+            {
+                rootProductId: 40,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495359/product/new-balance-fresh-foam-arish_4_hyy42m.jpg'
+            },
+            {
+                rootProductId: 40,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495360/product/new-balance-fresh-foam-arish_5_cc4pux.jpg'
+            },
+            {
+                rootProductId: 40,
+                url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760495360/product/new-balance-fresh-foam-arish_6_bhmbgl.jpg'
+            },
             { rootProductId: 41, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760496227/product/new-balance-fresh-foam_1_riozis.jpg' },
             { rootProductId: 41, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760496227/product/new-balance-fresh-foam_2_ctufvb.jpg' },
             { rootProductId: 41, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760496228/product/new-balance-fresh-foam_3_mcq9kk.jpg' },
@@ -1913,7 +1969,7 @@ const seedData = async () => {
                 breathability: 'Tốt',
                 pattern: 'Thiết kế tối giản lấy cảm hứng từ giày chạy, chi tiết 3-Stripes đúc',
                 countryOfOrigin: 'Việt Nam',
-                primaryColor: '#f5f0e6',  // màu “beige” sáng
+                primaryColor: '#f5f0e6',
                 secondaryColor: null,
                 heelHeight: 2.5,
                 durabilityRating: 4.3,
@@ -2000,7 +2056,7 @@ const seedData = async () => {
                 categoryId: 1,
                 gender: 'UNISEX',
                 upperMaterial: 'Lưới (mesh) và sợi tổng hợp',
-                soleMaterial: 'Cao su + đệm EVA (Fresh Foam / DynaSoft tùy phiên bản)',  
+                soleMaterial: 'Cao su + đệm EVA (Fresh Foam / DynaSoft tùy phiên bản)',
                 liningMaterial: 'Vải tổng hợp mềm mại',
                 closureType: 'Dây buộc',
                 toeShape: 'Tròn',
@@ -2027,8 +2083,8 @@ const seedData = async () => {
                 breathability: 'Tốt',
                 pattern: 'Thiết kế phối màu Sea Salt / Multi với chi tiết da lộn xám và điểm nhấn màu sắc nhẹ',
                 countryOfOrigin: 'Việt Nam / Trung Quốc',
-                primaryColor: '#f5f5f5',  // màu Sea Salt (trắng ngà)
-                secondaryColor: '#a0a0a0',  // màu phụ xám / “multi”
+                primaryColor: '#f5f5f5',
+                secondaryColor: '#a0a0a0',
                 heelHeight: 3.0,
                 durabilityRating: 4.6,
                 releaseYear: 2025
