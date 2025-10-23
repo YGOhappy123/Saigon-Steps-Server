@@ -112,7 +112,9 @@ const chatService = {
         const conversation = await prisma.conversation.findFirst({
             where: { conversationId: conversationId },
             include: {
-                customer: true,
+                customer: {
+                    include: { account: true }
+                },
                 messages: {
                     include: { senderStaff: true },
                     orderBy: { sentAt: 'asc' }
@@ -121,33 +123,62 @@ const chatService = {
         })
         if (!conversation) throw new HttpException(404, errorMessage.CONVERSATION_NOT_FOUND)
 
-        return conversation
+        return {
+            ...conversation,
+            customer: {
+                ...conversation.customer,
+                isActive: conversation.customer.account.isActive
+            }
+        }
     },
 
     staffSendMessage: async (
-        conversationId: number,
+        customerId: number,
         staffId: number,
         textContent: string | undefined,
         imageContent: string | undefined,
         tempId: number
     ) => {
-        const conversation = await prisma.conversation.findFirst({ where: { conversationId: conversationId } })
-        if (!conversation) throw new HttpException(404, errorMessage.CONVERSATION_NOT_FOUND)
+        const customer = await prisma.customer.findFirst({ where: { customerId: customerId, account: { isActive: true } } })
+        if (!customer) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
 
-        const newMessage = await prisma.chatMessage.create({
-            data: {
-                conversationId: conversationId,
-                senderStaffId: staffId,
-                textContent: textContent ?? null,
-                imageContent: imageContent ?? null
-            },
-            include: { senderStaff: true }
-        })
+        const conversation = await prisma.conversation.findFirst({ where: { customerId: customerId } })
+        if (!conversation) {
+            const newConversation = await prisma.conversation.create({
+                data: { customerId: customerId },
+                include: { customer: true }
+            })
 
-        io.to(`conversation:${conversationId}`).emit('message:new', {
-            newMessage: newMessage,
-            tempId: tempId
-        })
+            const newMessage = await prisma.chatMessage.create({
+                data: {
+                    conversationId: newConversation.conversationId,
+                    senderStaffId: staffId,
+                    textContent: textContent ?? null,
+                    imageContent: imageContent ?? null
+                },
+                include: { senderStaff: true }
+            })
+
+            io.emit('conversation:new', {
+                ...newConversation,
+                lastMessage: newMessage
+            })
+        } else {
+            const newMessage = await prisma.chatMessage.create({
+                data: {
+                    conversationId: conversation.conversationId,
+                    senderStaffId: staffId,
+                    textContent: textContent ?? null,
+                    imageContent: imageContent ?? null
+                },
+                include: { senderStaff: true }
+            })
+
+            io.to(`conversation:${conversation.conversationId}`).emit('message:new', {
+                newMessage: newMessage,
+                tempId: tempId
+            })
+        }
     }
 }
 
