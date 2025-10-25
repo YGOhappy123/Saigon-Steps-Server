@@ -21,7 +21,7 @@ model ProductPromotion {
     rootProduct   RootProduct @relation(fields: [rootProductId], references: [rootProductId])
 
     @@id([promotionId, rootProductId])
-    @@map("promotion_product")
+    @@map("product_promotion")
 }
 
 model Coupon {

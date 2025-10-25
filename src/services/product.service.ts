@@ -557,11 +557,7 @@ const productService = {
             }
         })
 
-        const hasPromotions = await prisma.productPromotion.findFirst({
-            where: { rootProductId: rootProductId }
-        })
-
-        return !hasRootReferences && !hasItemsReferences && !hasPromotions
+        return !hasRootReferences && !hasItemsReferences
     },
 
     getProductStatisticInTimeRange: async (productId: number, startDate: Date, endDate: Date) => {

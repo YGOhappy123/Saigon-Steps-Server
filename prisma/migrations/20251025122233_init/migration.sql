@@ -220,7 +220,7 @@ CREATE TABLE `promotions` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `promotion_product` (
+CREATE TABLE `product_promotion` (
     `promotionId` INTEGER NOT NULL,
     `rootProductId` INTEGER NOT NULL,
 
@@ -438,10 +438,10 @@ ALTER TABLE `shoe_categories` ADD CONSTRAINT `shoe_categories_createdBy_fkey` FO
 ALTER TABLE `promotions` ADD CONSTRAINT `promotions_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `promotion_product` ADD CONSTRAINT `promotion_product_promotionId_fkey` FOREIGN KEY (`promotionId`) REFERENCES `promotions`(`promotionId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `product_promotion` ADD CONSTRAINT `product_promotion_promotionId_fkey` FOREIGN KEY (`promotionId`) REFERENCES `promotions`(`promotionId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `promotion_product` ADD CONSTRAINT `promotion_product_rootProductId_fkey` FOREIGN KEY (`rootProductId`) REFERENCES `root_products`(`rootProductId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `product_promotion` ADD CONSTRAINT `product_promotion_rootProductId_fkey` FOREIGN KEY (`rootProductId`) REFERENCES `root_products`(`rootProductId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `coupons` ADD CONSTRAINT `coupons_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;
