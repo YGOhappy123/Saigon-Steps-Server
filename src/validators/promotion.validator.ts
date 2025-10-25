@@ -33,17 +33,7 @@ export const updatePromotionValidator = [
     body('name').trim().isString().notEmpty(),
     body('description').optional().trim().isString(),
     body('discountRate').isFloat({ min: 1, max: 100 }),
-    body('startDate')
-        .trim()
-        .isISO8601()
-        .custom(value => {
-            const today = new Date()
-            const start = new Date(value)
-
-            today.setHours(0, 0, 0, 0)
-            if (start < today) throw new Error('Start date must be greater than or equal to today')
-            return true
-        }),
+    body('startDate').trim().isISO8601(),
     body('endDate')
         .trim()
         .isISO8601()
