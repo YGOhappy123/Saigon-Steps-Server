@@ -350,7 +350,7 @@ const productService = {
         const newProduct = await prisma.rootProduct.create({
             data: {
                 brandId: brandId,
-                name: name,
+                name: capitalizeWords(name, false),
                 slug: getProductSlug(name),
                 description: description,
                 price: price,
@@ -439,7 +439,7 @@ const productService = {
             where: { rootProductId: productId },
             data: {
                 brandId: brandId,
-                name: name,
+                name: capitalizeWords(name, false),
                 slug: newSlug,
                 description: description
             }

@@ -2,6 +2,7 @@ import { prisma } from '@/prisma'
 import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
+import { capitalizeWords } from '@/utils/stringHelpers'
 import errorMessage from '@/configs/errorMessage'
 
 const categoryService = {
@@ -29,7 +30,7 @@ const categoryService = {
 
         await prisma.shoeCategory.create({
             data: {
-                name: name,
+                name: capitalizeWords(name),
                 createdBy: staffId
             }
         })
@@ -45,7 +46,7 @@ const categoryService = {
         await prisma.shoeCategory.update({
             where: { categoryId: categoryId },
             data: {
-                name: name
+                name: capitalizeWords(name)
             }
         })
     },

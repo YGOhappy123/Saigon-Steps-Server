@@ -2,6 +2,7 @@ import { prisma } from '@/prisma'
 import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
+import { capitalizeWords } from '@/utils/stringHelpers'
 import errorMessage from '@/configs/errorMessage'
 
 const brandService = {
@@ -28,7 +29,7 @@ const brandService = {
 
         await prisma.productBrand.create({
             data: {
-                name: name,
+                name: capitalizeWords(name, false),
                 description: description,
                 logoUrl: logoUrl ?? null
             }
@@ -45,7 +46,7 @@ const brandService = {
         await prisma.productBrand.update({
             where: { brandId: brandId },
             data: {
-                name: name,
+                name: capitalizeWords(name, false),
                 description: description,
                 logoUrl: logoUrl ?? null
             }

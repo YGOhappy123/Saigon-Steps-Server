@@ -1,6 +1,6 @@
 import randomstring from 'randomstring'
 
-export const capitalizeWords = (input: string) => {
+export const capitalizeWords = (input: string, lowerOtherChars: boolean = true) => {
     const MULTI_SPACE_REGEX = /\s+/g
 
     if (!input.trim()) return ''
@@ -8,7 +8,7 @@ export const capitalizeWords = (input: string) => {
         .trim()
         .replace(MULTI_SPACE_REGEX, ' ')
         .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.substring(1).toLowerCase())
+        .map(word => `${word.charAt(0).toUpperCase()}${lowerOtherChars ? word.substring(1).toLowerCase() : word.substring(1)}`)
         .join(' ')
 }
 

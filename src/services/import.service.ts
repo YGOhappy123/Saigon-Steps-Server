@@ -3,6 +3,7 @@ import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
 import { parseTime } from '@/utils/timeHelpers'
+import { uppercaseWords } from '@/utils/stringHelpers'
 import errorMessage from '@/configs/errorMessage'
 import productService from '@/services/product.service'
 
@@ -75,7 +76,7 @@ const importService = {
 
         await prisma.productImport.create({
             data: {
-                invoiceNumber: invoiceNumber,
+                invoiceNumber: uppercaseWords(invoiceNumber),
                 importDate: parseTime(importDate),
                 totalCost: items.reduce((sum, item) => sum + item.cost * item.quantity, 0),
                 trackedBy: staffId,

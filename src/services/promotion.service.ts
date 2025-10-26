@@ -4,6 +4,7 @@ import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
 import { getStartOfTimeByType, getEndOfTimeByType } from '@/utils/timeHelpers'
 import errorMessage from '@/configs/errorMessage'
+import { capitalizeWords } from '@/utils/stringHelpers'
 
 const promotionService = {
     getAllPromotions: async ({ skip = 0, limit, filter = '{}', sort = '{}' }: ISearchParams) => {
@@ -55,7 +56,7 @@ const promotionService = {
 
         await prisma.promotion.create({
             data: {
-                name: name,
+                name: capitalizeWords(name, false),
                 description: description,
                 discountRate: discountRate,
                 startDate: getStartOfTimeByType(startDate, 'daily').toDate(),
@@ -83,7 +84,7 @@ const promotionService = {
         await prisma.promotion.update({
             where: { promotionId: promotionId },
             data: {
-                name: name,
+                name: capitalizeWords(name, false),
                 description: description,
                 discountRate: discountRate,
                 endDate: getEndOfTimeByType(endDate, 'daily').toDate()
