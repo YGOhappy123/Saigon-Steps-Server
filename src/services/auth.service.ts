@@ -117,7 +117,7 @@ const authService = {
         if (!customer) throw new HttpException(404, errorMessage.USER_NOT_FOUND)
 
         const resetPasswordToken = generateResetPasswordToken({ email: email, type: 'forgot' })
-        nodemailerService.sendResetPasswordMail(email, customer.name, `${parsedEnv.CLIENT_URL}/auth?type=reset&token=${resetPasswordToken}`)
+        nodemailerService.sendResetPasswordMail(email, customer.name, `${parsedEnv.CLIENT_URL}/xac-thuc?type=reset&token=${resetPasswordToken}`)
     },
 
     resetPassword: async (resetPasswordToken: string, newPassword: string) => {
@@ -183,7 +183,7 @@ const authService = {
                 customerFullName,
                 randomUsername,
                 randomPassword,
-                `${parsedEnv.CLIENT_URL}/auth?type=reset&token=${resetPasswordToken}`
+                `${parsedEnv.CLIENT_URL}/xac-thuc?type=reset&token=${resetPasswordToken}`
             )
 
             return {

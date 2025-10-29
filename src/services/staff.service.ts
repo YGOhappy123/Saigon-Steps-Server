@@ -70,7 +70,7 @@ const staffService = {
             role.name,
             randomUsername,
             randomPassword,
-            `${parsedEnv.DASHBOARD_URL}/change-password`
+            `${parsedEnv.DASHBOARD_URL}/doi-mat-khau`
         )
     },
 
