@@ -212,6 +212,7 @@ const productService = {
                     include: {
                         images: { orderBy: { imageId: 'asc' } },
                         brand: true,
+                        productItems: true,
                         shoeFeature: {
                             include: {
                                 category: true,
@@ -228,13 +229,24 @@ const productService = {
         const mappedProductItems = await Promise.all(
             productItems.map(async item => {
                 const { discountRate } = await productService.getProductPromotions(item.rootProductId)
-                const currentStock = await productService.getProductItemCurrentStock(item.productItemId)
+                const mappedItems = await Promise.all(
+                    item.rootProduct.productItems.map(async _item => {
+                        const currentStock = await productService.getProductItemCurrentStock(_item.productItemId)
+
+                        return {
+                            productItemId: _item.productItemId,
+                            size: _item.size,
+                            stock: _item.stock,
+                            availableStock: currentStock
+                        }
+                    })
+                )
 
                 return {
                     ...item,
-                    availableStock: currentStock,
                     rootProduct: {
                         ...item.rootProduct,
+                        productItems: mappedItems,
                         discountRate: discountRate,
                         images: item.rootProduct.images.map(image => image.url),
                         shoeFeature:
