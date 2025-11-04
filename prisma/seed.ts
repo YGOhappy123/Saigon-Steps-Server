@@ -799,6 +799,36 @@ const seedData = async () => {
                 price: 2400000,
                 isAccessory: false,
                 createdBy: 2
+            },
+            {
+                brandId: 4,
+                name: "Giày Cao Gót Biti's Nữ Màu Trắng BFW006888TRG",
+                slug: "giay-cao-got-biti's-nu-mau-trang-bfw006888trg",
+                description:
+                    "Giày Cao Gót Biti's Nữ Màu Trắng BFW006888TRG sở hữu thiết kế mũi nhọn thanh thoát, quai hậu co giãn nhẹ ôm chân vừa vặn, tạo điểm nhấn tinh tế cho đôi chân. Chất liệu PU cao cấp với hoa văn chìm sang trọng, bền màu theo thời gian và dễ vệ sinh. Đế giày cao vừa phải (~5cm), tạo dáng thanh mảnh nhưng vẫn đảm bảo độ vững chắc và êm ái khi sải bước.",
+                price: 495000,
+                isAccessory: false,
+                createdBy: 1
+            },
+            {
+                brandId: 4,
+                name: "Sandal Cao Gót Biti's Nữ Màu Đen BFW006188DEN",
+                slug: "sandal-cao-got-biti's-nu-mau-den-bfw006188den",
+                description:
+                    "Giày Sandal Cao Gót Biti's Nữ Màu Đen BFW006188DEN mang thiết kế hiện đại với tông đen cổ điển dễ phối đồ. Điểm nổi bật là quai ngang bản lớn ôm mu chân nhẹ nhàng và gót vuông cao khoảng 5 cm giúp tôn dáng và giữ thăng bằng tốt. Chất liệu da tổng hợp mềm mại cùng đế cao su chống trượt mang lại sự thoải mái và ổn định suốt cả ngày. Ideal cho phong cách công sở và các dịp trang trọng.",
+                price: 465000,
+                isAccessory: false,
+                createdBy: 1
+            },
+            {
+                brandId: 4,
+                name: "Giày Thời Trang Nữ Gosto GFW018788",
+                slug: "giay-thoi-trang-nu-gosto-gfw018788",
+                description:
+                    "Giày Thời Trang Nữ Gosto GFW018788 mang nét hiện đại và thời thượng với thiết kế nâng cấp từ dòng classic. Thân giày được chế tác tinh xảo từ chất liệu da tổng hợp cao cấp, phối hợp đường may tỉ mỉ, tạo sự sang trọng. Màu sắc trẻ trung dễ phối đồ, thích hợp cho cả ngày dài năng động và buổi tối dạo phố. Một lựa chọn hoàn hảo cho cô nàng yêu phong cách khác biệt.",
+                price: 599000,
+                isAccessory: false,
+                createdBy: 2
             }
         ]
     })
@@ -1169,7 +1199,28 @@ const seedData = async () => {
             { rootProductId: 42, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760496963/product/new-balance-fuelcell_3_wwou80.jpg' },
             { rootProductId: 42, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760496963/product/new-balance-fuelcell_4_gy4nnv.jpg' },
             { rootProductId: 42, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760496963/product/new-balance-fuelcell_5_koi6ao.jpg' },
-            { rootProductId: 42, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760496967/product/new-balance-fuelcell_6_wgoawx.jpg' }
+            { rootProductId: 42, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760496967/product/new-balance-fuelcell_6_wgoawx.jpg' },
+            { rootProductId: 43, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761225798/product/bfw006888trg__1_tmnawe.jpg' },
+            { rootProductId: 43, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761225797/product/bfw006888trg__2_vbgnj6.jpg' },
+            { rootProductId: 43, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761225799/product/bfw006888trg__3_uwfx5e.jpg' },
+            { rootProductId: 43, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761225797/product/bfw006888trg__4_jyhsbi.jpg' },
+            { rootProductId: 43, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761225798/product/bfw006888trg__5_rm6sck.jpg' },
+            { rootProductId: 43, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761225799/product/bfw006888trg__6_fss1nh.jpg' },
+            { rootProductId: 43, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761225797/product/bfw006888trg__7_mdshfu.jpg' },
+            { rootProductId: 43, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761225798/product/bfw006888trg__8_djhb31.jpg' },
+            { rootProductId: 43, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761225798/product/bfw006888trg__9_c03tml.jpg' },
+            { rootProductId: 44, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761226774/product/sandal-caogot-bitis_1_zgifln.jpg' },
+            { rootProductId: 44, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761226774/product/sandal-caogot-bitis_2_ryvxbc.jpg' },
+            { rootProductId: 44, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761226775/product/sandal-caogot-bitis_3_wrhv0g.jpg' },
+            { rootProductId: 44, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761226775/product/sandal-caogot-bitis_4_gxrkwk.jpg' },
+            { rootProductId: 44, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761226777/product/sandal-caogot-bitis_5_kkjxhj.jpg' },
+            { rootProductId: 44, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761226775/product/sandal-caogot-bitis_6_vtehhe.jpg' },
+            { rootProductId: 44, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761226776/product/sandal-caogot-bitis_7_rqjyli.jpg' },
+            { rootProductId: 45, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761227784/product/giay-gosto-1_ppc43l.jpg' },
+            { rootProductId: 45, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761227784/product/giay-gosto-2_nikoud.jpg' },
+            { rootProductId: 45, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761227784/product/giay-gosto-3_exagu6.jpg' },
+            { rootProductId: 45, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761227784/product/giay-gosto-4_uuijva.jpg' },
+            { rootProductId: 45, url: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1761227785/product/giay-gosto-5_kcfymw.jpg' }
         ]
     })
 
@@ -1421,7 +1472,24 @@ const seedData = async () => {
             { rootProductId: 42, size: '41', stock: 25 },
             { rootProductId: 42, size: '42', stock: 30 },
             { rootProductId: 42, size: '43', stock: 40 },
-            { rootProductId: 42, size: '44', stock: 20 }
+            { rootProductId: 42, size: '44', stock: 20 },
+            { rootProductId: 43, size: '35', stock: 20 },
+            { rootProductId: 43, size: '36', stock: 30 },
+            { rootProductId: 43, size: '37', stock: 25 },
+            { rootProductId: 43, size: '38', stock: 40 },
+            { rootProductId: 43, size: '39', stock: 45 },
+            { rootProductId: 43, size: '40', stock: 20 },
+            { rootProductId: 44, size: '35', stock: 25 },
+            { rootProductId: 44, size: '36', stock: 25 },
+            { rootProductId: 44, size: '37', stock: 30 },
+            { rootProductId: 44, size: '38', stock: 45 },
+            { rootProductId: 44, size: '39', stock: 30 },
+            { rootProductId: 44, size: '40', stock: 10 },
+            { rootProductId: 45, size: '35', stock: 20 },
+            { rootProductId: 45, size: '36', stock: 30 },
+            { rootProductId: 45, size: '37', stock: 25 },
+            { rootProductId: 45, size: '38', stock: 40 },
+            { rootProductId: 45, size: '39', stock: 20 }
         ]
     })
 
@@ -2145,6 +2213,63 @@ const seedData = async () => {
                 heelHeight: 3.5,
                 durabilityRating: 4.6,
                 releaseYear: 2025
+            },
+            {
+                rootProductId: 43,
+                categoryId: 5,
+                gender: ShoeGender.FEMALE,
+                upperMaterial: 'PU cao cấp với hoa văn chìm tinh tế',
+                soleMaterial: 'Cao su bền chắc',
+                liningMaterial: 'Da tổng hợp mềm mại',
+                closureType: 'Quai sau co giãn',
+                toeShape: 'Mũi nhọn',
+                waterResistant: 'Không',
+                breathability: 'Trung bình',
+                pattern: 'Bề mặt trơn bóng với hoa văn chìm nhẹ nhàng',
+                countryOfOrigin: 'Việt Nam',
+                primaryColor: '#ffffff',
+                secondaryColor: null,
+                heelHeight: 5.0,
+                durabilityRating: 4.5,
+                releaseYear: 2025
+            },
+            {
+                rootProductId: 44,
+                categoryId: 5,
+                gender: ShoeGender.FEMALE,
+                upperMaterial: 'Da tổng hợp cao cấp',
+                soleMaterial: 'Cao su tổng hợp chống trượt',
+                liningMaterial: 'Da nhân tạo mềm mại',
+                closureType: 'Quai ngang bản lớn',
+                toeShape: 'Mở (open-toe)',
+                waterResistant: 'Không',
+                breathability: 'Trung bình',
+                pattern: 'Thiết kế tối giản, quai bản lớn ôm mu bàn chân, gót vuông cao khoảng 5 cm', 
+                countryOfOrigin: 'Việt Nam',
+                primaryColor: '#000000',
+                secondaryColor: null,
+                heelHeight: 5.0,
+                durabilityRating: 4.4,
+                releaseYear: 2024
+            },
+            {
+                rootProductId: 45,
+                categoryId: 7,
+                gender: ShoeGender.FEMALE,
+                upperMaterial: 'Da tổng hợp cao cấp bóng nhẹ',
+                soleMaterial: 'Cao su chống trượt',
+                liningMaterial: 'Vải tổng hợp mềm mại',
+                closureType: 'Dây buộc',
+                toeShape: 'Mũi nhọn',
+                waterResistant: 'Không',
+                breathability: 'Tốt',
+                pattern: 'Thiết kế thanh lịch với phần gót ống cao và bề mặt da bóng',
+                countryOfOrigin: 'Việt Nam',
+                primaryColor: '#000000',
+                secondaryColor: null,
+                heelHeight: 6.0,
+                durabilityRating: 4.3,
+                releaseYear: 2024
             }
         ]
     })
@@ -2363,7 +2488,17 @@ const seedData = async () => {
             { shoeFeatureId: 37, occasionTagId: 4 },
             { shoeFeatureId: 37, occasionTagId: 5 },
             { shoeFeatureId: 37, occasionTagId: 8 },
-            { shoeFeatureId: 37, occasionTagId: 9 }
+            { shoeFeatureId: 37, occasionTagId: 9 },
+            { shoeFeatureId: 38, occasionTagId: 3 },
+            { shoeFeatureId: 38, occasionTagId: 6 },
+            { shoeFeatureId: 38, occasionTagId: 10 },
+            { shoeFeatureId: 39, occasionTagId: 3 },
+            { shoeFeatureId: 39, occasionTagId: 6 },
+            { shoeFeatureId: 39, occasionTagId: 10 },
+            { shoeFeatureId: 40, occasionTagId: 2 },
+            { shoeFeatureId: 40, occasionTagId: 3 },
+            { shoeFeatureId: 40, occasionTagId: 6 },
+            { shoeFeatureId: 40, occasionTagId: 10 }
         ]
     })
 
@@ -2601,7 +2736,22 @@ const seedData = async () => {
             { shoeFeatureId: 37, designTagId: 8 },
             { shoeFeatureId: 37, designTagId: 9 },
             { shoeFeatureId: 37, designTagId: 10 },
-            { shoeFeatureId: 37, designTagId: 11 }
+            { shoeFeatureId: 37, designTagId: 11 },
+            { shoeFeatureId: 38, designTagId: 2 },
+            { shoeFeatureId: 38, designTagId: 3 },
+            { shoeFeatureId: 38, designTagId: 4 },
+            { shoeFeatureId: 38, designTagId: 7 },
+            { shoeFeatureId: 38, designTagId: 12 },
+            { shoeFeatureId: 39, designTagId: 2 },
+            { shoeFeatureId: 39, designTagId: 3 },
+            { shoeFeatureId: 39, designTagId: 4 },
+            { shoeFeatureId: 39, designTagId: 7 },
+            { shoeFeatureId: 39, designTagId: 12 },
+            { shoeFeatureId: 40, designTagId: 3 },
+            { shoeFeatureId: 40, designTagId: 4 },
+            { shoeFeatureId: 40, designTagId: 6 },
+            { shoeFeatureId: 40, designTagId: 7 },
+            { shoeFeatureId: 40, designTagId: 12 }
         ]
     })
 
