@@ -1,4 +1,4 @@
-import { prisma } from '@/prisma'
+import { prisma, InventoryUpdateType } from '@/prisma'
 import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
@@ -58,22 +58,7 @@ const damageService = {
         items: { productItemId: number; quantity: number; expectedCost: number }[],
         staffId: number
     ) => {
-        await Promise.all(
-            items.map(async item => {
-                const productItem = await prisma.productItem.findFirst({ where: { productItemId: item.productItemId } })
-                if (productItem == null) throw new HttpException(404, errorMessage.PRODUCT_ITEM_NOT_FOUND)
-                if (item.quantity > productItem.stock) throw new HttpException(400, errorMessage.QUANTITY_EXCEED_CURRENT_STOCK)
-
-                await prisma.productItem.update({
-                    where: { productItemId: item.productItemId },
-                    data: {
-                        stock: { decrement: item.quantity }
-                    }
-                })
-            })
-        )
-
-        await prisma.inventoryDamageReport.create({
+        const newReport = await prisma.inventoryDamageReport.create({
             data: {
                 reason: reason,
                 note: note ?? null,
@@ -88,6 +73,29 @@ const damageService = {
                 }
             }
         })
+
+        await Promise.all(
+            items.map(async item => {
+                const productItem = await prisma.productItem.findFirst({ where: { productItemId: item.productItemId } })
+                if (productItem == null) throw new HttpException(404, errorMessage.PRODUCT_ITEM_NOT_FOUND)
+                if (item.quantity > productItem.stock) throw new HttpException(400, errorMessage.QUANTITY_EXCEED_CURRENT_STOCK)
+
+                await prisma.productItem.update({
+                    where: { productItemId: item.productItemId },
+                    data: {
+                        stock: { decrement: item.quantity }
+                    }
+                })
+                await prisma.inventoryUpdateLog.create({
+                    data: {
+                        damageReportId: newReport.reportId,
+                        productItemId: item.productItemId,
+                        quantity: item.quantity,
+                        type: InventoryUpdateType.DAMAGE
+                    }
+                })
+            })
+        )
     },
 
     getDamageReportsRecordedInTimeRange: async (startDate: Date, endDate: Date) => {

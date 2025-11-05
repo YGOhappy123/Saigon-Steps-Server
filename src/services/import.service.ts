@@ -1,4 +1,4 @@
-import { prisma } from '@/prisma'
+import { prisma, InventoryUpdateType } from '@/prisma'
 import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
@@ -60,21 +60,7 @@ const importService = {
         items: { productItemId: number; quantity: number; cost: number }[],
         staffId: number
     ) => {
-        await Promise.all(
-            items.map(async item => {
-                const productItem = await prisma.productItem.findFirst({ where: { productItemId: item.productItemId } })
-                if (productItem == null) throw new HttpException(404, errorMessage.PRODUCT_ITEM_NOT_FOUND)
-
-                await prisma.productItem.update({
-                    where: { productItemId: item.productItemId },
-                    data: {
-                        stock: { increment: item.quantity }
-                    }
-                })
-            })
-        )
-
-        await prisma.productImport.create({
+        const newImport = await prisma.productImport.create({
             data: {
                 invoiceNumber: uppercaseWords(invoiceNumber),
                 importDate: parseTime(importDate),
@@ -89,6 +75,28 @@ const importService = {
                 }
             }
         })
+
+        await Promise.all(
+            items.map(async item => {
+                const productItem = await prisma.productItem.findFirst({ where: { productItemId: item.productItemId } })
+                if (productItem == null) throw new HttpException(404, errorMessage.PRODUCT_ITEM_NOT_FOUND)
+
+                await prisma.productItem.update({
+                    where: { productItemId: item.productItemId },
+                    data: {
+                        stock: { increment: item.quantity }
+                    }
+                })
+                await prisma.inventoryUpdateLog.create({
+                    data: {
+                        importId: newImport.importId,
+                        productItemId: item.productItemId,
+                        quantity: item.quantity,
+                        type: InventoryUpdateType.STOCK_IN
+                    }
+                })
+            })
+        )
     },
 
     getProductImportsImportedInTimeRange: async (startDate: Date, endDate: Date) => {

@@ -31,3 +31,12 @@ export const generateRandomString = (length?: number) => {
 
     return randomstring.generate(length ?? RANDOM_STRING_LENGTH)
 }
+
+export const generateProductBarcode = (length?: number) => {
+    const RANDOM_STRING_LENGTH = 12
+
+    return randomstring.generate({
+        length: length ?? RANDOM_STRING_LENGTH,
+        charset: 'numeric'
+    })
+}

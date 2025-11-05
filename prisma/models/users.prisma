@@ -44,7 +44,7 @@ model Staff {
     createdPromotions        Promotion[]
     createdCoupons           Coupon[]
     sentMessages             ChatMessage[]
-    updatedOrderStatuses     OrderStatusUpdateLog[]
+    updatedOrders            OrderUpdateLog[]
     trackedImports           ProductImport[]
     reportedInventoryDamages InventoryDamageReport[]
 

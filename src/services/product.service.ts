@@ -1,8 +1,8 @@
-import { prisma, OrderStatus } from '@/prisma'
+import { prisma } from '@/prisma'
 import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
-import { capitalizeFirstWord, capitalizeWords, uppercaseWords } from '@/utils/stringHelpers'
+import { capitalizeFirstWord, capitalizeWords, generateProductBarcode, uppercaseWords } from '@/utils/stringHelpers'
 import { getProductSlug } from '@/utils/slugifyHelpers'
 import { getNow } from '@/utils/timeHelpers'
 import errorMessage from '@/configs/errorMessage'
@@ -63,6 +63,7 @@ const productService = {
                         return {
                             productItemId: item.productItemId,
                             size: item.size,
+                            barcode: item.barcode,
                             stock: item.stock,
                             availableStock: currentStock
                         }
@@ -119,6 +120,7 @@ const productService = {
                 return {
                     productItemId: item.productItemId,
                     size: item.size,
+                    barcode: item.barcode,
                     stock: item.stock,
                     availableStock: currentStock
                 }
@@ -173,6 +175,7 @@ const productService = {
                         return {
                             productItemId: item.productItemId,
                             size: item.size,
+                            barcode: item.barcode,
                             stock: item.stock,
                             availableStock: currentStock
                         }
@@ -236,6 +239,7 @@ const productService = {
                         return {
                             productItemId: _item.productItemId,
                             size: _item.size,
+                            barcode: _item.barcode,
                             stock: _item.stock,
                             availableStock: currentStock
                         }
@@ -337,12 +341,7 @@ const productService = {
         const productItem = await prisma.productItem.findFirst({ where: { productItemId: productItemId } })
         if (!productItem) return 0
 
-        const totalPendingItems = await prisma.orderItem.aggregate({
-            where: { productItemId: productItemId, order: { status: OrderStatus.PENDING } },
-            _sum: { quantity: true }
-        })
-
-        return Math.max(productItem.stock - (totalPendingItems._sum.quantity ?? 0), 0)
+        return Math.max(productItem.stock - productItem.reservedQuantity, 0)
     },
 
     addNewProduct: async (
@@ -380,7 +379,8 @@ const productService = {
             await prisma.productItem.createMany({
                 data: sizes!.map(size => ({
                     rootProductId: newProduct.rootProductId,
-                    size: uppercaseWords(size)
+                    size: uppercaseWords(size),
+                    barcode: generateProductBarcode()
                 }))
             })
 
@@ -428,7 +428,8 @@ const productService = {
         } else {
             await prisma.productItem.create({
                 data: {
-                    rootProductId: newProduct.rootProductId
+                    rootProductId: newProduct.rootProductId,
+                    barcode: generateProductBarcode()
                 }
             })
         }

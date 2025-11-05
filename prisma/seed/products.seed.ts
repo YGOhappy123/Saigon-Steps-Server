@@ -1,334 +1,7 @@
-import { PrismaClient, ShoeGender, CouponType } from '@prisma/client'
+import { PrismaClient, ShoeGender } from '@prisma/client'
+import { generateProductBarcode } from '../../src/utils/stringHelpers'
 
-const prisma = new PrismaClient()
-
-const seedData = async () => {
-    // --- Staff Roles ---
-    await prisma.staffRole.createMany({
-        data: [
-            { name: 'Super Admin', isImmutable: true },
-            { name: 'Nhân Viên Quản Lý Kho', isImmutable: false },
-            { name: 'Nhân Viên Xử Lý Đơn Hàng', isImmutable: false },
-            { name: 'Nhân Viên Tư Vấn', isImmutable: false },
-            { name: 'Nhân Viên Marketing', isImmutable: false }
-        ]
-    })
-
-    // --- Accounts ---
-    await prisma.account.createMany({
-        data: [
-            { username: 'customer0001', password: '$2a$11$nkC/M88KMyKWGmd44/aQzeSuuwq7.mfCFoRpb8OGHykQG0JnEFROC', isActive: true },
-            { username: 'customer0002', password: '$2a$11$KlwjhvWsKbfIi647k3qUr.ia9ZdQLZYcgITuEpueBO52AoyAhU9OK', isActive: true },
-            { username: 'customer0003', password: '$2a$11$0BZ2SnQREPsbPRhVOhaaVeeSQAlyzsFADL595pKc70ZFd1zHaCcAa', isActive: true },
-            { username: 'customer0004', password: '$2a$11$Oz.G5fwD8zq38K0lUCIYD.QZZ4B2cmqFkJuC47653Ev7PGqs71Zra', isActive: true },
-            { username: 'customer0005', password: '$2b$10$OllPT0huDJmHKRg93KvFKuFzKhadFLA5zP2Q4F4Qp1/5q6w2ddoua', isActive: true },
-            { username: 'staff0001', password: '$2a$11$ySwhpRk89aWrAvHI0iRtNuCpABHLbtgYym3ptSBA2ybwUy5H18.A2', isActive: true },
-            { username: 'staff0002', password: '$2a$11$tths/WMBffLQUWt33aNrkOPDi2l/m3L2MGOVjn5gaP.SaOpSWu3Xa', isActive: true },
-            { username: 'staff0003', password: '$2a$11$yjR8nOPp206keajtK2oupO.5tTICOhPHn/57tzN.MvcFShAQ9sZxe', isActive: true },
-            { username: 'staff0004', password: '$2a$11$7rJW6QKXD0s8/1FTSYjSeuTJlQmVIJjFX8Pp0nPepDqzejE8cnLq2', isActive: true },
-            { username: 'staff0005', password: '$2a$11$zqXsN0LPHcMoAKEe5/5pdOBsjnv/HH1fa0.E98pPhoIGkUCW2lj4u', isActive: true },
-            { username: 'staff0006', password: '$2a$11$2X2QD.jtfFtjPY4Fz/hmkuoXe.GjpZscjs82RtegrLItV9R92fboW', isActive: true }
-        ]
-    })
-
-    // --- Customers ---
-    await prisma.customer.createMany({
-        data: [
-            {
-                name: 'Trần Thị Vân Anh',
-                email: 'vananhtt@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1748456563/avatar/uute8mhvnktvwyanwtef.jpg',
-                createdAt: new Date(),
-                accountId: 1
-            },
-            {
-                name: 'Phạm Thị Kiều Trang',
-                email: 'kieutrangpt@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1737043282/avatar/istockphoto-1395009090-612x612_cz9cl1.jpg',
-                createdAt: new Date(),
-                accountId: 2
-            },
-            {
-                name: 'Hà Huyền My',
-                email: 'huyenmyh@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1736128670/avatar/pexels-photo-573299_utp10s.jpg',
-                createdAt: new Date(),
-                accountId: 3
-            },
-            {
-                name: 'Lâm Chí Cường',
-                email: 'chicuongl@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1736128669/avatar/pexels-photo-1516680_ku3mbb.jpg',
-                createdAt: new Date(),
-                accountId: 4
-            },
-            {
-                name: 'Nguyễn Văn Minh',
-                email: 'vanminhn@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1736128668/avatar/pexels-photo-1680172_grg4ug.jpg',
-                createdAt: new Date(),
-                accountId: 5
-            }
-        ]
-    })
-
-    // --- Staffs ---
-    await prisma.staff.createMany({
-        data: [
-            {
-                createdBy: null,
-                name: 'Nguyễn Văn Vũ',
-                email: 'vanvun@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1752170940/avatar/photo-1742119897876-67e9935ac375_oiyq3t.avif',
-                roleId: 1,
-                createdAt: new Date(),
-                accountId: 6
-            },
-            {
-                createdBy: null,
-                name: 'Huỳnh Thị Thu Nga',
-                email: 'thungaht@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1752170987/avatar/photo-1676777455261-fcd8a99a9bca_z2t0de.jpg',
-                roleId: 1,
-                createdAt: new Date(),
-                accountId: 7
-            },
-            {
-                createdBy: 1,
-                name: 'Lê Thành Công',
-                email: 'thanhcongl@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1752170940/avatar/photo-1718209881006-f6e313e2e109_qjex5e.avif',
-                roleId: 2,
-                createdAt: new Date(),
-                accountId: 8
-            },
-            {
-                createdBy: 1,
-                name: 'Nguyễn Trần Anh Quân',
-                email: 'anhquannt@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1752426735/avatar/photo-1633332755192-727a05c4013d_p9ppsx.avif',
-                roleId: 3,
-                createdAt: new Date(),
-                accountId: 9
-            },
-            {
-                createdBy: 2,
-                name: 'Hà Ánh Tuyết',
-                email: 'anhtuyeth@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1752170940/avatar/photo-1718999398032-8fc0a58ed9c7_nezkcx.avif',
-                roleId: 4,
-                createdAt: new Date(),
-                accountId: 10
-            },
-            {
-                createdBy: 2,
-                name: 'Phan Thu Hương',
-                email: 'thuhuongp@gmail.com',
-                avatar: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1752170940/avatar/photo-1596304250579-8cb49baae3f2_bepdku.avif',
-                roleId: 5,
-                createdAt: new Date(),
-                accountId: 11
-            }
-        ]
-    })
-
-    // --- Customer Addresses ---
-    await prisma.customerAddress.createMany({
-        data: [
-            {
-                customerId: 1,
-                recipientName: 'Trần Thị Vân Anh',
-                phoneNumber: '0827376722',
-                city: 'thành phố Hà Nội',
-                ward: 'phường Ngọc Hà',
-                addressLine: '8 Ng. 64 - Vĩnh Phúc',
-                isDefault: true
-            },
-            {
-                customerId: 1,
-                recipientName: 'Trần Thị Vân Anh',
-                phoneNumber: '0827376712',
-                city: 'thành phố Hà Nội',
-                ward: 'phường Đống Đa',
-                addressLine: 'Xoan Cafe, số 5 ngõ 411 Trường Chinh',
-                isDefault: false
-            },
-            {
-                customerId: 2,
-                recipientName: 'Phạm Thị Kiều Trang',
-                phoneNumber: '0902125305',
-                city: 'tỉnh Thanh Hóa',
-                ward: 'phường Sầm Sơn',
-                addressLine: '151 Nguyễn Hồng Lễ',
-                isDefault: true
-            },
-            {
-                customerId: 3,
-                recipientName: 'Hà Huyền My',
-                phoneNumber: '0827775408',
-                city: 'tỉnh Long An',
-                ward: 'xã Hậu Nghĩa',
-                addressLine: '311 QLN2',
-                isDefault: true
-            },
-            {
-                customerId: 3,
-                recipientName: 'Lê Song Nguyên',
-                phoneNumber: '0969040220',
-                city: 'thành phố Hồ Chí Minh',
-                ward: 'phường Tăng Nhơn Phú',
-                addressLine: '35 Man Thiện',
-                isDefault: true
-            },
-            {
-                customerId: 4,
-                recipientName: 'Lâm Chí Cường',
-                phoneNumber: '0941710934',
-                city: 'thành phố Hồ Chí Minh',
-                ward: 'phường Tân Đông Hiệp',
-                addressLine: '64 Đường Nguyễn Thị Tươi',
-                isDefault: true
-            }
-        ]
-    })
-
-    // --- App Permissions ---
-    await prisma.appPermission.createMany({
-        data: [
-            // Authentication & staff roles
-            { code: 'ACCESS_ROLE_DASHBOARD_PAGE', name: 'Truy cập trang quản lý vai trò' }, //1
-            { code: 'ADD_NEW_ROLE', name: 'Thêm vai trò mới' },
-            { code: 'UPDATE_ROLE', name: 'Chỉnh sửa vai trò' },
-            { code: 'REMOVE_ROLE', name: 'Xóa vai trò' },
-
-            // Customers & advisory
-            { code: 'ACCESS_CUSTOMER_DASHBOARD_PAGE', name: 'Truy cập trang quản lý khách hàng' }, //5
-            { code: 'DEACTIVATE_CUSTOMER_ACCOUNT', name: 'Khóa tài khoản khách hàng' },
-            { code: 'ACCESS_ADVISORY_DASHBOARD_PAGE', name: 'Truy cập trang chăm sóc khách hàng' },
-            { code: 'CHAT_WITH_CUSTOMER', name: 'Nhắn tin tư vấn cho khách hàng' },
-
-            // Human resources
-            { code: 'ACCESS_STAFF_DASHBOARD_PAGE', name: 'Truy cập trang quản lý nhân sự' },
-            { code: 'ADD_NEW_STAFF', name: 'Tạo nhân viên mới' }, //10
-            { code: 'UPDATE_STAFF_INFORMATION', name: 'Cập nhật thông tin nhân viên' },
-            { code: 'CHANGE_STAFF_ROLE', name: 'Thay đổi vai trò của nhân viên' },
-            { code: 'DEACTIVATE_STAFF_ACCOUNT', name: 'Khóa tài khoản nhân viên' },
-            { code: 'MODIFY_PERSONAL_INFORMATION', name: 'Tự thay đổi thông tin cá nhân' },
-
-            // Categories
-            { code: 'ADD_NEW_SHOE_CATEGORY', name: 'Thêm danh mục giày dép mới' }, //15
-            { code: 'UPDATE_SHOE_CATEGORY', name: 'Cập nhật danh mục giày dép' },
-            { code: 'DELETE_SHOE_CATEGORY', name: 'Xóa danh mục giày dép' },
-
-            // Brands
-            { code: 'ADD_NEW_PRODUCT_BRAND', name: 'Thêm thương hiệu sản phẩm mới' },
-            { code: 'UPDATE_PRODUCT_BRAND', name: 'Cập nhật thương hiệu sản phẩm' },
-            { code: 'DELETE_PRODUCT_BRAND', name: 'Xóa thương hiệu sản phẩm' }, //20
-
-            // Products
-            { code: 'ADD_NEW_PRODUCT', name: 'Thêm sản phẩm mới' },
-            { code: 'UPDATE_PRODUCT_INFORMATION', name: 'Cập nhật thông tin sản phẩm' },
-            { code: 'UPDATE_PRODUCT_PRICE', name: 'Cập nhật giá sản phẩm' },
-            { code: 'DELETE_PRODUCT', name: 'Xóa sản phẩm' },
-
-            // Orders
-            { code: 'ACCESS_ORDER_DASHBOARD_PAGE', name: 'Truy cập trang quản lý đơn hàng' }, //25
-            { code: 'PROCESS_ORDER', name: 'Xử lý đơn hàng' },
-
-            // Product imports
-            { code: 'ACCESS_IMPORT_DASHBOARD_PAGE', name: 'Truy cập trang quản lý đơn nhập hàng' },
-            { code: 'ADD_NEW_IMPORT', name: 'Thêm đơn nhập hàng mới' },
-
-            // Promotions
-            { code: 'ADD_NEW_PROMOTION', name: 'Thêm chương trình khuyến mãi mới' },
-            { code: 'UPDATE_PROMOTION', name: 'Cập nhật chương trình khuyến mãi' }, //30
-            { code: 'DISABLE_PROMOTION', name: 'Dừng chương trình khuyến mãi' },
-
-            // Coupons
-            { code: 'ACCESS_COUPON_DASHBOARD_PAGE', name: 'Truy cập trang quản lý phiếu giảm giá' },
-            { code: 'ADD_NEW_COUPON', name: 'Thêm phiếu giảm giá mới' },
-            { code: 'DISABLE_COUPON', name: 'Khóa phiếu giảm giá' },
-
-            // Stock
-            { code: 'ACCESS_DAMAGE_REPORT_DASHBOARD_PAGE', name: 'Truy cập trang quản lý báo cáo thiệt hại' }, //35
-            { code: 'ADD_NEW_DAMAGE_REPORT', name: 'Thêm báo cáo thiệt hại mới' },
-
-            // Statistics
-            { code: 'ACCESS_PRODUCT_STATISTIC_PAGE', name: 'Truy cập trang thống kê sản phẩm' },
-            { code: 'ACCESS_REVENUE_STATISTIC_PAGE', name: 'Truy cập trang thống kê doanh thu' } //38
-        ]
-    })
-
-    // --- Role Permissions ---
-    await prisma.rolePermission.createMany({
-        data: [
-            // Super Admin - full permissions
-            { roleId: 1, permissionId: 1 },
-            { roleId: 1, permissionId: 2 },
-            { roleId: 1, permissionId: 3 },
-            { roleId: 1, permissionId: 4 },
-            { roleId: 1, permissionId: 5 },
-            { roleId: 1, permissionId: 6 },
-            { roleId: 1, permissionId: 7 },
-            { roleId: 1, permissionId: 8 },
-            { roleId: 1, permissionId: 9 },
-            { roleId: 1, permissionId: 10 },
-            { roleId: 1, permissionId: 11 },
-            { roleId: 1, permissionId: 12 },
-            { roleId: 1, permissionId: 13 },
-            { roleId: 1, permissionId: 14 },
-            { roleId: 1, permissionId: 15 },
-            { roleId: 1, permissionId: 16 },
-            { roleId: 1, permissionId: 17 },
-            { roleId: 1, permissionId: 18 },
-            { roleId: 1, permissionId: 19 },
-            { roleId: 1, permissionId: 20 },
-            { roleId: 1, permissionId: 21 },
-            { roleId: 1, permissionId: 22 },
-            { roleId: 1, permissionId: 23 },
-            { roleId: 1, permissionId: 24 },
-            { roleId: 1, permissionId: 25 },
-            { roleId: 1, permissionId: 26 },
-            { roleId: 1, permissionId: 27 },
-            { roleId: 1, permissionId: 28 },
-            { roleId: 1, permissionId: 29 },
-            { roleId: 1, permissionId: 30 },
-            { roleId: 1, permissionId: 31 },
-            { roleId: 1, permissionId: 32 },
-            { roleId: 1, permissionId: 33 },
-            { roleId: 1, permissionId: 34 },
-            { roleId: 1, permissionId: 35 },
-            { roleId: 1, permissionId: 36 },
-            { roleId: 1, permissionId: 37 },
-            { roleId: 1, permissionId: 38 },
-
-            // Warehouse Staff - inventory and damage report management
-            { roleId: 2, permissionId: 27 },
-            { roleId: 2, permissionId: 28 },
-            { roleId: 2, permissionId: 35 },
-            { roleId: 2, permissionId: 36 },
-
-            // Order Processing Staff - order management
-            { roleId: 3, permissionId: 25 },
-            { roleId: 3, permissionId: 26 },
-
-            // Advisory Staff - customer care and advisory
-            { roleId: 4, permissionId: 5 },
-            { roleId: 4, permissionId: 7 },
-            { roleId: 4, permissionId: 8 },
-            { roleId: 4, permissionId: 32 },
-
-            // Marketing Staff - promotions and coupons
-            { roleId: 5, permissionId: 29 },
-            { roleId: 5, permissionId: 30 },
-            { roleId: 5, permissionId: 31 },
-            { roleId: 5, permissionId: 32 },
-            { roleId: 5, permissionId: 33 },
-            { roleId: 5, permissionId: 34 },
-            { roleId: 5, permissionId: 37 }
-        ]
-    })
-
+export const seedBrandsAndCategories = async (prisma: PrismaClient) => {
     // --- Product Brands ---
     await prisma.productBrand.createMany({
         data: [
@@ -371,12 +44,30 @@ const seedData = async () => {
             {
                 name: 'New Balance',
                 description:
-                    'New Balance là thương hiệu giày thể thao lâu đời đến từ Mỹ, được thành lập năm 1906 tại Boston, Massachusetts. Với triết lý “đặt sự thoải mái và hiệu suất lên hàng đầu”, New Balance nổi tiếng nhờ những đôi giày mang phong cách cổ điển kết hợp công nghệ hiện đại, mang lại cảm giác êm ái và ổn định cho người mang. Thương hiệu này tập trung vào chất lượng, độ bền và sự phù hợp cho mọi hoạt động — từ chạy bộ, tập luyện cho đến thời trang hàng ngày. New Balance cũng được biết đến với việc duy trì sản xuất tại Mỹ và Anh, thể hiện cam kết về tay nghề và giá trị truyền thống.',
+                    'New Balance là thương hiệu giày thể thao lâu đời đến từ Mỹ, được thành lập năm 1906 tại Boston, Massachusetts. Với triết lý "đặt sự thoải mái và hiệu suất lên hàng đầu", New Balance nổi tiếng nhờ những đôi giày mang phong cách cổ điển kết hợp công nghệ hiện đại, mang lại cảm giác êm ái và ổn định cho người mang. Thương hiệu này tập trung vào chất lượng, độ bền và sự phù hợp cho mọi hoạt động — từ chạy bộ, tập luyện cho đến thời trang hàng ngày. New Balance cũng được biết đến với việc duy trì sản xuất tại Mỹ và Anh, thể hiện cam kết về tay nghề và giá trị truyền thống.',
                 logoUrl: 'https://res.cloudinary.com/dagaqa0ly/image/upload/v1760456916/brand/newbalance_sy8bpk.png'
             }
         ]
     })
 
+    // --- Shoe Categories ---
+    await prisma.shoeCategory.createMany({
+        data: [
+            { name: 'Giày sneaker', createdBy: 1 }, //1
+            { name: 'Dép sandal', createdBy: 1 },
+            { name: 'Dép xỏ ngón', createdBy: 1 },
+            { name: 'Giày Tây', createdBy: 1 },
+            { name: 'Giày cao gót', createdBy: 2 }, //5
+            { name: 'Giày búp bê', createdBy: 2 },
+            { name: 'Giày boots', createdBy: 2 },
+            { name: 'Giày bệt', createdBy: 2 },
+            { name: 'Giày trẻ em', createdBy: 1 },
+            { name: 'Dép crocs', createdBy: 1 } //10
+        ]
+    })
+}
+
+export const seedProducts = async (prisma: PrismaClient) => {
     // --- Root Products ---
     await prisma.rootProduct.createMany({
         data: [
@@ -822,10 +513,10 @@ const seedData = async () => {
             },
             {
                 brandId: 4,
-                name: "Giày Thời Trang Nữ Gosto GFW018788",
-                slug: "giay-thoi-trang-nu-gosto-gfw018788",
+                name: 'Giày Thời Trang Nữ Gosto GFW018788',
+                slug: 'giay-thoi-trang-nu-gosto-gfw018788',
                 description:
-                    "Giày Thời Trang Nữ Gosto GFW018788 mang nét hiện đại và thời thượng với thiết kế nâng cấp từ dòng classic. Thân giày được chế tác tinh xảo từ chất liệu da tổng hợp cao cấp, phối hợp đường may tỉ mỉ, tạo sự sang trọng. Màu sắc trẻ trung dễ phối đồ, thích hợp cho cả ngày dài năng động và buổi tối dạo phố. Một lựa chọn hoàn hảo cho cô nàng yêu phong cách khác biệt.",
+                    'Giày Thời Trang Nữ Gosto GFW018788 mang nét hiện đại và thời thượng với thiết kế nâng cấp từ dòng classic. Thân giày được chế tác tinh xảo từ chất liệu da tổng hợp cao cấp, phối hợp đường may tỉ mỉ, tạo sự sang trọng. Màu sắc trẻ trung dễ phối đồ, thích hợp cho cả ngày dài năng động và buổi tối dạo phố. Một lựa chọn hoàn hảo cho cô nàng yêu phong cách khác biệt.',
                 price: 599000,
                 isAccessory: false,
                 createdBy: 2
@@ -1227,288 +918,274 @@ const seedData = async () => {
     // --- Product Items ---
     await prisma.productItem.createMany({
         data: [
-            { rootProductId: 1, size: '38.5', stock: 5 },
-            { rootProductId: 1, size: '39', stock: 10 },
-            { rootProductId: 1, size: '40', stock: 10 },
-            { rootProductId: 1, size: '40.5', stock: 3 },
-            { rootProductId: 1, size: '41', stock: 10 },
-            { rootProductId: 1, size: '42', stock: 15 },
-            { rootProductId: 1, size: '42.5', stock: 5 },
-            { rootProductId: 1, size: '43', stock: 10 },
-            { rootProductId: 1, size: '44', stock: 9 },
-            { rootProductId: 2, stock: 20 },
-            { rootProductId: 3, stock: 10 },
-            { rootProductId: 4, size: '29.5', stock: 5 },
-            { rootProductId: 4, size: '31', stock: 7 },
-            { rootProductId: 4, size: '32', stock: 7 },
-            { rootProductId: 4, size: '33', stock: 12 },
-            { rootProductId: 4, size: '33.5', stock: 5 },
-            { rootProductId: 4, size: '34', stock: 10 },
-            { rootProductId: 4, size: '35', stock: 8 },
-            { rootProductId: 5, size: '35', stock: 10 },
-            { rootProductId: 5, size: '36', stock: 20 },
-            { rootProductId: 5, size: '37', stock: 22 },
-            { rootProductId: 5, size: '38', stock: 18 },
-            { rootProductId: 5, size: '39', stock: 10 },
-            { rootProductId: 6, stock: 40 },
-            { rootProductId: 7, stock: 17 },
-            { rootProductId: 8, stock: 50 },
-            { rootProductId: 9, size: '35', stock: 20 },
-            { rootProductId: 9, size: '36', stock: 25 },
-            { rootProductId: 9, size: '37', stock: 40 },
-            { rootProductId: 9, size: '38', stock: 40 },
-            { rootProductId: 9, size: '39', stock: 15 },
-            { rootProductId: 10, size: '40', stock: 15 },
-            { rootProductId: 10, size: '41', stock: 12 },
-            { rootProductId: 10, size: '42', stock: 35 },
-            { rootProductId: 10, size: '43', stock: 35 },
-            { rootProductId: 10, size: '44', stock: 20 },
-            { rootProductId: 11, size: '42', stock: 30 },
-            { rootProductId: 11, size: '42.5', stock: 10 },
-            { rootProductId: 11, size: '43', stock: 20 },
-            { rootProductId: 11, size: '44', stock: 20 },
-            { rootProductId: 11, size: '44.5', stock: 10 },
-            { rootProductId: 12, size: '42', stock: 20 },
-            { rootProductId: 12, size: '43', stock: 22 },
-            { rootProductId: 12, size: '44', stock: 40 },
-            { rootProductId: 12, size: '44.5', stock: 16 },
-            { rootProductId: 13, size: '40', stock: 30 },
-            { rootProductId: 13, size: '40.5', stock: 13 },
-            { rootProductId: 13, size: '41', stock: 40 },
-            { rootProductId: 13, size: '42', stock: 30 },
-            { rootProductId: 13, size: '42.5', stock: 10 },
-            { rootProductId: 14, size: '38.5', stock: 12 },
-            { rootProductId: 14, size: '39', stock: 34 },
-            { rootProductId: 14, size: '40', stock: 40 },
-            { rootProductId: 14, size: '40.5', stock: 30 },
-            { rootProductId: 15, size: '41', stock: 20 },
-            { rootProductId: 15, size: '42', stock: 40 },
-            { rootProductId: 15, size: '42.5', stock: 10 },
-            { rootProductId: 15, size: '43', stock: 25 },
-            { rootProductId: 15, size: '44', stock: 30 },
-            { rootProductId: 16, size: '41', stock: 20 },
-            { rootProductId: 16, size: '42', stock: 20 },
-            { rootProductId: 16, size: '43', stock: 48 },
-            { rootProductId: 16, size: '43.5', stock: 10 },
-            { rootProductId: 16, size: '44', stock: 25 },
-            { rootProductId: 16, size: '44.5', stock: 20 },
-            { rootProductId: 17, size: '38.5', stock: 15 },
-            { rootProductId: 17, size: '39', stock: 30 },
-            { rootProductId: 17, size: '40', stock: 41 },
-            { rootProductId: 17, size: '40.5', stock: 10 },
-            { rootProductId: 17, size: '41', stock: 20 },
-            { rootProductId: 17, size: '42', stock: 30 },
-            { rootProductId: 18, size: '36', stock: 25 },
-            { rootProductId: 18, size: '36.5', stock: 16 },
-            { rootProductId: 18, size: '37', stock: 30 },
-            { rootProductId: 18, size: '38', stock: 35 },
-            { rootProductId: 18, size: '38.5', stock: 14 },
-            { rootProductId: 18, size: '39', stock: 20 },
-            { rootProductId: 18, size: '40', stock: 15 },
-            { rootProductId: 18, size: '41', stock: 10 },
-            { rootProductId: 19, size: '38', stock: 30 },
-            { rootProductId: 19, size: '38.5', stock: 10 },
-            { rootProductId: 19, size: '39', stock: 40 },
-            { rootProductId: 19, size: '40', stock: 41 },
-            { rootProductId: 19, size: '40.5', stock: 23 },
-            { rootProductId: 19, size: '41', stock: 45 },
-            { rootProductId: 19, size: '42', stock: 33 },
-            { rootProductId: 19, size: '42.5', stock: 10 },
-            { rootProductId: 19, size: '43', stock: 20 },
-            { rootProductId: 20, size: '40', stock: 20 },
-            { rootProductId: 20, size: '41', stock: 30 },
-            { rootProductId: 20, size: '42', stock: 47 },
-            { rootProductId: 20, size: '42.5', stock: 10 },
-            { rootProductId: 20, size: '43', stock: 30 },
-            { rootProductId: 20, size: '44', stock: 18 },
-            { rootProductId: 20, size: '44.5', stock: 10 },
-            { rootProductId: 20, size: '45', stock: 15 },
-            { rootProductId: 21, size: '36', stock: 42 },
-            { rootProductId: 21, size: '36.5', stock: 15 },
-            { rootProductId: 21, size: '37', stock: 30 },
-            { rootProductId: 21, size: '38', stock: 35 },
-            { rootProductId: 21, size: '38.5', stock: 10 },
-            { rootProductId: 21, size: '39', stock: 20 },
-            { rootProductId: 21, size: '40', stock: 20 },
-            { rootProductId: 21, size: '41', stock: 23 },
-            { rootProductId: 21, size: '42', stock: 41 },
-            { rootProductId: 21, size: '43', stock: 43 },
-            { rootProductId: 22, size: '39', stock: 20 },
-            { rootProductId: 22, size: '40', stock: 30 },
-            { rootProductId: 22, size: '41', stock: 25 },
-            { rootProductId: 22, size: '42', stock: 30 },
-            { rootProductId: 22, size: '43', stock: 15 },
-            { rootProductId: 22, size: '44', stock: 10 },
-            { rootProductId: 23, size: '39', stock: 31 },
-            { rootProductId: 23, size: '40', stock: 44 },
-            { rootProductId: 23, size: '41', stock: 30 },
-            { rootProductId: 23, size: '42', stock: 20 },
-            { rootProductId: 23, size: '43', stock: 17 },
-            { rootProductId: 24, size: '38', stock: 38 },
-            { rootProductId: 24, size: '39', stock: 30 },
-            { rootProductId: 24, size: '40', stock: 25 },
-            { rootProductId: 24, size: '41', stock: 20 },
-            { rootProductId: 24, size: '42', stock: 15 },
-            { rootProductId: 24, size: '43', stock: 10 },
-            { rootProductId: 25, size: '38', stock: 28 },
-            { rootProductId: 25, size: '39', stock: 40 },
-            { rootProductId: 25, size: '40', stock: 45 },
-            { rootProductId: 25, size: '41', stock: 10 },
-            { rootProductId: 25, size: '42', stock: 55 },
-            { rootProductId: 25, size: '43', stock: 20 },
-            { rootProductId: 26, size: '39', stock: 30 },
-            { rootProductId: 26, size: '40', stock: 41 },
-            { rootProductId: 26, size: '41', stock: 50 },
-            { rootProductId: 26, size: '42', stock: 41 },
-            { rootProductId: 26, size: '43', stock: 23 },
-            { rootProductId: 27, size: '39', stock: 30 },
-            { rootProductId: 27, size: '40', stock: 20 },
-            { rootProductId: 27, size: '41', stock: 34 },
-            { rootProductId: 27, size: '42', stock: 30 },
-            { rootProductId: 27, size: '43', stock: 25 },
-            { rootProductId: 27, size: '44', stock: 43 },
-            { rootProductId: 28, size: '39', stock: 31 },
-            { rootProductId: 28, size: '40', stock: 23 },
-            { rootProductId: 28, size: '41', stock: 30 },
-            { rootProductId: 28, size: '42', stock: 35 },
-            { rootProductId: 28, size: '43', stock: 25 },
-            { rootProductId: 28, size: '44', stock: 44 },
-            { rootProductId: 29, size: '39', stock: 31 },
-            { rootProductId: 29, size: '40', stock: 23 },
-            { rootProductId: 29, size: '41', stock: 31 },
-            { rootProductId: 29, size: '42', stock: 35 },
-            { rootProductId: 29, size: '43', stock: 20 },
-            { rootProductId: 29, size: '44', stock: 40 },
-            { rootProductId: 29, size: '45', stock: 20 },
-            { rootProductId: 30, size: '39', stock: 31 },
-            { rootProductId: 30, size: '40', stock: 33 },
-            { rootProductId: 30, size: '41', stock: 41 },
-            { rootProductId: 30, size: '42', stock: 35 },
-            { rootProductId: 30, size: '43', stock: 30 },
-            { rootProductId: 30, size: '44', stock: 30 },
-            { rootProductId: 31, size: '39', stock: 40 },
-            { rootProductId: 31, size: '40', stock: 33 },
-            { rootProductId: 31, size: '41', stock: 40 },
-            { rootProductId: 31, size: '42', stock: 30 },
-            { rootProductId: 31, size: '43', stock: 30 },
-            { rootProductId: 31, size: '44', stock: 20 },
-            { rootProductId: 32, size: '40', stock: 40 },
-            { rootProductId: 32, size: '41', stock: 30 },
-            { rootProductId: 32, size: '42', stock: 46 },
-            { rootProductId: 32, size: '42.5', stock: 10 },
-            { rootProductId: 32, size: '43', stock: 41 },
-            { rootProductId: 33, size: '39', stock: 20 },
-            { rootProductId: 33, size: '40.5', stock: 25 },
-            { rootProductId: 33, size: '41', stock: 25 },
-            { rootProductId: 33, size: '42', stock: 30 },
-            { rootProductId: 33, size: '43', stock: 25 },
-            { rootProductId: 33, size: '44', stock: 22 },
-            { rootProductId: 33, size: '44.5', stock: 5 },
-            { rootProductId: 34, size: '39', stock: 24 },
-            { rootProductId: 34, size: '40', stock: 41 },
-            { rootProductId: 34, size: '40.5', stock: 25 },
-            { rootProductId: 34, size: '41', stock: 45 },
-            { rootProductId: 34, size: '42', stock: 30 },
-            { rootProductId: 35, size: '38.5', stock: 20 },
-            { rootProductId: 35, size: '39', stock: 30 },
-            { rootProductId: 35, size: '40', stock: 40 },
-            { rootProductId: 35, size: '40.5', stock: 15 },
-            { rootProductId: 35, size: '41', stock: 20 },
-            { rootProductId: 35, size: '42', stock: 33 },
-            { rootProductId: 35, size: '42.5', stock: 10 },
-            { rootProductId: 35, size: '43', stock: 40 },
-            { rootProductId: 35, size: '44', stock: 20 },
-            { rootProductId: 35, size: '45', stock: 10 },
-            { rootProductId: 36, size: '38.5', stock: 15 },
-            { rootProductId: 36, size: '39', stock: 20 },
-            { rootProductId: 36, size: '40', stock: 30 },
-            { rootProductId: 36, size: '40.5', stock: 10 },
-            { rootProductId: 36, size: '41', stock: 40 },
-            { rootProductId: 36, size: '42', stock: 25 },
-            { rootProductId: 36, size: '43', stock: 45 },
-            { rootProductId: 37, size: '38', stock: 20 },
-            { rootProductId: 37, size: '39', stock: 40 },
-            { rootProductId: 37, size: '39.5', stock: 20 },
-            { rootProductId: 37, size: '40', stock: 30 },
-            { rootProductId: 37, size: '41', stock: 25 },
-            { rootProductId: 37, size: '41.5', stock: 15 },
-            { rootProductId: 37, size: '42', stock: 37 },
-            { rootProductId: 38, size: '36.5', stock: 20 },
-            { rootProductId: 38, size: '37', stock: 25 },
-            { rootProductId: 38, size: '37.5', stock: 29 },
-            { rootProductId: 38, size: '38', stock: 31 },
-            { rootProductId: 38, size: '39', stock: 20 },
-            { rootProductId: 38, size: '40', stock: 30 },
-            { rootProductId: 39, size: '35', stock: 20 },
-            { rootProductId: 39, size: '36', stock: 30 },
-            { rootProductId: 39, size: '36.5', stock: 30 },
-            { rootProductId: 39, size: '37', stock: 40 },
-            { rootProductId: 39, size: '37.5', stock: 41 },
-            { rootProductId: 39, size: '38', stock: 30 },
-            { rootProductId: 39, size: '38.5', stock: 30 },
-            { rootProductId: 39, size: '39', stock: 40 },
-            { rootProductId: 39, size: '40', stock: 24 },
-            { rootProductId: 39, size: '41', stock: 31 },
-            { rootProductId: 40, size: '36', stock: 20 },
-            { rootProductId: 40, size: '37', stock: 30 },
-            { rootProductId: 40, size: '38', stock: 40 },
-            { rootProductId: 40, size: '39', stock: 30 },
-            { rootProductId: 40, size: '40', stock: 20 },
-            { rootProductId: 40, size: '41', stock: 10 },
-            { rootProductId: 41, size: '36', stock: 20 },
-            { rootProductId: 41, size: '36.5', stock: 10 },
-            { rootProductId: 41, size: '37', stock: 30 },
-            { rootProductId: 41, size: '37.5', stock: 25 },
-            { rootProductId: 41, size: '38', stock: 30 },
-            { rootProductId: 41, size: '39', stock: 20 },
-            { rootProductId: 41, size: '40', stock: 35 },
-            { rootProductId: 41, size: '40.5', stock: 10 },
-            { rootProductId: 41, size: '41', stock: 20 },
-            { rootProductId: 41, size: '42', stock: 35 },
-            { rootProductId: 41, size: '43', stock: 35 },
-            { rootProductId: 41, size: '44', stock: 30 },
-            { rootProductId: 42, size: '39', stock: 20 },
-            { rootProductId: 42, size: '40', stock: 30 },
-            { rootProductId: 42, size: '41', stock: 25 },
-            { rootProductId: 42, size: '42', stock: 30 },
-            { rootProductId: 42, size: '43', stock: 40 },
-            { rootProductId: 42, size: '44', stock: 20 },
-            { rootProductId: 43, size: '35', stock: 20 },
-            { rootProductId: 43, size: '36', stock: 30 },
-            { rootProductId: 43, size: '37', stock: 25 },
-            { rootProductId: 43, size: '38', stock: 40 },
-            { rootProductId: 43, size: '39', stock: 45 },
-            { rootProductId: 43, size: '40', stock: 20 },
-            { rootProductId: 44, size: '35', stock: 25 },
-            { rootProductId: 44, size: '36', stock: 25 },
-            { rootProductId: 44, size: '37', stock: 30 },
-            { rootProductId: 44, size: '38', stock: 45 },
-            { rootProductId: 44, size: '39', stock: 30 },
-            { rootProductId: 44, size: '40', stock: 10 },
-            { rootProductId: 45, size: '35', stock: 20 },
-            { rootProductId: 45, size: '36', stock: 30 },
-            { rootProductId: 45, size: '37', stock: 25 },
-            { rootProductId: 45, size: '38', stock: 40 },
-            { rootProductId: 45, size: '39', stock: 20 }
+            { rootProductId: 1, size: '38.5', stock: 5, barcode: generateProductBarcode() },
+            { rootProductId: 1, size: '39', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 1, size: '40', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 1, size: '40.5', stock: 3, barcode: generateProductBarcode() },
+            { rootProductId: 1, size: '41', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 1, size: '42', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 1, size: '42.5', stock: 5, barcode: generateProductBarcode() },
+            { rootProductId: 1, size: '43', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 1, size: '44', stock: 9, barcode: generateProductBarcode() },
+            { rootProductId: 2, stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 3, stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 4, size: '29.5', stock: 5, barcode: generateProductBarcode() },
+            { rootProductId: 4, size: '31', stock: 7, barcode: generateProductBarcode() },
+            { rootProductId: 4, size: '32', stock: 7, barcode: generateProductBarcode() },
+            { rootProductId: 4, size: '33', stock: 12, barcode: generateProductBarcode() },
+            { rootProductId: 4, size: '33.5', stock: 5, barcode: generateProductBarcode() },
+            { rootProductId: 4, size: '34', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 4, size: '35', stock: 8, barcode: generateProductBarcode() },
+            { rootProductId: 5, size: '35', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 5, size: '36', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 5, size: '37', stock: 22, barcode: generateProductBarcode() },
+            { rootProductId: 5, size: '38', stock: 18, barcode: generateProductBarcode() },
+            { rootProductId: 5, size: '39', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 6, stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 7, stock: 17, barcode: generateProductBarcode() },
+            { rootProductId: 8, stock: 50, barcode: generateProductBarcode() },
+            { rootProductId: 9, size: '35', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 9, size: '36', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 9, size: '37', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 9, size: '38', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 9, size: '39', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 10, size: '40', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 10, size: '41', stock: 12, barcode: generateProductBarcode() },
+            { rootProductId: 10, size: '42', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 10, size: '43', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 10, size: '44', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 11, size: '42', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 11, size: '42.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 11, size: '43', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 11, size: '44', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 11, size: '44.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 12, size: '42', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 12, size: '43', stock: 22, barcode: generateProductBarcode() },
+            { rootProductId: 12, size: '44', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 12, size: '44.5', stock: 16, barcode: generateProductBarcode() },
+            { rootProductId: 13, size: '40', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 13, size: '40.5', stock: 13, barcode: generateProductBarcode() },
+            { rootProductId: 13, size: '41', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 13, size: '42', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 13, size: '42.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 14, size: '38.5', stock: 12, barcode: generateProductBarcode() },
+            { rootProductId: 14, size: '39', stock: 34, barcode: generateProductBarcode() },
+            { rootProductId: 14, size: '40', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 14, size: '40.5', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 15, size: '41', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 15, size: '42', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 15, size: '42.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 15, size: '43', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 15, size: '44', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 16, size: '41', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 16, size: '42', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 16, size: '43', stock: 48, barcode: generateProductBarcode() },
+            { rootProductId: 16, size: '43.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 16, size: '44', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 16, size: '44.5', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 17, size: '38.5', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 17, size: '39', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 17, size: '40', stock: 41, barcode: generateProductBarcode() },
+            { rootProductId: 17, size: '40.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 17, size: '41', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 17, size: '42', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 18, size: '36', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 18, size: '36.5', stock: 16, barcode: generateProductBarcode() },
+            { rootProductId: 18, size: '37', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 18, size: '38', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 18, size: '38.5', stock: 14, barcode: generateProductBarcode() },
+            { rootProductId: 18, size: '39', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 18, size: '40', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 18, size: '41', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 19, size: '38', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 19, size: '38.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 19, size: '39', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 19, size: '40', stock: 41, barcode: generateProductBarcode() },
+            { rootProductId: 19, size: '40.5', stock: 23, barcode: generateProductBarcode() },
+            { rootProductId: 19, size: '41', stock: 45, barcode: generateProductBarcode() },
+            { rootProductId: 19, size: '42', stock: 33, barcode: generateProductBarcode() },
+            { rootProductId: 19, size: '42.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 19, size: '43', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 20, size: '40', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 20, size: '41', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 20, size: '42', stock: 47, barcode: generateProductBarcode() },
+            { rootProductId: 20, size: '42.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 20, size: '43', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 20, size: '44', stock: 18, barcode: generateProductBarcode() },
+            { rootProductId: 20, size: '44.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 20, size: '45', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '36', stock: 42, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '36.5', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '37', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '38', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '38.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '39', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '40', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '41', stock: 23, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '42', stock: 41, barcode: generateProductBarcode() },
+            { rootProductId: 21, size: '43', stock: 43, barcode: generateProductBarcode() },
+            { rootProductId: 22, size: '39', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 22, size: '40', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 22, size: '41', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 22, size: '42', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 22, size: '43', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 22, size: '44', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 23, size: '39', stock: 31, barcode: generateProductBarcode() },
+            { rootProductId: 23, size: '40', stock: 44, barcode: generateProductBarcode() },
+            { rootProductId: 23, size: '41', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 23, size: '42', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 23, size: '43', stock: 17, barcode: generateProductBarcode() },
+            { rootProductId: 24, size: '38', stock: 38, barcode: generateProductBarcode() },
+            { rootProductId: 24, size: '39', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 24, size: '40', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 24, size: '41', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 24, size: '42', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 24, size: '43', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 25, size: '38', stock: 28, barcode: generateProductBarcode() },
+            { rootProductId: 25, size: '39', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 25, size: '40', stock: 45, barcode: generateProductBarcode() },
+            { rootProductId: 25, size: '41', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 25, size: '42', stock: 55, barcode: generateProductBarcode() },
+            { rootProductId: 25, size: '43', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 26, size: '39', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 26, size: '40', stock: 41, barcode: generateProductBarcode() },
+            { rootProductId: 26, size: '41', stock: 50, barcode: generateProductBarcode() },
+            { rootProductId: 26, size: '42', stock: 41, barcode: generateProductBarcode() },
+            { rootProductId: 26, size: '43', stock: 23, barcode: generateProductBarcode() },
+            { rootProductId: 27, size: '39', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 27, size: '40', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 27, size: '41', stock: 34, barcode: generateProductBarcode() },
+            { rootProductId: 27, size: '42', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 27, size: '43', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 27, size: '44', stock: 43, barcode: generateProductBarcode() },
+            { rootProductId: 28, size: '39', stock: 31, barcode: generateProductBarcode() },
+            { rootProductId: 28, size: '40', stock: 23, barcode: generateProductBarcode() },
+            { rootProductId: 28, size: '41', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 28, size: '42', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 28, size: '43', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 28, size: '44', stock: 44, barcode: generateProductBarcode() },
+            { rootProductId: 29, size: '39', stock: 31, barcode: generateProductBarcode() },
+            { rootProductId: 29, size: '40', stock: 23, barcode: generateProductBarcode() },
+            { rootProductId: 29, size: '41', stock: 31, barcode: generateProductBarcode() },
+            { rootProductId: 29, size: '42', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 29, size: '43', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 29, size: '44', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 29, size: '45', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 30, size: '39', stock: 31, barcode: generateProductBarcode() },
+            { rootProductId: 30, size: '40', stock: 33, barcode: generateProductBarcode() },
+            { rootProductId: 30, size: '41', stock: 41, barcode: generateProductBarcode() },
+            { rootProductId: 30, size: '42', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 30, size: '43', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 30, size: '44', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 31, size: '39', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 31, size: '40', stock: 33, barcode: generateProductBarcode() },
+            { rootProductId: 31, size: '41', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 31, size: '42', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 31, size: '43', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 31, size: '44', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 32, size: '40', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 32, size: '41', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 32, size: '42', stock: 46, barcode: generateProductBarcode() },
+            { rootProductId: 32, size: '42.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 32, size: '43', stock: 41, barcode: generateProductBarcode() },
+            { rootProductId: 33, size: '39', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 33, size: '40.5', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 33, size: '41', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 33, size: '42', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 33, size: '43', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 33, size: '44', stock: 22, barcode: generateProductBarcode() },
+            { rootProductId: 33, size: '44.5', stock: 5, barcode: generateProductBarcode() },
+            { rootProductId: 34, size: '39', stock: 24, barcode: generateProductBarcode() },
+            { rootProductId: 34, size: '40', stock: 41, barcode: generateProductBarcode() },
+            { rootProductId: 34, size: '40.5', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 34, size: '41', stock: 45, barcode: generateProductBarcode() },
+            { rootProductId: 34, size: '42', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '38.5', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '39', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '40', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '40.5', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '41', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '42', stock: 33, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '42.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '43', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '44', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 35, size: '45', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 36, size: '38.5', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 36, size: '39', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 36, size: '40', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 36, size: '40.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 36, size: '41', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 36, size: '42', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 36, size: '43', stock: 45, barcode: generateProductBarcode() },
+            { rootProductId: 37, size: '38', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 37, size: '39', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 37, size: '39.5', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 37, size: '40', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 37, size: '41', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 37, size: '41.5', stock: 15, barcode: generateProductBarcode() },
+            { rootProductId: 37, size: '42', stock: 37, barcode: generateProductBarcode() },
+            { rootProductId: 38, size: '36.5', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 38, size: '37', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 38, size: '37.5', stock: 29, barcode: generateProductBarcode() },
+            { rootProductId: 38, size: '38', stock: 31, barcode: generateProductBarcode() },
+            { rootProductId: 38, size: '39', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 38, size: '40', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '35', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '36', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '36.5', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '37', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '37.5', stock: 41, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '38', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '38.5', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '39', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '40', stock: 24, barcode: generateProductBarcode() },
+            { rootProductId: 39, size: '41', stock: 31, barcode: generateProductBarcode() },
+            { rootProductId: 40, size: '36', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 40, size: '37', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 40, size: '38', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 40, size: '39', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 40, size: '40', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 40, size: '41', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '36', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '36.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '37', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '37.5', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '38', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '39', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '40', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '40.5', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '41', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '42', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '43', stock: 35, barcode: generateProductBarcode() },
+            { rootProductId: 41, size: '44', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 42, size: '39', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 42, size: '40', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 42, size: '41', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 42, size: '42', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 42, size: '43', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 42, size: '44', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 43, size: '35', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 43, size: '36', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 43, size: '37', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 43, size: '38', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 43, size: '39', stock: 45, barcode: generateProductBarcode() },
+            { rootProductId: 43, size: '40', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 44, size: '35', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 44, size: '36', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 44, size: '37', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 44, size: '38', stock: 45, barcode: generateProductBarcode() },
+            { rootProductId: 44, size: '39', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 44, size: '40', stock: 10, barcode: generateProductBarcode() },
+            { rootProductId: 45, size: '35', stock: 20, barcode: generateProductBarcode() },
+            { rootProductId: 45, size: '36', stock: 30, barcode: generateProductBarcode() },
+            { rootProductId: 45, size: '37', stock: 25, barcode: generateProductBarcode() },
+            { rootProductId: 45, size: '38', stock: 40, barcode: generateProductBarcode() },
+            { rootProductId: 45, size: '39', stock: 20, barcode: generateProductBarcode() }
         ]
     })
+}
 
-    // --- Shoe Categories ---
-    await prisma.shoeCategory.createMany({
-        data: [
-            { name: 'Giày sneaker', createdBy: 1 }, //1
-            { name: 'Dép sandal', createdBy: 1 },
-            { name: 'Dép xỏ ngón', createdBy: 1 },
-            { name: 'Giày Tây', createdBy: 1 },
-            { name: 'Giày cao gót', createdBy: 2 }, //5
-            { name: 'Giày búp bê', createdBy: 2 },
-            { name: 'Giày boots', createdBy: 2 },
-            { name: 'Giày bệt', createdBy: 2 },
-            { name: 'Giày trẻ em', createdBy: 1 },
-            { name: 'Dép crocs', createdBy: 1 } //10
-        ]
-    })
-
+export const seedProductFeatures = async (prisma: PrismaClient) => {
     // --- Shoe Features ---
     await prisma.shoeFeature.createMany({
         data: [
@@ -2244,7 +1921,7 @@ const seedData = async () => {
                 toeShape: 'Mở (open-toe)',
                 waterResistant: 'Không',
                 breathability: 'Trung bình',
-                pattern: 'Thiết kế tối giản, quai bản lớn ôm mu bàn chân, gót vuông cao khoảng 5 cm', 
+                pattern: 'Thiết kế tối giản, quai bản lớn ôm mu bàn chân, gót vuông cao khoảng 5 cm',
                 countryOfOrigin: 'Việt Nam',
                 primaryColor: '#000000',
                 secondaryColor: null,
@@ -2754,131 +2431,4 @@ const seedData = async () => {
             { shoeFeatureId: 40, designTagId: 12 }
         ]
     })
-
-    // --- Coupons ---
-    await prisma.coupon.createMany({
-        data: [
-            {
-                code: 'CHAOHE2025',
-                type: CouponType.FIXED,
-                amount: 100000,
-                maxUsage: 100,
-                expiredAt: new Date('2025-10-01T23:59:59+07:00'),
-                createdAt: new Date('2025-06-01T07:00:00+07:00'),
-                createdBy: 1
-            },
-            {
-                code: 'SINHNHAT1TUOI',
-                type: CouponType.PERCENTAGE,
-                amount: 10,
-                expiredAt: new Date('2025-08-31T23:59:59+07:00'),
-                createdAt: new Date('2025-08-01T07:00:00+07:00'),
-                createdBy: 1
-            },
-            {
-                code: 'CHAOBANMOI',
-                type: CouponType.FIXED,
-                amount: 50000,
-                createdAt: new Date('2025-08-01T07:00:00+07:00'),
-                createdBy: 2
-            },
-            {
-                code: 'FLASHSALE8/8',
-                type: CouponType.PERCENTAGE,
-                amount: 50,
-                maxUsage: 10,
-                expiredAt: new Date('2025-08-08T23:59:59+07:00'),
-                createdAt: new Date('2025-08-08T00:00:00+07:00'),
-                createdBy: 2
-            },
-            {
-                code: 'QUOCKHANHA80',
-                type: CouponType.FIXED,
-                amount: 200000,
-                expiredAt: new Date('2025-09-02T23:59:59+07:00'),
-                createdAt: new Date('2025-08-30T12:00:00+07:00'),
-                createdBy: 1
-            },
-            {
-                code: 'MUNGGIANGSINH',
-                type: CouponType.PERCENTAGE,
-                amount: 10,
-                maxUsage: 200,
-                expiredAt: new Date('2025-12-24T23:59:59+07:00'),
-                createdAt: new Date('2025-10-01T00:00:00+07:00'),
-                createdBy: 2
-            }
-        ]
-    })
-
-    // --- Promotions ---
-    await prisma.promotion.createMany({
-        data: [
-            {
-                name: 'Chào mùa tựu trường 2025',
-                description:
-                    'Saigon Steps hân hoan mang đến chương trình "Chào Mùa Tựu Trường" với nhiều ưu đãi hấp dẫn dành cho học sinh, sinh viên và phụ huynh. Đây là cơ hội tuyệt vời để bạn sở hữu những đôi giày bền đẹp, thoải mái và hợp xu hướng cho mùa học mới. Hãy nhanh tay ghé cửa hàng hoặc mua sắm trực tuyến để tận hưởng mức giá ưu đãi đặc biệt cùng nhiều quà tặng bất ngờ.',
-                discountRate: 10,
-                startDate: new Date('2025-08-15T00:00:00+07:00'),
-                endDate: new Date('2025-09-15T23:59:59+07:00'),
-                createdAt: new Date('2025-08-10T07:00:00+07:00'),
-                createdBy: 1
-            },
-            {
-                name: 'Nike festival month',
-                description:
-                    'Nike mang đến không khí sôi động cùng chương trình "Festival Month" với hàng loạt ưu đãi và sản phẩm mới đầy cảm hứng. Đây là thời điểm tuyệt vời để bạn sở hữu những đôi sneaker phong cách, bền bỉ và công nghệ tiên tiến, giúp bạn tự tin bứt phá trong từng bước di chuyển. Đừng bỏ lỡ cơ hội trải nghiệm không gian mua sắm sôi động và rinh ngay cho mình những thiết kế biểu tượng từ Nike trong tháng lễ hội này.',
-                discountRate: 20,
-                startDate: new Date('2025-10-01T00:00:00+07:00'),
-                endDate: new Date('2025-10-31T23:59:59+07:00'),
-                createdAt: new Date('2025-08-25T07:00:00+07:00'),
-                createdBy: 1
-            },
-            {
-                name: "Chào mừng Quốc Khánh cùng Biti's",
-                description:
-                    "Biti's tưng bừng chào mừng Quốc Khánh 2/9 với chương trình ưu đãi đặc biệt dành cho mọi khách hàng. Đây là dịp để bạn lựa chọn những đôi giày trẻ trung, bền bỉ và thoải mái với mức giá hấp dẫn hơn bao giờ hết. Hãy nhanh tay ghé cửa hàng hoặc mua sắm trực tuyến để cùng Biti's hòa chung không khí rộn ràng, rinh giày mới xinh xắn và tận hưởng trọn vẹn niềm vui ngày lễ lớn.",
-                discountRate: 30,
-                startDate: new Date('2025-09-01T00:00:00+07:00'),
-                endDate: new Date('2025-09-05T23:59:59+07:00'),
-                createdAt: new Date('2025-08-27T07:00:00+07:00'),
-                createdBy: 2
-            },
-            {
-                name: 'Flash sale black Friday',
-                description:
-                    'Saigon Steps bùng nổ Flash Sale Black Friday với mức giảm giá "sốc" trên hàng loạt mẫu giày dép thời trang. Chỉ trong thời gian giới hạn, bạn có thể săn ngay những đôi giày yêu thích với giá ưu đãi chưa từng có. Nhanh tay chọn cho mình sản phẩm phù hợp để nâng tầm phong cách và tiết kiệm tối đa. Đừng bỏ lỡ cơ hội mua sắm vàng duy nhất trong năm tại Saigon Steps!',
-                discountRate: 40,
-                startDate: new Date('2025-11-28T00:00:00+07:00'),
-                endDate: new Date('2025-11-28T23:59:59+07:00'),
-                createdAt: new Date('2025-11-22T12:00:00+07:00'),
-                createdBy: 2
-            }
-        ]
-    })
-
-    // --- Product - Promotion ---
-    await prisma.productPromotion.createMany({
-        data: [
-            { promotionId: 1, rootProductId: 1 },
-            { promotionId: 1, rootProductId: 4 },
-            { promotionId: 1, rootProductId: 5 },
-            { promotionId: 1, rootProductId: 9 },
-            { promotionId: 1, rootProductId: 10 },
-            { promotionId: 2, rootProductId: 1 },
-            { promotionId: 2, rootProductId: 4 },
-            { promotionId: 3, rootProductId: 8 },
-            { promotionId: 3, rootProductId: 9 },
-            { promotionId: 3, rootProductId: 10 },
-            { promotionId: 4, rootProductId: 1 },
-            { promotionId: 4, rootProductId: 4 },
-            { promotionId: 4, rootProductId: 5 },
-            { promotionId: 4, rootProductId: 9 },
-            { promotionId: 4, rootProductId: 10 }
-        ]
-    })
 }
-
-seedData().finally(async () => {
-    await prisma.$disconnect()
-})

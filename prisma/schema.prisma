@@ -18,22 +18,20 @@ enum CouponType {
   PERCENTAGE @map("percentage")
 }
 
-enum OrderStatus {
-  PENDING          @map("pending")
-  ACCEPTED         @map("accepted")
-  PACKED           @map("packed")
-  DISPATCHED       @map("dispatched")
-  DELIVERY_SUCCESS @map("delivery_success")
-  DELIVERY_FAILED  @map("delivery_failed")
-  CANCELLED        @map("cancelled")
-  RETURNED         @map("returned")
-}
-
 enum InventoryDamageReason {
   LOST      @map("lost")
   BROKEN    @map("broken")
   DEFECTIVE @map("defective")
   OTHER     @map("other")
+}
+
+enum InventoryUpdateType {
+  RESERVE   @map("reserve")
+  RELEASE   @map("release")
+  STOCK_IN  @map("stock_in")
+  STOCK_OUT @map("stock_out")
+  RETURN    @map("return")
+  DAMAGE    @map("dAMAGE")
 }
 
 enum ShoeGender {

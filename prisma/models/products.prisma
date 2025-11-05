@@ -20,15 +20,18 @@ model RootProduct {
 }
 
 model ProductItem {
-    productItemId     Int                @id @default(autoincrement())
+    productItemId     Int                  @id @default(autoincrement())
     rootProductId     Int
-    rootProduct       RootProduct        @relation(fields: [rootProductId], references: [rootProductId])
-    size              String             @default("Mặc định")
-    stock             Int                @default(0)
+    rootProduct       RootProduct          @relation(fields: [rootProductId], references: [rootProductId])
+    size              String               @default("Mặc định")
+    barcode           String               @unique
+    stock             Int                  @default(0)
+    reservedQuantity  Int                  @default(0)
     cartItems         CartItem[]
     orderItems        OrderItem[]
     importItems       ImportItem[]
     damageReportItems DamageReportItem[]
+    updateLogs        InventoryUpdateLog[]
 
     @@unique([rootProductId, size])
     @@map("product_items")

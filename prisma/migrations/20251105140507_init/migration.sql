@@ -44,11 +44,25 @@ CREATE TABLE `damage_report_items` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `inventory_update_logs` (
+    `logId` INTEGER NOT NULL AUTO_INCREMENT,
+    `productItemId` INTEGER NOT NULL,
+    `quantity` INTEGER NOT NULL,
+    `type` ENUM('reserve', 'release', 'stock_in', 'stock_out', 'return', 'dAMAGE') NOT NULL,
+    `orderId` INTEGER NULL,
+    `importId` INTEGER NULL,
+    `damageReportId` INTEGER NULL,
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`logId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `orders` (
     `orderId` INTEGER NOT NULL AUTO_INCREMENT,
     `customerId` INTEGER NOT NULL,
     `couponId` INTEGER NULL,
-    `status` ENUM('pending', 'accepted', 'packed', 'dispatched', 'delivery_success', 'delivery_failed', 'cancelled', 'returned') NOT NULL DEFAULT 'pending',
+    `statusId` INTEGER NOT NULL,
     `totalAmount` DOUBLE NOT NULL,
     `recipientName` VARCHAR(191) NULL,
     `deliveryPhone` VARCHAR(191) NULL,
@@ -72,14 +86,43 @@ CREATE TABLE `order_items` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `order_status_update_logs` (
+CREATE TABLE `order_update_logs` (
     `logId` INTEGER NOT NULL AUTO_INCREMENT,
     `orderId` INTEGER NOT NULL,
-    `status` ENUM('pending', 'accepted', 'packed', 'dispatched', 'delivery_success', 'delivery_failed', 'cancelled', 'returned') NOT NULL,
+    `statusId` INTEGER NOT NULL,
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedBy` INTEGER NOT NULL,
 
     PRIMARY KEY (`logId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `order_statuses` (
+    `statusId` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `description` TEXT NOT NULL,
+    `isDefault` BOOLEAN NOT NULL DEFAULT false,
+    `shouldReserveStock` BOOLEAN NOT NULL DEFAULT false,
+    `shouldReleaseStock` BOOLEAN NOT NULL DEFAULT false,
+    `shouldReduceStock` BOOLEAN NOT NULL DEFAULT false,
+    `shouldIncreaseStock` BOOLEAN NOT NULL DEFAULT false,
+    `shouldMarkAsDelivered` BOOLEAN NOT NULL DEFAULT false,
+    `shouldMarkAsRefunded` BOOLEAN NOT NULL DEFAULT false,
+    `shouldSendNotification` BOOLEAN NOT NULL DEFAULT false,
+
+    UNIQUE INDEX `order_statuses_name_key`(`name`),
+    PRIMARY KEY (`statusId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `order_status_transitions` (
+    `fromStatusId` INTEGER NOT NULL,
+    `toStatusId` INTEGER NOT NULL,
+    `label` VARCHAR(191) NOT NULL,
+    `isScanningRequired` BOOLEAN NOT NULL DEFAULT false,
+
+    UNIQUE INDEX `order_status_transitions_label_key`(`label`),
+    PRIMARY KEY (`fromStatusId`, `toStatusId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -105,8 +148,11 @@ CREATE TABLE `product_items` (
     `productItemId` INTEGER NOT NULL AUTO_INCREMENT,
     `rootProductId` INTEGER NOT NULL,
     `size` VARCHAR(191) NOT NULL DEFAULT 'Mặc định',
+    `barcode` VARCHAR(191) NOT NULL,
     `stock` INTEGER NOT NULL DEFAULT 0,
+    `reservedQuantity` INTEGER NOT NULL DEFAULT 0,
 
+    UNIQUE INDEX `product_items_barcode_key`(`barcode`),
     UNIQUE INDEX `product_items_rootProductId_size_key`(`rootProductId`, `size`),
     PRIMARY KEY (`productItemId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -384,10 +430,25 @@ ALTER TABLE `damage_report_items` ADD CONSTRAINT `damage_report_items_reportId_f
 ALTER TABLE `damage_report_items` ADD CONSTRAINT `damage_report_items_productItemId_fkey` FOREIGN KEY (`productItemId`) REFERENCES `product_items`(`productItemId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `inventory_update_logs` ADD CONSTRAINT `inventory_update_logs_productItemId_fkey` FOREIGN KEY (`productItemId`) REFERENCES `product_items`(`productItemId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `inventory_update_logs` ADD CONSTRAINT `inventory_update_logs_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `orders`(`orderId`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `inventory_update_logs` ADD CONSTRAINT `inventory_update_logs_importId_fkey` FOREIGN KEY (`importId`) REFERENCES `product_imports`(`importId`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `inventory_update_logs` ADD CONSTRAINT `inventory_update_logs_damageReportId_fkey` FOREIGN KEY (`damageReportId`) REFERENCES `inventory_damage_reports`(`reportId`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `orders` ADD CONSTRAINT `orders_customerId_fkey` FOREIGN KEY (`customerId`) REFERENCES `customers`(`customerId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `orders` ADD CONSTRAINT `orders_couponId_fkey` FOREIGN KEY (`couponId`) REFERENCES `coupons`(`couponId`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `orders` ADD CONSTRAINT `orders_statusId_fkey` FOREIGN KEY (`statusId`) REFERENCES `order_statuses`(`statusId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `order_items` ADD CONSTRAINT `order_items_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `orders`(`orderId`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -396,10 +457,19 @@ ALTER TABLE `order_items` ADD CONSTRAINT `order_items_orderId_fkey` FOREIGN KEY 
 ALTER TABLE `order_items` ADD CONSTRAINT `order_items_productItemId_fkey` FOREIGN KEY (`productItemId`) REFERENCES `product_items`(`productItemId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `order_status_update_logs` ADD CONSTRAINT `order_status_update_logs_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `orders`(`orderId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `order_update_logs` ADD CONSTRAINT `order_update_logs_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `orders`(`orderId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `order_status_update_logs` ADD CONSTRAINT `order_status_update_logs_updatedBy_fkey` FOREIGN KEY (`updatedBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `order_update_logs` ADD CONSTRAINT `order_update_logs_statusId_fkey` FOREIGN KEY (`statusId`) REFERENCES `order_statuses`(`statusId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `order_update_logs` ADD CONSTRAINT `order_update_logs_updatedBy_fkey` FOREIGN KEY (`updatedBy`) REFERENCES `staffs`(`staffId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `order_status_transitions` ADD CONSTRAINT `order_status_transitions_fromStatusId_fkey` FOREIGN KEY (`fromStatusId`) REFERENCES `order_statuses`(`statusId`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `order_status_transitions` ADD CONSTRAINT `order_status_transitions_toStatusId_fkey` FOREIGN KEY (`toStatusId`) REFERENCES `order_statuses`(`statusId`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `root_products` ADD CONSTRAINT `root_products_brandId_fkey` FOREIGN KEY (`brandId`) REFERENCES `product_brands`(`brandId`) ON DELETE RESTRICT ON UPDATE CASCADE;

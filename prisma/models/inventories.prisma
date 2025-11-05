@@ -1,12 +1,13 @@
 model ProductImport {
-    importId       Int          @id @default(autoincrement())
-    invoiceNumber  String
-    totalCost      Float
-    importDate     DateTime
-    trackedAt      DateTime     @default(now())
-    trackedBy      Int
-    trackedByStaff Staff        @relation(fields: [trackedBy], references: [staffId])
-    importItems    ImportItem[]
+    importId            Int                  @id @default(autoincrement())
+    invoiceNumber       String
+    totalCost           Float
+    importDate          DateTime
+    trackedAt           DateTime             @default(now())
+    trackedBy           Int
+    trackedByStaff      Staff                @relation(fields: [trackedBy], references: [staffId])
+    importItems         ImportItem[]
+    inventoryUpdateLogs InventoryUpdateLog[]
 
     @@index([invoiceNumber])
     @@map("product_imports")
@@ -25,14 +26,15 @@ model ImportItem {
 }
 
 model InventoryDamageReport {
-    reportId          Int                   @id @default(autoincrement())
-    totalExpectedCost Float
-    reason            InventoryDamageReason
-    note              String?
-    reportedAt        DateTime              @default(now())
-    reportedBy        Int
-    reportedByStaff   Staff                 @relation(fields: [reportedBy], references: [staffId])
-    reportItems       DamageReportItem[]
+    reportId            Int                   @id @default(autoincrement())
+    totalExpectedCost   Float
+    reason              InventoryDamageReason
+    note                String?
+    reportedAt          DateTime              @default(now())
+    reportedBy          Int
+    reportedByStaff     Staff                 @relation(fields: [reportedBy], references: [staffId])
+    reportItems         DamageReportItem[]
+    inventoryUpdateLogs InventoryUpdateLog[]
 
     @@map("inventory_damage_reports")
 }
@@ -47,4 +49,21 @@ model DamageReportItem {
 
     @@id([reportId, productItemId])
     @@map("damage_report_items")
+}
+
+model InventoryUpdateLog {
+    logId          Int                    @id @default(autoincrement())
+    productItemId  Int
+    productItem    ProductItem            @relation(fields: [productItemId], references: [productItemId])
+    quantity       Int
+    type           InventoryUpdateType
+    orderId        Int?
+    order          Order?                 @relation(fields: [orderId], references: [orderId])
+    importId       Int?
+    import         ProductImport?         @relation(fields: [importId], references: [importId])
+    damageReportId Int?
+    damageReport   InventoryDamageReport? @relation(fields: [damageReportId], references: [reportId])
+    updatedAt      DateTime               @default(now())
+
+    @@map("inventory_update_logs")
 }

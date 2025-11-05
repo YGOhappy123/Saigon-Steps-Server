@@ -14,6 +14,4 @@ export const placeNewOrderValidator = [
     body('items.*.quantity').isInt({ min: 1 })
 ]
 
-export const updateOrderValidator = [
-    body('status').isIn(['PENDING', 'ACCEPTED', 'PACKED', 'DISPATCHED', 'DELIVERY_SUCCESS', 'DELIVERY_FAILED', 'CANCELLED', 'RETURNED'])
-]
+export const updateOrderValidator = [body('statusId').isInt({ min: 1 })]

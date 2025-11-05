@@ -1,82 +1,28 @@
-import { prisma } from '@/prisma'
+import { prisma, InventoryUpdateType, OrderWithItems } from '@/prisma'
 import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
 import errorMessage from '@/configs/errorMessage'
 import productService from '@/services/product.service'
+import statusService from '@/services/status.service'
 import cartService from '@/services/cart.service'
+import chatService from '@/services/chat.service'
 
-enum Result {
-    Valid = 'Valid',
-    NotFound = 'NotFound',
-    InactiveOrExpired = 'InactiveOrExpired',
-    MaxUsageReached = 'MaxUsageReached',
-    AlreadyUsed = 'AlreadyUsed'
-}
-
-type OrderStatus = 'PENDING' | 'ACCEPTED' | 'PACKED' | 'DISPATCHED' | 'DELIVERY_SUCCESS' | 'DELIVERY_FAILED' | 'CANCELLED' | 'RETURNED'
-
-const transitionMap: { [key in OrderStatus]: OrderStatus[] } = {
-    PENDING: ['ACCEPTED', 'CANCELLED'],
-    ACCEPTED: ['PACKED'],
-    PACKED: ['DISPATCHED'],
-    DISPATCHED: ['DELIVERY_SUCCESS', 'DELIVERY_FAILED'],
-    DELIVERY_SUCCESS: ['RETURNED'],
-    DELIVERY_FAILED: ['RETURNED'],
-    CANCELLED: [],
-    RETURNED: []
+enum ValidateVoucherResult {
+    VALID,
+    NOT_FOUND,
+    INACTIVE_OR_EXPIRED,
+    MAX_USAGE_REACHED,
+    ALREADY_USED
 }
 
 const orderService = {
-    verifyCouponCore: async (code: string, customerId: number) => {
-        const coupon = await prisma.coupon.findFirst({ where: { code: code } })
-        if (!coupon) return { result: Result.NotFound, coupon: null }
-
-        const now = new Date()
-        if (!coupon.isActive || (coupon.expiredAt != null && now > coupon.expiredAt)) return { result: Result.InactiveOrExpired, coupon: null }
-
-        if (coupon.maxUsage != null) {
-            const usage = await prisma.order.count({ where: { couponId: coupon.couponId } })
-            if (usage >= coupon.maxUsage) {
-                return { result: Result.MaxUsageReached, coupon: null }
-            }
-        }
-
-        const isCustomerApplied = await prisma.order.findFirst({ where: { couponId: coupon.couponId, customerId: customerId } })
-        if (isCustomerApplied) return { result: Result.AlreadyUsed, coupon: null }
-
-        return { result: Result.Valid, coupon: coupon }
-    },
-
-    verifyCoupon: async (code: string, customerId: number) => {
-        const { result, coupon } = await orderService.verifyCouponCore(code, customerId)
-        switch (result) {
-            case Result.Valid:
-                return coupon
-
-            case Result.NotFound:
-                throw new HttpException(404, errorMessage.COUPON_NOT_FOUND)
-
-            case Result.InactiveOrExpired:
-                throw new HttpException(400, errorMessage.COUPON_NO_LONGER_AVAILABLE)
-
-            case Result.MaxUsageReached:
-                throw new HttpException(400, errorMessage.COUPON_REACH_MAX_USAGE)
-
-            case Result.AlreadyUsed:
-                throw new HttpException(400, errorMessage.YOU_HAVE_USED_COUPON)
-
-            default:
-                throw new HttpException(500, errorMessage.INTERNAL_SERVER_ERROR)
-        }
-    },
-
     getAllOrders: async ({ skip = 0, limit, filter = '{}', sort = '{}' }: ISearchParams) => {
         const whereStatement = buildWhereStatement(filter)
 
         const orders = await prisma.order.findMany({
             where: whereStatement,
-            include: { customer: true, coupon: true, orderItems: true },
+            include: { customer: true, coupon: true, status: true, orderItems: true },
             skip: skip,
             take: limit,
             orderBy: JSON.parse(sort as string)
@@ -86,6 +32,12 @@ const orderService = {
         const mappedOrders = await Promise.all(
             orders.map(async order => ({
                 ...order,
+                status: {
+                    statusId: order.status.statusId,
+                    name: order.status.name,
+                    description: order.status.description
+                },
+                availableTransitions: await statusService.getStatusTransitionsByFromStatusId(order.statusId),
                 statusUpdateLogs: await orderService.getStatusUpdateLogs(order.orderId),
                 orderItems: await Promise.all(
                     order.orderItems.map(async item => {
@@ -100,6 +52,7 @@ const orderService = {
                                     : {
                                           rootProductId: productItemData.rootProductId,
                                           size: productItemData.size,
+                                          barcode: productItemData.barcode,
                                           rootProduct: {
                                               name: productItemData.rootProduct.name,
                                               slug: productItemData.rootProduct.slug,
@@ -123,7 +76,7 @@ const orderService = {
 
         const orders = await prisma.order.findMany({
             where: whereStatement,
-            include: { coupon: true, orderItems: true },
+            include: { coupon: true, status: true, orderItems: true },
             skip: skip,
             take: limit,
             orderBy: JSON.parse(sort as string)
@@ -166,13 +119,20 @@ const orderService = {
     },
 
     getStatusUpdateLogs: async (orderId: number) => {
-        const logs = await prisma.orderStatusUpdateLog.findMany({
+        const logs = await prisma.orderUpdateLog.findMany({
             where: { orderId: orderId },
-            include: { updatedByStaff: true },
+            include: { updatedByStaff: true, status: true },
             orderBy: { updatedAt: 'desc' }
         })
 
-        return logs
+        return logs.map(log => ({
+            ...log,
+            status: {
+                statusId: log.status.statusId,
+                name: log.status.name,
+                description: log.status.description
+            }
+        }))
     },
 
     placeNewOrder: async (
@@ -184,6 +144,9 @@ const orderService = {
         items: { productItemId: number; quantity: number }[],
         customerId: number
     ) => {
+        const defaultOrderStatus = await statusService.getDefaultOrderStatus()
+        if (!defaultOrderStatus) throw new HttpException(500, errorMessage.ORDER_SYSTEM_TEMPORARILY_UNAVAILABLE)
+
         let totalAmount = 0
         const orderItems: { productItemId: number; quantity: number; price: number }[] = []
 
@@ -193,7 +156,8 @@ const orderService = {
                 include: { rootProduct: true }
             })
             if (productItem == null) throw new HttpException(404, errorMessage.PRODUCT_ITEM_NOT_FOUND)
-            if (item.quantity > productItem.stock) throw new HttpException(400, errorMessage.QUANTITY_EXCEED_CURRENT_STOCK)
+            if (item.quantity > productItem.stock - productItem.reservedQuantity)
+                throw new HttpException(400, errorMessage.QUANTITY_EXCEED_CURRENT_STOCK)
 
             const { discountRate } = await productService.getProductPromotions(productItem.rootProductId)
             const unitPrice = Math.round(productItem.rootProduct.price * (1 - discountRate / 100))
@@ -205,7 +169,7 @@ const orderService = {
         let couponId: number | null = null
         if (couponCode) {
             const { result, coupon } = await orderService.verifyCouponCore(couponCode, customerId)
-            if (result === Result.Valid) {
+            if (result === ValidateVoucherResult.VALID) {
                 couponId = coupon!.couponId
                 if (coupon!.type === 'PERCENTAGE') {
                     totalAmount -= Math.round(totalAmount * (coupon!.amount / 100))
@@ -220,6 +184,7 @@ const orderService = {
             data: {
                 customerId: customerId,
                 couponId: couponId,
+                statusId: defaultOrderStatus.statusId,
                 note: note ?? null,
                 recipientName: recipientName ?? null,
                 deliveryAddress: deliveryAddress ?? null,
@@ -230,61 +195,81 @@ const orderService = {
                 }
             }
         })
+        if (defaultOrderStatus.shouldReserveStock) {
+            await Promise.all(
+                items.map(async item => {
+                    await prisma.productItem.update({
+                        where: { productItemId: item.productItemId },
+                        data: { reservedQuantity: { increment: item.quantity } }
+                    })
+                })
+            )
+            await prisma.inventoryUpdateLog.createMany({
+                data: items.map(item => ({
+                    productItemId: item.productItemId,
+                    quantity: item.quantity,
+                    type: InventoryUpdateType.RESERVE,
+                    orderId: newOrder.orderId
+                }))
+            })
+        }
 
         return { orderId: newOrder.orderId }
     },
 
-    updateOrderStatus: async (orderId: number, newStatus: OrderStatus, staffId: number) => {
+    updateOrderStatus: async (orderId: number, statusId: number, staffId: number) => {
         const order = await prisma.order.findFirst({ where: { orderId: orderId }, include: { orderItems: true } })
         if (!order) throw new HttpException(404, errorMessage.ORDER_NOT_FOUND)
 
-        const currentStatus = order.status as OrderStatus
-        if (!transitionMap[currentStatus].includes(newStatus)) throw new HttpException(400, errorMessage.INVALID_STATUS_SELECTED)
+        const isTransitionValid = await statusService.verifyTransition(order.statusId, statusId)
+        if (!isTransitionValid) throw new HttpException(400, errorMessage.INVALID_STATUS_SELECTED)
 
-        if (newStatus === 'ACCEPTED') {
+        const newStatus = await statusService.getOrderStatusById(statusId)
+        if (!newStatus) throw new HttpException(400, errorMessage.ORDER_STATUS_NOT_FOUND)
+
+        if (newStatus.shouldReserveStock) {
+            await orderService.handleReserveStock(order)
+        }
+
+        if (newStatus.shouldReleaseStock) {
+            await orderService.handleReleaseStock(order)
+        }
+
+        if (newStatus.shouldReduceStock) {
+            // Stock might have reduced since order placement due to inventory damages
+            // ...re-verification required before accepting
             const isStockAdaptable = await orderService.isStockAdaptableForOrder(orderId)
             if (!isStockAdaptable) throw new HttpException(400, errorMessage.STOCK_NOT_ENOUGH_FOR_ORDER)
 
-            await Promise.all(
-                order.orderItems.map(async item => {
-                    await prisma.productItem.update({
-                        where: { productItemId: item.productItemId },
-                        data: {
-                            stock: { decrement: item.quantity }
-                        }
-                    })
-                })
-            )
+            await orderService.handleDecreaseStock(order)
         }
 
-        if (newStatus === 'RETURNED') {
-            await Promise.all(
-                order.orderItems.map(async item => {
-                    await prisma.productItem.update({
-                        where: { productItemId: item.productItemId },
-                        data: {
-                            stock: { increment: item.quantity }
-                        }
-                    })
-                })
-            )
+        if (newStatus.shouldIncreaseStock) {
+            await orderService.handleIncreaseStock(order)
         }
 
-        const isRefunded = order.status === 'DELIVERY_SUCCESS' && newStatus === 'RETURNED'
-        const isSuccess = order.status === 'DISPATCHED' && newStatus === 'DELIVERY_SUCCESS'
+        if (newStatus.shouldSendNotification) {
+            await chatService.staffSendMessage(
+                order.customerId,
+                staffId,
+                `Đơn hàng của bạn với mã [${orderId}] đã được chuyển sang trạng thái [${newStatus.name}]. Đây là tin nhắn tự động từ Saigon Steps. Chúc bạn một ngày tốt lành!`,
+                undefined,
+                0
+            )
+        }
 
         await prisma.order.update({
             where: { orderId: orderId },
             data: {
-                status: newStatus,
-                deliveredAt: isSuccess ? new Date() : order.deliveredAt,
-                refundedAt: isRefunded ? new Date() : order.refundedAt
+                statusId: statusId,
+                deliveredAt: newStatus.shouldMarkAsDelivered ? new Date() : order.deliveredAt,
+                refundedAt: newStatus.shouldMarkAsRefunded ? new Date() : order.refundedAt
             }
         })
-        await prisma.orderStatusUpdateLog.create({
+        await prisma.orderUpdateLog.create({
             data: {
                 orderId: orderId,
-                status: newStatus,
+                statusId: statusId,
                 updatedBy: staffId
             }
         })
@@ -297,7 +282,7 @@ const orderService = {
         const productItems = await prisma.productItem.findMany({ where: { productItemId: { in: order.orderItems.map(item => item.productItemId) } } })
         for (const item of order.orderItems) {
             const productItem = productItems.find(pi => pi.productItemId === item.productItemId)
-            if (!productItem || productItem.stock < item.quantity) return false
+            if (!productItem || productItem.stock - productItem.reservedQuantity < item.quantity) return false
         }
 
         return true
@@ -325,6 +310,177 @@ const orderService = {
         })
 
         return orders
+    },
+
+    verifyCouponCore: async (code: string, customerId: number) => {
+        const coupon = await prisma.coupon.findFirst({ where: { code: code } })
+        if (!coupon) return { result: ValidateVoucherResult.NOT_FOUND, coupon: null }
+
+        const now = new Date()
+        if (!coupon.isActive || (coupon.expiredAt != null && now > coupon.expiredAt)) {
+            return { result: ValidateVoucherResult.INACTIVE_OR_EXPIRED, coupon: null }
+        }
+
+        if (coupon.maxUsage != null) {
+            const usage = await prisma.order.count({ where: { couponId: coupon.couponId } })
+            if (usage >= coupon.maxUsage) {
+                return { result: ValidateVoucherResult.MAX_USAGE_REACHED, coupon: null }
+            }
+        }
+
+        const isCustomerApplied = await prisma.order.findFirst({ where: { couponId: coupon.couponId, customerId: customerId } })
+        if (isCustomerApplied) {
+            return { result: ValidateVoucherResult.ALREADY_USED, coupon: null }
+        }
+
+        return { result: ValidateVoucherResult.VALID, coupon: coupon }
+    },
+
+    verifyCoupon: async (code: string, customerId: number) => {
+        const { result, coupon } = await orderService.verifyCouponCore(code, customerId)
+        switch (result) {
+            case ValidateVoucherResult.VALID:
+                return coupon
+
+            case ValidateVoucherResult.NOT_FOUND:
+                throw new HttpException(404, errorMessage.COUPON_NOT_FOUND)
+
+            case ValidateVoucherResult.INACTIVE_OR_EXPIRED:
+                throw new HttpException(400, errorMessage.COUPON_NO_LONGER_AVAILABLE)
+
+            case ValidateVoucherResult.MAX_USAGE_REACHED:
+                throw new HttpException(400, errorMessage.COUPON_REACH_MAX_USAGE)
+
+            case ValidateVoucherResult.ALREADY_USED:
+                throw new HttpException(400, errorMessage.YOU_HAVE_USED_COUPON)
+
+            default:
+                throw new HttpException(500, errorMessage.INTERNAL_SERVER_ERROR)
+        }
+    },
+
+    handleReserveStock: async (order: OrderWithItems) => {
+        await Promise.all(
+            order.orderItems.map(async item => {
+                const hasReserved = await prisma.inventoryUpdateLog.findFirst({
+                    where: {
+                        orderId: order.orderId,
+                        productItemId: item.productItemId,
+                        type: InventoryUpdateType.RESERVE
+                    }
+                })
+
+                if (!hasReserved) {
+                    await prisma.productItem.update({
+                        where: { productItemId: item.productItemId },
+                        data: {
+                            reservedQuantity: { increment: item.quantity }
+                        }
+                    })
+                    await prisma.inventoryUpdateLog.create({
+                        data: {
+                            orderId: order.orderId,
+                            productItemId: item.productItemId,
+                            quantity: item.quantity,
+                            type: InventoryUpdateType.RESERVE
+                        }
+                    })
+                }
+            })
+        )
+    },
+
+    handleReleaseStock: async (order: OrderWithItems) => {
+        await Promise.all(
+            order.orderItems.map(async item => {
+                const hasReleased = await prisma.inventoryUpdateLog.findFirst({
+                    where: {
+                        orderId: order.orderId,
+                        productItemId: item.productItemId,
+                        type: InventoryUpdateType.RELEASE
+                    }
+                })
+
+                if (!hasReleased) {
+                    await prisma.productItem.update({
+                        where: { productItemId: item.productItemId },
+                        data: {
+                            reservedQuantity: { decrement: item.quantity }
+                        }
+                    })
+                    await prisma.inventoryUpdateLog.create({
+                        data: {
+                            orderId: order.orderId,
+                            productItemId: item.productItemId,
+                            quantity: item.quantity,
+                            type: InventoryUpdateType.RELEASE
+                        }
+                    })
+                }
+            })
+        )
+    },
+
+    handleDecreaseStock: async (order: OrderWithItems) => {
+        await Promise.all(
+            order.orderItems.map(async item => {
+                const hasDecreased = await prisma.inventoryUpdateLog.findFirst({
+                    where: {
+                        orderId: order.orderId,
+                        productItemId: item.productItemId,
+                        type: InventoryUpdateType.STOCK_OUT
+                    }
+                })
+
+                if (!hasDecreased) {
+                    await prisma.productItem.update({
+                        where: { productItemId: item.productItemId },
+                        data: {
+                            stock: { decrement: item.quantity }
+                        }
+                    })
+                    await prisma.inventoryUpdateLog.create({
+                        data: {
+                            orderId: order.orderId,
+                            productItemId: item.productItemId,
+                            quantity: item.quantity,
+                            type: InventoryUpdateType.STOCK_OUT
+                        }
+                    })
+                }
+            })
+        )
+    },
+
+    handleIncreaseStock: async (order: OrderWithItems) => {
+        await Promise.all(
+            order.orderItems.map(async item => {
+                const hasIncreased = await prisma.inventoryUpdateLog.findFirst({
+                    where: {
+                        orderId: order.orderId,
+                        productItemId: item.productItemId,
+                        type: InventoryUpdateType.STOCK_IN
+                    }
+                })
+
+                if (!hasIncreased) {
+                    await prisma.productItem.update({
+                        where: { productItemId: item.productItemId },
+                        data: {
+                            stock: { increment: item.quantity }
+                        }
+                    })
+                    await prisma.inventoryUpdateLog.create({
+                        data: {
+                            orderId: order.orderId,
+                            productItemId: item.productItemId,
+                            quantity: item.quantity,
+                            type: InventoryUpdateType.RETURN
+                        }
+                    })
+                }
+            })
+        )
     }
 }
 
