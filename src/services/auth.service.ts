@@ -58,8 +58,8 @@ const authService = {
     },
 
     signUpCustomerAccount: async (name: string, username: string, password: string) => {
-        const existingAccount = await prisma.account.findFirst({ where: { username: username } })
-        if (existingAccount) throw new HttpException(409, errorMessage.USERNAME_EXISTED)
+        const accountWithSameUsername = await prisma.account.findFirst({ where: { username: username } })
+        if (accountWithSameUsername) throw new HttpException(409, errorMessage.USERNAME_EXISTED)
 
         const hashedPassword = await bcrypt.hash(password, 10)
         const newAccount = await prisma.account.create({

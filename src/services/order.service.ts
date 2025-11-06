@@ -35,7 +35,8 @@ const orderService = {
                 status: {
                     statusId: order.status.statusId,
                     name: order.status.name,
-                    description: order.status.description
+                    description: order.status.description,
+                    color: order.status.color
                 },
                 availableTransitions: await statusService.getStatusTransitionsByFromStatusId(order.statusId),
                 statusUpdateLogs: await orderService.getStatusUpdateLogs(order.orderId),
@@ -130,7 +131,8 @@ const orderService = {
             status: {
                 statusId: log.status.statusId,
                 name: log.status.name,
-                description: log.status.description
+                description: log.status.description,
+                color: log.status.color
             }
         }))
     },
@@ -217,7 +219,7 @@ const orderService = {
         return { orderId: newOrder.orderId }
     },
 
-    updateOrderStatus: async (orderId: number, statusId: number, staffId: number) => {
+    processOrder: async (orderId: number, statusId: number, staffId: number) => {
         const order = await prisma.order.findFirst({ where: { orderId: orderId }, include: { orderItems: true } })
         if (!order) throw new HttpException(404, errorMessage.ORDER_NOT_FOUND)
 
@@ -360,17 +362,16 @@ const orderService = {
     },
 
     handleReserveStock: async (order: OrderWithItems) => {
-        await Promise.all(
-            order.orderItems.map(async item => {
-                const hasReserved = await prisma.inventoryUpdateLog.findFirst({
-                    where: {
-                        orderId: order.orderId,
-                        productItemId: item.productItemId,
-                        type: InventoryUpdateType.RESERVE
-                    }
-                })
+        const hasReserved = await prisma.inventoryUpdateLog.findFirst({
+            where: {
+                orderId: order.orderId,
+                type: InventoryUpdateType.RESERVE
+            }
+        })
 
-                if (!hasReserved) {
+        if (!hasReserved) {
+            await Promise.all(
+                order.orderItems.map(async item => {
                     await prisma.productItem.update({
                         where: { productItemId: item.productItemId },
                         data: {
@@ -385,23 +386,29 @@ const orderService = {
                             type: InventoryUpdateType.RESERVE
                         }
                     })
-                }
-            })
-        )
+                })
+            )
+        }
     },
 
     handleReleaseStock: async (order: OrderWithItems) => {
-        await Promise.all(
-            order.orderItems.map(async item => {
-                const hasReleased = await prisma.inventoryUpdateLog.findFirst({
-                    where: {
-                        orderId: order.orderId,
-                        productItemId: item.productItemId,
-                        type: InventoryUpdateType.RELEASE
-                    }
-                })
+        const hasReleased = await prisma.inventoryUpdateLog.findFirst({
+            where: {
+                orderId: order.orderId,
+                type: InventoryUpdateType.RELEASE
+            }
+        })
 
-                if (!hasReleased) {
+        const hasReserved = await prisma.inventoryUpdateLog.findFirst({
+            where: {
+                orderId: order.orderId,
+                type: InventoryUpdateType.RESERVE
+            }
+        })
+
+        if (!hasReleased && hasReserved) {
+            await Promise.all(
+                order.orderItems.map(async item => {
                     await prisma.productItem.update({
                         where: { productItemId: item.productItemId },
                         data: {
@@ -416,23 +423,22 @@ const orderService = {
                             type: InventoryUpdateType.RELEASE
                         }
                     })
-                }
-            })
-        )
+                })
+            )
+        }
     },
 
     handleDecreaseStock: async (order: OrderWithItems) => {
-        await Promise.all(
-            order.orderItems.map(async item => {
-                const hasDecreased = await prisma.inventoryUpdateLog.findFirst({
-                    where: {
-                        orderId: order.orderId,
-                        productItemId: item.productItemId,
-                        type: InventoryUpdateType.STOCK_OUT
-                    }
-                })
+        const hasDecreased = await prisma.inventoryUpdateLog.findFirst({
+            where: {
+                orderId: order.orderId,
+                type: InventoryUpdateType.STOCK_OUT
+            }
+        })
 
-                if (!hasDecreased) {
+        if (!hasDecreased) {
+            await Promise.all(
+                order.orderItems.map(async item => {
                     await prisma.productItem.update({
                         where: { productItemId: item.productItemId },
                         data: {
@@ -447,23 +453,29 @@ const orderService = {
                             type: InventoryUpdateType.STOCK_OUT
                         }
                     })
-                }
-            })
-        )
+                })
+            )
+        }
     },
 
     handleIncreaseStock: async (order: OrderWithItems) => {
-        await Promise.all(
-            order.orderItems.map(async item => {
-                const hasIncreased = await prisma.inventoryUpdateLog.findFirst({
-                    where: {
-                        orderId: order.orderId,
-                        productItemId: item.productItemId,
-                        type: InventoryUpdateType.STOCK_IN
-                    }
-                })
+        const hasIncreased = await prisma.inventoryUpdateLog.findFirst({
+            where: {
+                orderId: order.orderId,
+                type: InventoryUpdateType.STOCK_IN
+            }
+        })
 
-                if (!hasIncreased) {
+        const hasDecreased = await prisma.inventoryUpdateLog.findFirst({
+            where: {
+                orderId: order.orderId,
+                type: InventoryUpdateType.STOCK_OUT
+            }
+        })
+
+        if (!hasIncreased && hasDecreased) {
+            await Promise.all(
+                order.orderItems.map(async item => {
                     await prisma.productItem.update({
                         where: { productItemId: item.productItemId },
                         data: {
@@ -478,9 +490,9 @@ const orderService = {
                             type: InventoryUpdateType.RETURN
                         }
                     })
-                }
-            })
-        )
+                })
+            )
+        }
     }
 }
 

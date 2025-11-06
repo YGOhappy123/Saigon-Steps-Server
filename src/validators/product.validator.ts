@@ -1,6 +1,6 @@
 import { body } from 'express-validator'
 
-const HEX_COLOR_CODE_REGEX_PATTERN = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/
+export const HEX_COLOR_CODE_REGEX_PATTERN = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/
 
 export const addNewShoeCategoryValidator = [body('name').trim().isString()]
 

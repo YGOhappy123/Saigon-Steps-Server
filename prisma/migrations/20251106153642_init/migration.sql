@@ -101,6 +101,7 @@ CREATE TABLE `order_statuses` (
     `statusId` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `description` TEXT NOT NULL,
+    `color` VARCHAR(191) NOT NULL DEFAULT '#f4f4f5',
     `isDefault` BOOLEAN NOT NULL DEFAULT false,
     `shouldReserveStock` BOOLEAN NOT NULL DEFAULT false,
     `shouldReleaseStock` BOOLEAN NOT NULL DEFAULT false,

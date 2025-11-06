@@ -1,5 +1,6 @@
 import { body } from 'express-validator'
 import { PHONE_NUMBER_REGEX_PATTERN } from '@/validators/user.validator'
+import { HEX_COLOR_CODE_REGEX_PATTERN } from '@/validators/product.validator'
 
 export const verifyCouponValidator = [body('code').trim().isString()]
 
@@ -14,4 +15,37 @@ export const placeNewOrderValidator = [
     body('items.*.quantity').isInt({ min: 1 })
 ]
 
-export const updateOrderValidator = [body('statusId').isInt({ min: 1 })]
+export const processOrderValidator = [body('statusId').isInt({ min: 1 })]
+
+export const addNewOrderStatusValidator = [
+    body('name').trim().isString().notEmpty(),
+    body('description').trim().isString().notEmpty(),
+    body('color').trim().matches(HEX_COLOR_CODE_REGEX_PATTERN),
+    body('shouldReserveStock').isBoolean(),
+    body('shouldReleaseStock').isBoolean(),
+    body('shouldReduceStock').isBoolean(),
+    body('shouldIncreaseStock').isBoolean(),
+    body('shouldMarkAsDelivered').isBoolean(),
+    body('shouldMarkAsRefunded').isBoolean(),
+    body('shouldSendNotification').isBoolean()
+]
+
+export const updateOrderStatusValidator = [
+    body('name').trim().isString().notEmpty(),
+    body('description').trim().isString().notEmpty(),
+    body('color').trim().matches(HEX_COLOR_CODE_REGEX_PATTERN),
+    body('shouldReserveStock').isBoolean(),
+    body('shouldReleaseStock').isBoolean(),
+    body('shouldReduceStock').isBoolean(),
+    body('shouldIncreaseStock').isBoolean(),
+    body('shouldMarkAsDelivered').isBoolean(),
+    body('shouldMarkAsRefunded').isBoolean(),
+    body('shouldSendNotification').isBoolean()
+]
+
+export const addNewTransitionValidator = [
+    body('fromStatusId').isInt({ min: 1 }),
+    body('toStatusId').isInt({ min: 1 }),
+    body('label').trim().isString().notEmpty(),
+    body('isScanningRequired').isBoolean()
+]

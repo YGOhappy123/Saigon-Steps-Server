@@ -8,6 +8,7 @@ import categoryRoutes from '@/routes/category.route'
 import productRoutes from '@/routes/product.route'
 import promotionRoutes from '@/routes/promotion.route'
 import orderRoutes from '@/routes/order.route'
+import statusRoutes from '@/routes/status.route'
 import reportRoutes from '@/routes/report.route'
 import statisticRoutes from '@/routes/statistic.route'
 import chatRoutes from '@/routes/chat.route'
@@ -23,6 +24,7 @@ export {
     productRoutes,
     promotionRoutes,
     orderRoutes,
+    statusRoutes,
     reportRoutes,
     statisticRoutes,
     chatRoutes

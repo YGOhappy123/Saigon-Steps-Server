@@ -56,8 +56,8 @@ const roleService = {
     },
 
     addNewRole: async (name: string, permissionIds: number[]) => {
-        const existingRole = await prisma.staffRole.findFirst({ where: { name: name } })
-        if (existingRole) throw new HttpException(409, errorMessage.ROLE_EXISTED)
+        const roleWithSameName = await prisma.staffRole.findFirst({ where: { name: name } })
+        if (roleWithSameName) throw new HttpException(409, errorMessage.ROLE_EXISTED)
 
         const newRole = await prisma.staffRole.create({
             data: {

@@ -56,6 +56,10 @@ export const buildWhereStatement = (filter: string = '{}') => {
                     where.isActive = [true, 'true', 1].includes(parsedFilter[criteria])
                     break
 
+                case 'isDefault':
+                    where.isDefault = [true, 'true', 1].includes(parsedFilter[criteria])
+                    break
+
                 case 'name':
                     where.name = { contains: parsedFilter[criteria] }
                     break
@@ -85,6 +89,15 @@ export const buildWhereStatement = (filter: string = '{}') => {
                         ...(where.AND || []),
                         ...parsedFilter[criteria].map((permissionId: number) => ({
                             permissions: { some: { permissionId: permissionId } }
+                        }))
+                    ]
+                    break
+
+                case 'statusActions':
+                    where.AND = [
+                        ...(where.AND || []),
+                        ...parsedFilter[criteria].map((action: string) => ({
+                            [action]: true
                         }))
                     ]
                     break

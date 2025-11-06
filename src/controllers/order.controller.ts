@@ -8,7 +8,6 @@ import errorMessage from '@/configs/errorMessage'
 import orderService from '@/services/order.service'
 import roleService from '@/services/role.service'
 import appPermissions from '@/configs/appPermissions'
-import statusService from '@/services/status.service'
 
 const orderController = {
     verifyCoupon: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
@@ -90,7 +89,7 @@ const orderController = {
         }
     },
 
-    updateOrderStatus: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
+    processOrder: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
             if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
@@ -101,30 +100,10 @@ const orderController = {
 
             const { orderId } = req.params
             const { statusId } = req.body
-            await orderService.updateOrderStatus(parseInt(orderId), statusId, userId)
+            await orderService.processOrder(parseInt(orderId), statusId, userId)
 
             res.status(200).json({
                 message: successMessage.UPDATE_ORDER_SUCCESSFULLY
-            })
-        } catch (error) {
-            next(error)
-        }
-    },
-
-    getAllOrderStatuses: async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const { skip, limit, sort, filter } = req.query
-            const { statuses, total } = await statusService.getAllOrderStatuses({
-                skip: skip !== undefined ? parseInt(skip as string) : undefined,
-                limit: limit !== undefined ? parseInt(limit as string) : undefined,
-                sort,
-                filter
-            } as ISearchParams)
-
-            res.status(200).json({
-                data: statuses,
-                total,
-                took: statuses.length
             })
         } catch (error) {
             next(error)

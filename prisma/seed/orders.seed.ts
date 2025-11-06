@@ -7,44 +7,52 @@ export const seedOrderStatuses = async (prisma: PrismaClient) => {
             {
                 name: 'Chờ xử lý',
                 description: 'Đơn hàng mới được tạo và đang chờ xử lý',
+                color: '#71717b',
                 isDefault: true,
                 shouldReserveStock: true
             }, //1
             {
                 name: 'Đã xác nhận',
                 description: 'Đơn hàng đã được xác nhận và đang chuẩn bị đóng gói',
+                color: '#2b7fff',
                 shouldSendNotification: true
             },
             {
                 name: 'Đã đóng gói',
                 description: 'Đơn hàng đã được đóng gói và chuẩn bị giao cho đơn vị vận chuyển',
+                color: '#fcc800',
                 shouldReleaseStock: true,
                 shouldReduceStock: true
             },
             {
                 name: 'Đang giao hàng',
                 description: 'Đơn hàng đang được vận chuyển đến địa chỉ của khách hàng',
+                color: '#fcc800',
                 shouldSendNotification: true
             },
             {
                 name: 'Giao hàng thành công',
                 description: 'Đơn hàng đã được giao thành công đến khách hàng',
+                color: '#5ea500',
                 shouldMarkAsDelivered: true
             }, //5
             {
                 name: 'Giao hàng thất bại',
                 description: 'Đơn hàng không thể giao đến khách hàng và đã được trả lại',
+                color: '#e7000b',
                 shouldIncreaseStock: true
             },
             {
                 name: 'Bị từ chối',
                 description: 'Đơn hàng bị nhân viên từ chối do không đáp ứng được yêu cầu',
+                color: '#e7000b',
                 shouldReleaseStock: true,
                 shouldSendNotification: true
             },
             {
                 name: 'Đã hoàn trả',
                 description: 'Đơn hàng đã được hoàn trả và hoàn tiền lại cho khách hàng',
+                color: '#54b8d2',
                 shouldIncreaseStock: true,
                 shouldMarkAsRefunded: true
             } //8

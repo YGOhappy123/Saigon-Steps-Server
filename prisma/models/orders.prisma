@@ -50,6 +50,7 @@ model OrderStatus {
     statusId               Int                     @id @default(autoincrement())
     name                   String                  @unique
     description            String                  @db.Text
+    color                  String                  @default("#f4f4f5")
     isDefault              Boolean                 @default(false)
     shouldReserveStock     Boolean                 @default(false)
     shouldReleaseStock     Boolean                 @default(false)
