@@ -22,6 +22,7 @@ This is the Web Service (Server) portion of our University Graduation project. B
 - [TypeScript](https://www.typescriptlang.org/)
 - [Axios](https://axios-http.com/)
 - [Day JS](https://day.js.org/)
+- [Arcjet](https://arcjet.com/)
 
 ## Required Dependencies
 
@@ -132,6 +133,7 @@ Now you can access the app using other devices by visiting `http://<IPv4 Adddess
 - **Authentication and Authorization** 🔑 Secure your API with JWT-based authentication.
 - **Cross-Platform** 🌐 Runs on any operating system that supports Javascript
 - **Migrations** 🔄 Easily handle database schema changes using Prisma migrations.
+- **Security** 🛡️ Protect from common attacks and prevent from bots' illegal data collecting.
 
 ## Suggested VS Code Extensions
 
