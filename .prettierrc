@@ -4,5 +4,15 @@
     "singleQuote": true,
     "trailingComma": "none",
     "semi": false,
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "overrides": [
+        {
+            "files": "*.md",
+            "options": {
+                "parser": "markdown",
+                "plugins": [],
+                "tabWidth": 2
+            }
+        }
+    ]
 }
