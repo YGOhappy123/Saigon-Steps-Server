@@ -41,13 +41,13 @@ Follow these steps to set up and run the application locally.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/YGOhappy123/Saigon_Steps_Server.git
+   git clone https://github.com/YGOhappy123/Saigon-Steps-Server.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd Saigon_Steps_Server
+   cd Saigon-Steps-Server
    ```
 
 3. Install dependencies:
