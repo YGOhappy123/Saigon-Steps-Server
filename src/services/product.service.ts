@@ -6,6 +6,7 @@ import { capitalizeFirstWord, capitalizeWords, generateProductBarcode, uppercase
 import { getProductSlug } from '@/utils/slugifyHelpers'
 import { getNow } from '@/utils/timeHelpers'
 import errorMessage from '@/configs/errorMessage'
+import flaskService from '@/services/flask.service'
 
 type ShoeFeatures = {
     categoryId: number | undefined
@@ -96,6 +97,57 @@ const productService = {
     getProductBySlug: async (slug: string) => {
         const product = await prisma.rootProduct.findFirst({
             where: { slug: slug },
+            include: {
+                images: { orderBy: { imageId: 'asc' } },
+                brand: true,
+                createdByStaff: true,
+                productItems: true,
+                shoeFeature: {
+                    include: {
+                        category: true,
+                        occasionTags: { include: { occasionTag: true } },
+                        designTags: { include: { designTag: true } }
+                    }
+                }
+            }
+        })
+        if (product == null) return null
+
+        const { promotions } = await productService.getProductPromotions(product.rootProductId)
+        const mappedItems = await Promise.all(
+            product.productItems.map(async item => {
+                const currentStock = await productService.getProductItemCurrentStock(item.productItemId)
+
+                return {
+                    productItemId: item.productItemId,
+                    size: item.size,
+                    barcode: item.barcode,
+                    stock: item.stock,
+                    availableStock: currentStock
+                }
+            })
+        )
+
+        return product == null
+            ? null
+            : {
+                  ...product,
+                  productItems: mappedItems,
+                  promotions: promotions,
+                  images: product.images.map(image => image.url),
+                  shoeFeature: product.shoeFeature
+                      ? {
+                            ...product.shoeFeature,
+                            occasionTags: product.shoeFeature.occasionTags.map(tag => tag.occasionTag.name),
+                            designTags: product.shoeFeature.designTags.map(tag => tag.designTag.name)
+                        }
+                      : null
+              }
+    },
+
+    getProductById: async (productId: number) => {
+        const product = await prisma.rootProduct.findFirst({
+            where: { rootProductId: productId },
             include: {
                 images: { orderBy: { imageId: 'asc' } },
                 brand: true,
@@ -425,6 +477,8 @@ const productService = {
                     }
                 }
             })
+
+            await flaskService.addProduct(newProduct.rootProductId)
         } else {
             await prisma.productItem.create({
                 data: {
@@ -509,6 +563,8 @@ const productService = {
                     }
                 }
             })
+
+            await flaskService.updateProduct(productId)
         }
     },
 
@@ -522,6 +578,10 @@ const productService = {
                 price: price
             }
         })
+
+        if (!product.isAccessory) {
+            await flaskService.updateProduct(productId)
+        }
     },
 
     deleteProduct: async (productId: number) => {
@@ -553,6 +613,10 @@ const productService = {
         await prisma.rootProduct.delete({
             where: { rootProductId: productId }
         })
+
+        if (!product.isAccessory) {
+            await flaskService.deleteProduct(productId)
+        }
     },
 
     isProductDeletable: async (rootProductId: number) => {

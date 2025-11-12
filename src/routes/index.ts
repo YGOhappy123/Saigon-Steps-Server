@@ -12,6 +12,7 @@ import statusRoutes from '@/routes/status.route'
 import reportRoutes from '@/routes/report.route'
 import statisticRoutes from '@/routes/statistic.route'
 import chatRoutes from '@/routes/chat.route'
+import aiRoutes from '@/routes/ai.routes'
 
 export {
     authRoutes,
@@ -27,5 +28,6 @@ export {
     statusRoutes,
     reportRoutes,
     statisticRoutes,
-    chatRoutes
+    chatRoutes,
+    aiRoutes
 }

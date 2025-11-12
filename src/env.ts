@@ -5,6 +5,7 @@ const envSchema = z.object({
     PORT: z.coerce.number().int().positive().default(5000),
     CLIENT_URL: z.url(),
     DASHBOARD_URL: z.url(),
+    AI_SERVER_URL: z.url(),
 
     SQL_DEFAULT_AVATAR_URL: z.url(),
     SQL_DATABASE_URL: z.string().min(1),

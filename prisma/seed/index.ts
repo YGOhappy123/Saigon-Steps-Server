@@ -1,4 +1,4 @@
-import { PrismaClient, ShoeGender, CouponType } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { seedRolesAndPermissions, seedAccountsAndUsers } from './users.seed'
 import { seedBrandsAndCategories, seedProducts, seedProductFeatures } from './products.seed'
 import { seedPromotionsAndCoupons } from './promotions.seed'

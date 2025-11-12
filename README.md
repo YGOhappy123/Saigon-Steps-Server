@@ -131,7 +131,7 @@ Now you can access the app using other devices by visiting `http://<IPv4 Adddess
 - **RESTful API** 🛠 Exposes endpoints following REST principles for ease of use and scalability.
 - **Database Integration** 💾 Uses MySQL with Prisma for data persistence.
 - **Authentication and Authorization** 🔑 Secure your API with JWT-based authentication.
-- **Cross-Platform** 🌐 Runs on any operating system that supports Javascript
+- **Cross-Platform** 🌐 Runs on any operating system that supports Javascript.
 - **Migrations** 🔄 Easily handle database schema changes using Prisma migrations.
 - **Security** 🛡️ Protect from common attacks and prevent from bots' illegal data collecting.
 

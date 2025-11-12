@@ -140,7 +140,7 @@ const authService = {
     },
 
     loginByGoogleAccount: async (googleAccessToken: string) => {
-        const { data } = await axios.get(parsedEnv.GOOGLE_OAUTH_ENDPOINT!, {
+        const { data } = await axios.get(parsedEnv.GOOGLE_OAUTH_ENDPOINT, {
             headers: {
                 Authorization: `Bearer ${googleAccessToken}`
             }
