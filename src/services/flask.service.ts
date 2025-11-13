@@ -37,7 +37,7 @@ const flaskService = {
         }
     },
 
-    seedProducts: async () => {
+    syncProducts: async () => {
         const shoeProducts = await prisma.rootProduct.findMany({
             where: { isAccessory: false },
             include: {

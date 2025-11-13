@@ -5,12 +5,12 @@ import errorMessage from '@/configs/errorMessage'
 import flaskService from '@/services/flask.service'
 
 const aiController = {
-    seedProducts: async (_: Request, res: Response, next: NextFunction) => {
+    syncProducts: async (_: Request, res: Response, next: NextFunction) => {
         try {
-            await flaskService.seedProducts()
+            await flaskService.syncProducts()
 
             res.status(200).json({
-                message: 'Products seeded successfully'
+                message: 'Products synced successfully'
             })
         } catch (error) {
             next(error)
