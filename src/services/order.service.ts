@@ -290,25 +290,34 @@ const orderService = {
         return true
     },
 
-    getOrdersPlacedInTimeRange: async (startDate: Date, endDate: Date) => {
+    getOrdersPlacedInTimeRange: async (startDate: Date, endDate: Date, customerId?: number) => {
+        const whereStatement: any = { createdAt: { gte: startDate, lt: endDate } }
+        if (customerId !== undefined) whereStatement.customerId = customerId
+
         const orders = await prisma.order.findMany({
-            where: { createdAt: { gte: startDate, lt: endDate } }
+            where: whereStatement
         })
 
         return orders
     },
 
-    getOrdersAccountedInTimeRange: async (startDate: Date, endDate: Date) => {
+    getOrdersAccountedInTimeRange: async (startDate: Date, endDate: Date, customerId?: number) => {
+        const whereStatement: any = { deliveredAt: { gte: startDate, lt: endDate } }
+        if (customerId !== undefined) whereStatement.customerId = customerId
+
         const orders = await prisma.order.findMany({
-            where: { deliveredAt: { gte: startDate, lt: endDate } }
+            where: whereStatement
         })
 
         return orders
     },
 
-    getOrdersRefundedInTimeRange: async (startDate: Date, endDate: Date) => {
+    getOrdersRefundedInTimeRange: async (startDate: Date, endDate: Date, customerId?: number) => {
+        const whereStatement: any = { refundedAt: { gte: startDate, lt: endDate } }
+        if (customerId !== undefined) whereStatement.customerId = customerId
+
         const orders = await prisma.order.findMany({
-            where: { refundedAt: { gte: startDate, lt: endDate } }
+            where: whereStatement
         })
 
         return orders

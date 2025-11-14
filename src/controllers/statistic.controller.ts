@@ -29,10 +29,24 @@ const statisticController = {
         }
     },
 
-    getRevenueChart: async (req: Request, res: Response, next: NextFunction) => {
+    getRevenuesChart: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { type } = req.query
-            const statisticData = await statisticService.getRevenueChart(type as StatisticType)
+            const statisticData = await statisticService.getRevenuesChart(type as StatisticType)
+
+            res.status(200).json({
+                data: statisticData
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    getOrdersChartByCustomerId: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { customerId } = req.params
+            const { type } = req.query
+            const statisticData = await statisticService.getOrdersChartByCustomerId(parseInt(customerId), type as StatisticType)
 
             res.status(200).json({
                 data: statisticData

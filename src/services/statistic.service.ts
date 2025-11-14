@@ -132,7 +132,7 @@ const statisticService = {
         return chartData
     },
 
-    getRevenueChart: async (type: StatisticType) => {
+    getRevenuesChart: async (type: StatisticType) => {
         const currentTime = getNow()
         const startOfCurrTime = getStartOfTimeByType(currentTime, type)
 
@@ -143,6 +143,48 @@ const statisticService = {
 
         const chartData = statisticService.createRevenuesChart(accountedOrders, refundedOrders, productImports, damageReports, startOfCurrTime, type)
         return chartData
+    },
+
+    createOrdersChart: (accountedOrders: Order[], refundedOrders: Order[], startDate: Dayjs, type: StatisticType) => {
+        const { columns, timeUnit, format } = statisticService.prepareCreateChartParams(type, startDate)
+
+        const chartData = Array.from(Array(columns), (_, i) => ({
+            date: startDate.add(i, timeUnit as ManipulateType),
+            name: startDate.add(i, timeUnit as ManipulateType).format(format),
+            totalRefunds: 0,
+            totalSales: 0
+        }))
+
+        accountedOrders.forEach(order => {
+            const index = chartData.findIndex(result => isSame(order.deliveredAt!, result.date, timeUnit as ManipulateType))
+            if (index !== -1) chartData[index].totalSales += order.totalAmount
+        })
+
+        refundedOrders.forEach(order => {
+            const index = chartData.findIndex(result => isSame(order.refundedAt!, result.date, timeUnit as ManipulateType))
+            if (index !== -1) chartData[index].totalRefunds -= order.totalAmount
+        })
+
+        return chartData
+    },
+
+    getOrdersChartByCustomerId: async (customerId: number, type: StatisticType) => {
+        const currentTime = getNow()
+        const startOfCurrTime = getStartOfTimeByType(currentTime, type)
+
+        const placedOrders = await orderService.getOrdersPlacedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate(), customerId)
+        const accountedOrders = await orderService.getOrdersAccountedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate(), customerId)
+        const refundedOrders = await orderService.getOrdersRefundedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate(), customerId)
+
+        const chartData = statisticService.createOrdersChart(accountedOrders, refundedOrders, startOfCurrTime, type)
+        return {
+            count: {
+                placed: placedOrders.length,
+                accounted: accountedOrders.length,
+                refunded: refundedOrders.length
+            },
+            chart: chartData
+        }
     },
 
     getProductStatistic: async (productId: number) => {
