@@ -31,7 +31,7 @@ enum InventoryUpdateType {
   STOCK_IN  @map("stock_in")
   STOCK_OUT @map("stock_out")
   RETURN    @map("return")
-  DAMAGE    @map("dAMAGE")
+  DAMAGE    @map("damage")
 }
 
 enum ShoeGender {

@@ -48,7 +48,7 @@ CREATE TABLE `inventory_update_logs` (
     `logId` INTEGER NOT NULL AUTO_INCREMENT,
     `productItemId` INTEGER NOT NULL,
     `quantity` INTEGER NOT NULL,
-    `type` ENUM('reserve', 'release', 'stock_in', 'stock_out', 'return', 'dAMAGE') NOT NULL,
+    `type` ENUM('reserve', 'release', 'stock_in', 'stock_out', 'return', 'damage') NOT NULL,
     `orderId` INTEGER NULL,
     `importId` INTEGER NULL,
     `damageReportId` INTEGER NULL,
