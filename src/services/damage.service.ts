@@ -58,6 +58,9 @@ const damageService = {
         items: { productItemId: number; quantity: number; expectedCost: number }[],
         staffId: number
     ) => {
+        const isStockAdaptable = await damageService.isStockAdaptableForDamageReport(items)
+        if (!isStockAdaptable) throw new HttpException(400, errorMessage.QUANTITY_EXCEED_CURRENT_STOCK)
+
         const newReport = await prisma.inventoryDamageReport.create({
             data: {
                 reason: reason,
@@ -76,10 +79,6 @@ const damageService = {
 
         await Promise.all(
             items.map(async item => {
-                const productItem = await prisma.productItem.findFirst({ where: { productItemId: item.productItemId } })
-                if (productItem == null) throw new HttpException(404, errorMessage.PRODUCT_ITEM_NOT_FOUND)
-                if (item.quantity > productItem.stock) throw new HttpException(400, errorMessage.QUANTITY_EXCEED_CURRENT_STOCK)
-
                 await prisma.productItem.update({
                     where: { productItemId: item.productItemId },
                     data: {
@@ -96,6 +95,16 @@ const damageService = {
                 })
             })
         )
+    },
+
+    isStockAdaptableForDamageReport: async (items: { productItemId: number; quantity: number }[]) => {
+        for (const item of items) {
+            const productItem = await prisma.productItem.findFirst({ where: { productItemId: item.productItemId } })
+            if (productItem == null) throw new HttpException(404, errorMessage.PRODUCT_ITEM_NOT_FOUND)
+            if (item.quantity > productItem.stock) return false
+        }
+
+        return true
     },
 
     getDamageReportsRecordedInTimeRange: async (startDate: Date, endDate: Date) => {
