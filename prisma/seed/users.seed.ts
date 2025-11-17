@@ -59,9 +59,9 @@ export const seedRolesAndPermissions = async (prisma: PrismaClient) => {
             { code: 'ADD_NEW_ORDER_STATUS', name: 'Thêm trạng thái đơn hàng mới' },
             { code: 'UPDATE_ORDER_STATUS', name: 'Cập nhật trạng thái đơn hàng' },
             { code: 'DELETE_ORDER_STATUS', name: 'Xóa trạng thái đơn hàng' },
-            { code: 'ACCESS_TRANSITION_DASHBOARD_PAGE', name: 'Truy cập trang quản lý chuyển đổi trạng thái đơn hàng' }, //30
-            { code: 'ADD_NEW_TRANSITION', name: 'Thêm chuyển đổi trạng thái đơn hàng mới' },
-            { code: 'DELETE_TRANSITION', name: 'Xóa chuyển đổi trạng thái đơn hàng' },
+            { code: 'ACCESS_TRANSITION_DASHBOARD_PAGE', name: 'Truy cập trang quản lý hướng chuyển đổi trạng thái' }, //30
+            { code: 'ADD_NEW_TRANSITION', name: 'Thêm hướng chuyển đổi trạng thái mới' },
+            { code: 'DELETE_TRANSITION', name: 'Xóa hướng chuyển đổi trạng thái' },
 
             // Product imports
             { code: 'ACCESS_IMPORT_DASHBOARD_PAGE', name: 'Truy cập trang quản lý đơn nhập hàng' },
