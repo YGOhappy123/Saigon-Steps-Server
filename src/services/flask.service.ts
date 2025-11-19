@@ -148,6 +148,7 @@ const flaskService = {
         const detectionsWithProducts = detections.map(detection => {
             const productsWithDetails = detection.products.map(([productId, certainty]) => {
                 const product = detectedProducts.find(p => p!.rootProductId === productId)
+
                 return {
                     ...product,
                     certainty: certainty

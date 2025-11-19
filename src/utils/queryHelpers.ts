@@ -29,6 +29,17 @@ export const buildWhereStatement = (filter: string = '{}') => {
                     }
                     break
 
+                case 'startUpdatedTime':
+                    where.updatedAt = { ...(where.updatedAt || {}), gte: parseTime(parsedFilter[criteria]) }
+                    break
+
+                case 'endUpdatedTime':
+                    where.updatedAt = {
+                        ...(where.updatedAt || {}),
+                        lte: parseTime(parsedFilter[criteria].trim().length > 10 ? parsedFilter[criteria] : parsedFilter[criteria] + ' 23:59:59')
+                    }
+                    break
+
                 case 'startImportDate':
                     where.importDate = { ...(where.importDate || {}), gte: parseTime(parsedFilter[criteria]) }
                     break

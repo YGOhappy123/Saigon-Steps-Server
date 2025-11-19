@@ -78,12 +78,13 @@ export const seedRolesAndPermissions = async (prisma: PrismaClient) => {
             { code: 'DISABLE_COUPON', name: 'Khóa phiếu giảm giá' }, //40
 
             // Stock
+            { code: 'ACCESS_INVENTORY_DASHBOARD_PAGE', name: 'Truy cập trang quản lý tồn kho' },
             { code: 'ACCESS_DAMAGE_REPORT_DASHBOARD_PAGE', name: 'Truy cập trang quản lý báo cáo thiệt hại' },
             { code: 'ADD_NEW_DAMAGE_REPORT', name: 'Thêm báo cáo thiệt hại mới' },
 
             // Statistics
             { code: 'ACCESS_PRODUCT_STATISTIC_PAGE', name: 'Truy cập trang thống kê sản phẩm' },
-            { code: 'ACCESS_REVENUE_STATISTIC_PAGE', name: 'Truy cập trang thống kê doanh thu' } //44
+            { code: 'ACCESS_REVENUE_STATISTIC_PAGE', name: 'Truy cập trang thống kê doanh thu' } //45
         ]
     })
 
@@ -135,12 +136,14 @@ export const seedRolesAndPermissions = async (prisma: PrismaClient) => {
             { roleId: 1, permissionId: 42 },
             { roleId: 1, permissionId: 43 },
             { roleId: 1, permissionId: 44 },
+            { roleId: 1, permissionId: 45 },
 
             // Warehouse Staff - inventory and damage report management
             { roleId: 2, permissionId: 33 },
             { roleId: 2, permissionId: 34 },
             { roleId: 2, permissionId: 41 },
             { roleId: 2, permissionId: 42 },
+            { roleId: 2, permissionId: 43 },
 
             // Order Processing Staff - order management
             { roleId: 3, permissionId: 25 },
@@ -160,7 +163,7 @@ export const seedRolesAndPermissions = async (prisma: PrismaClient) => {
             { roleId: 5, permissionId: 38 },
             { roleId: 5, permissionId: 39 },
             { roleId: 5, permissionId: 40 },
-            { roleId: 5, permissionId: 43 }
+            { roleId: 5, permissionId: 44 }
         ]
     })
 }

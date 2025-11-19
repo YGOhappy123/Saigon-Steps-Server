@@ -8,6 +8,7 @@ import errorMessage from '@/configs/errorMessage'
 import roleService from '@/services/role.service'
 import importService from '@/services/import.service'
 import damageService from '@/services/damage.service'
+import inventoryService from '@/services/inventory.service'
 import appPermissions from '@/configs/appPermissions'
 
 const reportController = {
@@ -85,6 +86,26 @@ const reportController = {
 
             res.status(201).json({
                 message: successMessage.REPORT_DAMAGE_SUCCESSFULLY
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    getInventoryUpdateLogs: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { skip, limit, sort, filter } = req.query
+            const { logs, total } = await inventoryService.getInventoryUpdateLogs({
+                skip: skip !== undefined ? parseInt(skip as string) : undefined,
+                limit: limit !== undefined ? parseInt(limit as string) : undefined,
+                sort,
+                filter
+            } as ISearchParams)
+
+            res.status(200).json({
+                data: logs,
+                total,
+                took: logs.length
             })
         } catch (error) {
             next(error)

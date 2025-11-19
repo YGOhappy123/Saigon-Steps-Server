@@ -11,4 +11,6 @@ router.post('/imports', staffOnly, trackNewProductImportValidator, reportControl
 router.get('/damages', staffOnly, reportController.getAllDamageReports)
 router.post('/damages', staffOnly, reportNewDamageValidator, reportController.reportNewDamage)
 
+router.get('/inventories', staffOnly, reportController.getInventoryUpdateLogs)
+
 export default router
