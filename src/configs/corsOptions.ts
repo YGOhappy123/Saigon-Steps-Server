@@ -4,7 +4,14 @@ import { HttpException } from '@/errors/HttpException'
 import errorMessage from '@/configs/errorMessage'
 
 const allowedOrigins: { [key in typeof parsedEnv.NODE_ENV]: string[] } = {
-    development: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4000', 'http://127.0.0.1:4000'],
+    development: [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:4000',
+        'http://127.0.0.1:4000',
+        'https://saigon-steps.vercel.app',
+        'https://saigon-steps-dashboard.vercel.app'
+    ],
     production: []
 }
 

@@ -323,6 +323,68 @@ const orderService = {
         return orders
     },
 
+    getProductsStatisticInTimeRange: async (startDate: Date, endDate: Date) => {
+        const result: {
+            rootProductId: number
+            totalSoldUnits: number
+            totalSales: number
+            totalRefundedUnits: number
+            totalRefundedAmount: number
+        }[] = []
+
+        const accountedOrderItems = await prisma.orderItem.findMany({
+            where: {
+                order: {
+                    deliveredAt: { gte: startDate, lt: endDate }
+                }
+            },
+            include: { productItem: true }
+        })
+
+        accountedOrderItems.forEach(item => {
+            const existingProductStat = result.find(stat => stat['rootProductId'] === item.productItem.rootProductId)
+            if (existingProductStat) {
+                existingProductStat.totalSoldUnits += item.quantity
+                existingProductStat.totalSales += item.price * item.quantity
+            } else {
+                result.push({
+                    rootProductId: item.productItem.rootProductId,
+                    totalSoldUnits: item.quantity,
+                    totalSales: item.price * item.quantity,
+                    totalRefundedUnits: 0,
+                    totalRefundedAmount: 0
+                })
+            }
+        })
+
+        const refundedOrderItems = await prisma.orderItem.findMany({
+            where: {
+                order: {
+                    refundedAt: { gte: startDate, lt: endDate }
+                }
+            },
+            include: { productItem: true }
+        })
+
+        refundedOrderItems.forEach(item => {
+            const existingProductStat = result.find(stat => stat['rootProductId'] === item.productItem.rootProductId)
+            if (existingProductStat) {
+                existingProductStat.totalRefundedUnits += item.quantity
+                existingProductStat.totalRefundedAmount += item.price * item.quantity
+            } else {
+                result.push({
+                    rootProductId: item.productItem.rootProductId,
+                    totalSoldUnits: 0,
+                    totalSales: 0,
+                    totalRefundedUnits: item.quantity,
+                    totalRefundedAmount: item.price * item.quantity
+                })
+            }
+        })
+
+        return result
+    },
+
     verifyCouponCore: async (code: string, customerId: number) => {
         const coupon = await prisma.coupon.findFirst({ where: { code: code } })
         if (!coupon) return { result: ValidateVoucherResult.NOT_FOUND, coupon: null }

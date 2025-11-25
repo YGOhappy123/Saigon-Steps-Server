@@ -3,6 +3,7 @@ import { prisma } from '@/prisma'
 import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
+import { encryptString, decryptString } from '@/utils/securityHelpers'
 import errorMessage from '@/configs/errorMessage'
 
 const chatService = {
@@ -21,10 +22,12 @@ const chatService = {
             : {
                   ...conversation,
                   messages: conversation.messages.map(message => {
-                      const { senderStaffId, ...messageData } = message
+                      const { senderStaffId, textContent, imageContent, ...messageData } = message
 
                       return {
                           ...messageData,
+                          textContent: textContent ? decryptString(textContent) : null,
+                          imageContent: imageContent ? decryptString(imageContent) : null,
                           isSentByStaff: message.senderStaffId != null
                       }
                   })
@@ -42,26 +45,26 @@ const chatService = {
             const newMessage = await prisma.chatMessage.create({
                 data: {
                     conversationId: newConversation.conversationId,
-                    textContent: textContent ?? null,
-                    imageContent: imageContent ?? null
+                    textContent: textContent ? encryptString(textContent) : null,
+                    imageContent: imageContent ? encryptString(imageContent) : null
                 }
             })
 
             io.emit('conversation:new', {
                 ...newConversation,
-                lastMessage: newMessage
+                lastMessage: { ...newMessage, textContent: textContent || null, imageContent: imageContent || null }
             })
         } else {
             const newMessage = await prisma.chatMessage.create({
                 data: {
                     conversationId: conversation.conversationId,
-                    textContent: textContent ?? null,
-                    imageContent: imageContent ?? null
+                    textContent: textContent ? encryptString(textContent) : null,
+                    imageContent: imageContent ? encryptString(imageContent) : null
                 }
             })
 
             io.to(`conversation:${conversation.conversationId}`).emit('message:new', {
-                newMessage: newMessage,
+                newMessage: { ...newMessage, textContent: textContent || null, imageContent: imageContent || null },
                 tempId: tempId
             })
         }
@@ -97,11 +100,15 @@ const chatService = {
         return {
             conversations: sortedConversations.map(conversation => {
                 const { messages, ...conversationData } = conversation
-                const lastMessage = messages[0]
+                const { textContent, imageContent, ...messageData } = messages[0]
 
                 return {
                     ...conversationData,
-                    lastMessage: lastMessage
+                    lastMessage: {
+                        ...messageData,
+                        textContent: textContent ? decryptString(textContent) : null,
+                        imageContent: imageContent ? decryptString(imageContent) : null
+                    }
                 }
             }),
             total: total
@@ -125,6 +132,14 @@ const chatService = {
 
         return {
             ...conversation,
+            messages: conversation.messages.map(message => {
+                const { textContent, imageContent, ...messageData } = message
+                return {
+                    ...messageData,
+                    textContent: textContent ? decryptString(textContent) : null,
+                    imageContent: imageContent ? decryptString(imageContent) : null
+                }
+            }),
             customer: {
                 ...conversation.customer,
                 isActive: conversation.customer.account.isActive
@@ -153,29 +168,29 @@ const chatService = {
                 data: {
                     conversationId: newConversation.conversationId,
                     senderStaffId: staffId,
-                    textContent: textContent ?? null,
-                    imageContent: imageContent ?? null
+                    textContent: textContent ? encryptString(textContent) : null,
+                    imageContent: imageContent ? encryptString(imageContent) : null
                 },
                 include: { senderStaff: true }
             })
 
             io.emit('conversation:new', {
                 ...newConversation,
-                lastMessage: newMessage
+                lastMessage: { ...newMessage, textContent: textContent || null, imageContent: imageContent || null }
             })
         } else {
             const newMessage = await prisma.chatMessage.create({
                 data: {
                     conversationId: conversation.conversationId,
                     senderStaffId: staffId,
-                    textContent: textContent ?? null,
-                    imageContent: imageContent ?? null
+                    textContent: textContent ? encryptString(textContent) : null,
+                    imageContent: imageContent ? encryptString(imageContent) : null
                 },
                 include: { senderStaff: true }
             })
 
             io.to(`conversation:${conversation.conversationId}`).emit('message:new', {
-                newMessage: newMessage,
+                newMessage: { ...newMessage, textContent: textContent || null, imageContent: imageContent || null },
                 tempId: tempId
             })
         }

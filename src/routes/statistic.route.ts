@@ -8,6 +8,6 @@ router.get('/summary', staffOnly, statisticController.getSummaryStatistic)
 router.get('/key-customers', staffOnly, statisticController.getKeyCustomersStatistic)
 router.get('/revenues', staffOnly, statisticController.getRevenuesChart)
 router.get('/orders/:customerId', staffOnly, statisticController.getOrdersChartByCustomerId)
-router.get('/products/:productId', staffOnly, statisticController.getProductStatistic)
+router.get('/products', staffOnly, statisticController.getProductsSalesStatistic)
 
 export default router

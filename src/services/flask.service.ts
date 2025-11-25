@@ -3,6 +3,7 @@ import { parsedEnv } from '@/env'
 import FormData from 'form-data'
 import axios from 'axios'
 import productService from '@/services/product.service'
+import pinoLogger from '@/configs/pinoLogger'
 
 const flaskService = {
     recreateCollections: async () => {
@@ -54,13 +55,13 @@ const flaskService = {
         if (total === 0) return
 
         await flaskService.recreateCollections()
-        console.log('Recreated collections in vector database.')
+        pinoLogger.info('[VECTOR DATABASE] Recreated collections in vector database.')
 
         const formattedProducts = shoeProducts.map(product => flaskService.formatProductForAI(product))
         let count = 0
         for (const item of formattedProducts) {
             await axios.post(`${parsedEnv.AI_SERVER_URL}/add-product`, item)
-            console.log(`Product added. Current progress: ${++count}/${total}`)
+            pinoLogger.info(`[VECTOR DATABASE] Product added. Current progress: ${++count}/${total}`)
         }
     },
 
@@ -112,6 +113,26 @@ const flaskService = {
 
     deleteProduct: async (productId: number) => {
         await axios.delete(`${parsedEnv.AI_SERVER_URL}/delete-product/${productId}`)
+    },
+
+    getSimilarProducts: async (slug: string) => {
+        const product = await prisma.rootProduct.findFirst({ where: { slug: slug, isAccessory: false } })
+        if (product == null) return []
+
+        const response = await axios.get(`${parsedEnv.AI_SERVER_URL}/similar-products/${product.rootProductId}`)
+        const similarProducts: [number, number][] = response?.data?.data?.detections ?? []
+
+        const detectedProducts = await Promise.all(
+            similarProducts.map(async ([productId, certainty]) => {
+                const product = await productService.getProductById(productId)
+                return {
+                    ...product,
+                    certainty: certainty
+                }
+            })
+        )
+
+        return detectedProducts
     },
 
     imageSearch: async (imageBuffer: Buffer, imageName: string, imageType: string) => {

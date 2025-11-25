@@ -13,6 +13,7 @@ const envSchema = z.object({
     ACCESS_TOKEN_SECRET: z.string().min(1),
     REFRESH_TOKEN_SECRET: z.string().min(1),
     RESET_PASSWORD_TOKEN_SECRET: z.string().min(1),
+    MESSAGE_ENCRYPTION_KEY: z.string().min(1),
 
     GOOGLE_EMAIL: z.email(),
     GOOGLE_APP_PASSWORD: z.string().min(1),

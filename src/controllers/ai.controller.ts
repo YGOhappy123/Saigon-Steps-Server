@@ -17,6 +17,19 @@ const aiController = {
         }
     },
 
+    getSimilarProducts: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { slug } = req.params
+            const similarProducts = await flaskService.getSimilarProducts(slug)
+
+            res.status(200).json({
+                data: similarProducts
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
     imageSearch: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const image = (req.files as Express.Multer.File[])[0]
@@ -27,7 +40,9 @@ const aiController = {
             const imageType = image.mimetype
             const detections = await flaskService.imageSearch(imageBuffer, imageName, imageType)
 
-            res.status(200).json({ data: detections })
+            res.status(200).json({
+                data: detections
+            })
         } catch (error) {
             next(error)
         }
@@ -41,7 +56,9 @@ const aiController = {
             const { query } = req.body
             const detections = await flaskService.semanticSearch(query)
 
-            res.status(200).json({ data: detections })
+            res.status(200).json({
+                data: detections
+            })
         } catch (error) {
             next(error)
         }

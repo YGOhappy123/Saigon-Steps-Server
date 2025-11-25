@@ -33,10 +33,14 @@ export const generateRandomString = (length?: number) => {
 }
 
 export const generateProductBarcode = (length?: number) => {
-    const RANDOM_STRING_LENGTH = 12
+    const prefix = '99'
+    const lengthValue = Math.max(1, (length ?? 12) - prefix.length)
 
-    return randomstring.generate({
-        length: length ?? RANDOM_STRING_LENGTH,
-        charset: 'numeric'
-    })
+    return (
+        prefix +
+        randomstring.generate({
+            length: lengthValue,
+            charset: 'numeric'
+        })
+    )
 }
