@@ -91,7 +91,7 @@ export const seedBrandsAndCategories = async (prisma: PrismaClient) => {
             { name: 'Giày boots', createdBy: 2 },
             { name: 'Dép guốc', createdBy: 2 },
             { name: 'Giày trẻ em', createdBy: 1 },
-            { name: 'Dép crocs', createdBy: 1 } //10
+            { name: 'Giày clog', createdBy: 1 } //10
         ]
     })
 }
