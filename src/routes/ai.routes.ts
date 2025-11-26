@@ -9,6 +9,7 @@ if (parsedEnv.NODE_ENV === 'development') {
     router.post('/sync-products', aiController.syncProducts)
 }
 
+router.get('/similar-products/:slug', aiController.getSimilarProducts)
 router.post('/image-search', aiController.imageSearch)
 router.post('/semantic-search', semanticSearchValidator, aiController.semanticSearch)
 
