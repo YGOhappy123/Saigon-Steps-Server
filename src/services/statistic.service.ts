@@ -1,10 +1,9 @@
-import { Order, ProductImport, DamageReport } from '@/prisma'
+import { Order, ProductImport, DamageReport, prisma } from '@/prisma'
 import { StatisticType } from '@/interfaces/params'
-import { getNow, getStartOfTimeByType, getPreviousTimeByType, isSame } from '@/utils/timeHelpers'
+import { getNow, getStartOfTimeByType, getPreviousTimeByType, isSame, getEndOfTimeByType } from '@/utils/timeHelpers'
 import { Dayjs, ManipulateType } from 'dayjs'
 import customerService from '@/services/customer.service'
 import orderService from '@/services/order.service'
-import productService from '@/services/product.service'
 import importService from '@/services/import.service'
 import damageService from '@/services/damage.service'
 
@@ -39,21 +38,14 @@ const statisticService = {
         }
     },
 
-    getKeyCustomersStatistic: async (type: StatisticType) => {
-        const currentTime = getNow()
-        const startOfCurrTime = getStartOfTimeByType(currentTime, type)
+    getKeyCustomersStatistic: async (from: string | undefined, to: string | undefined) => {
+        if (!from || !to || from > to) return { highestOrderCountCustomers: [], highestSpendingCustomers: [] }
 
-        const highestOrderCountCustomers = await customerService.getCustomersWithHighestOrderCountInTimeRange(
-            startOfCurrTime.toDate(),
-            currentTime.toDate(),
-            5
-        )
+        const startTime = getStartOfTimeByType(from, 'daily')
+        const endTime = getEndOfTimeByType(to, 'daily')
 
-        const highestSpendingCustomers = await customerService.getCustomersWithHighestSpendingInTimeRange(
-            startOfCurrTime.toDate(),
-            currentTime.toDate(),
-            5
-        )
+        const highestOrderCountCustomers = await customerService.getCustomersWithHighestOrderCountInTimeRange(startTime.toDate(), endTime.toDate(), 5)
+        const highestSpendingCustomers = await customerService.getCustomersWithHighestSpendingInTimeRange(startTime.toDate(), endTime.toDate(), 5)
 
         return {
             highestOrderCountCustomers: highestOrderCountCustomers,
@@ -61,32 +53,29 @@ const statisticService = {
         }
     },
 
-    prepareCreateChartParams: (type: StatisticType, startDate: Dayjs) => {
-        switch (type) {
-            case 'daily':
-                return {
-                    columns: 24,
-                    timeUnit: 'hour',
-                    format: 'HH:mm'
-                }
-            case 'weekly':
-                return {
-                    columns: 7,
-                    timeUnit: 'day',
-                    format: 'dddd DD-MM'
-                }
-            case 'monthly':
-                return {
-                    columns: startDate.daysInMonth(),
-                    timeUnit: 'day',
-                    format: 'DD'
-                }
-            case 'yearly':
-                return {
-                    columns: 12,
-                    timeUnit: 'month',
-                    format: 'MMMM'
-                }
+    prepareCreateChartParams: (startDate: Dayjs, endDate: Dayjs) => {
+        const diffHours = endDate.diff(startDate, 'hour')
+        const diffDays = endDate.diff(startDate, 'day')
+        const diffMonths = endDate.diff(startDate, 'month')
+
+        if (diffHours <= 24) {
+            return {
+                columns: diffHours + 1,
+                timeUnit: 'hour',
+                format: 'HH:mm'
+            }
+        }
+        if (diffDays <= 31) {
+            return {
+                columns: diffDays + 1,
+                timeUnit: 'day',
+                format: 'DD-MM'
+            }
+        }
+        return {
+            columns: diffMonths + 1,
+            timeUnit: 'month',
+            format: 'MM-YYYY'
         }
     },
 
@@ -96,9 +85,9 @@ const statisticService = {
         productImports: ProductImport[],
         damageReports: DamageReport[],
         startDate: Dayjs,
-        type: StatisticType
+        endDate: Dayjs
     ) => {
-        const { columns, timeUnit, format } = statisticService.prepareCreateChartParams(type, startDate)
+        const { columns, timeUnit, format } = statisticService.prepareCreateChartParams(startDate, endDate)
 
         const chartData = Array.from(Array(columns), (_, i) => ({
             date: startDate.add(i, timeUnit as ManipulateType),
@@ -132,21 +121,23 @@ const statisticService = {
         return chartData
     },
 
-    getRevenuesChart: async (type: StatisticType) => {
-        const currentTime = getNow()
-        const startOfCurrTime = getStartOfTimeByType(currentTime, type)
+    getRevenuesChart: async (from: string | undefined, to: string | undefined) => {
+        if (!from || !to || from > to) return []
 
-        const accountedOrders = await orderService.getOrdersAccountedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate())
-        const refundedOrders = await orderService.getOrdersRefundedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate())
-        const productImports = await importService.getProductImportsImportedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate())
-        const damageReports = await damageService.getDamageReportsRecordedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate())
+        const startTime = getStartOfTimeByType(from, 'daily')
+        const endTime = getEndOfTimeByType(to, 'daily')
 
-        const chartData = statisticService.createRevenuesChart(accountedOrders, refundedOrders, productImports, damageReports, startOfCurrTime, type)
+        const accountedOrders = await orderService.getOrdersAccountedInTimeRange(startTime.toDate(), endTime.toDate())
+        const refundedOrders = await orderService.getOrdersRefundedInTimeRange(startTime.toDate(), endTime.toDate())
+        const productImports = await importService.getProductImportsImportedInTimeRange(startTime.toDate(), endTime.toDate())
+        const damageReports = await damageService.getDamageReportsRecordedInTimeRange(startTime.toDate(), endTime.toDate())
+
+        const chartData = statisticService.createRevenuesChart(accountedOrders, refundedOrders, productImports, damageReports, startTime, endTime)
         return chartData
     },
 
-    createOrdersChart: (accountedOrders: Order[], refundedOrders: Order[], startDate: Dayjs, type: StatisticType) => {
-        const { columns, timeUnit, format } = statisticService.prepareCreateChartParams(type, startDate)
+    createOrdersChart: (accountedOrders: Order[], refundedOrders: Order[], startDate: Dayjs, endDate: Dayjs) => {
+        const { columns, timeUnit, format } = statisticService.prepareCreateChartParams(startDate, endDate)
 
         const chartData = Array.from(Array(columns), (_, i) => ({
             date: startDate.add(i, timeUnit as ManipulateType),
@@ -168,15 +159,17 @@ const statisticService = {
         return chartData
     },
 
-    getOrdersChartByCustomerId: async (customerId: number, type: StatisticType) => {
-        const currentTime = getNow()
-        const startOfCurrTime = getStartOfTimeByType(currentTime, type)
+    getOrdersChartByCustomerId: async (customerId: number, from: string | undefined, to: string | undefined) => {
+        if (!from || !to || from > to) return { count: { placed: 0, accounted: 0, refunded: 0 }, chart: [] }
 
-        const placedOrders = await orderService.getOrdersPlacedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate(), customerId)
-        const accountedOrders = await orderService.getOrdersAccountedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate(), customerId)
-        const refundedOrders = await orderService.getOrdersRefundedInTimeRange(startOfCurrTime.toDate(), currentTime.toDate(), customerId)
+        const startTime = getStartOfTimeByType(from, 'daily')
+        const endTime = getEndOfTimeByType(to, 'daily')
 
-        const chartData = statisticService.createOrdersChart(accountedOrders, refundedOrders, startOfCurrTime, type)
+        const placedOrders = await orderService.getOrdersPlacedInTimeRange(startTime.toDate(), endTime.toDate(), customerId)
+        const accountedOrders = await orderService.getOrdersAccountedInTimeRange(startTime.toDate(), endTime.toDate(), customerId)
+        const refundedOrders = await orderService.getOrdersRefundedInTimeRange(startTime.toDate(), endTime.toDate(), customerId)
+
+        const chartData = statisticService.createOrdersChart(accountedOrders, refundedOrders, startTime, endTime)
         return {
             count: {
                 placed: placedOrders.length,
@@ -187,27 +180,41 @@ const statisticService = {
         }
     },
 
-    getProductStatistic: async (productId: number) => {
-        const currentTime = getNow()
+    getProductsSalesStatistic: async (from: string | undefined, to: string | undefined, hasActivity: boolean) => {
+        if (!from || !to || from > to) return []
 
-        const startOfCurrDay = getStartOfTimeByType(currentTime, 'daily')
-        const productSalesDaily = await productService.getProductStatisticInTimeRange(productId, startOfCurrDay.toDate(), currentTime.toDate())
+        const startTime = getStartOfTimeByType(from, 'daily')
+        const endTime = getEndOfTimeByType(to, 'daily')
 
-        const startOfCurrWeek = getStartOfTimeByType(currentTime, 'weekly')
-        const productSalesWeekly = await productService.getProductStatisticInTimeRange(productId, startOfCurrWeek.toDate(), currentTime.toDate())
+        const productSales = await orderService.getProductsStatisticInTimeRange(startTime.toDate(), endTime.toDate())
+        const productsData = await prisma.rootProduct.findMany({
+            where: {
+                rootProductId: hasActivity ? { in: productSales.map(data => data.rootProductId) } : undefined
+            }
+        })
 
-        const startOfCurrMonth = getStartOfTimeByType(currentTime, 'monthly')
-        const productSalesMonthly = await productService.getProductStatisticInTimeRange(productId, startOfCurrMonth.toDate(), currentTime.toDate())
+        const mappedProductsData = productsData.map(product => {
+            const salesStatistic = productSales.find(data => data.rootProductId === product.rootProductId)
 
-        const startOfCurrYear = getStartOfTimeByType(currentTime, 'yearly')
-        const productSalesYearly = await productService.getProductStatisticInTimeRange(productId, startOfCurrYear.toDate(), currentTime.toDate())
+            return {
+                rootProductId: product.rootProductId,
+                name: product.name,
+                sales: {
+                    totalSoldUnits: salesStatistic ? salesStatistic.totalSoldUnits : 0,
+                    totalSales: salesStatistic ? salesStatistic.totalSales : 0,
+                    totalRefundedUnits: salesStatistic ? salesStatistic.totalRefundedUnits : 0,
+                    totalRefundedAmount: salesStatistic ? salesStatistic.totalRefundedAmount : 0
+                }
+            }
+        })
 
-        return {
-            daily: productSalesDaily,
-            weekly: productSalesWeekly,
-            monthly: productSalesMonthly,
-            yearly: productSalesYearly
-        }
+        return mappedProductsData.sort((a, b) => {
+            const aHasSales = a.sales.totalSoldUnits > 0 || a.sales.totalRefundedUnits > 0 ? 1 : 0
+            const bHasSales = b.sales.totalSoldUnits > 0 || a.sales.totalRefundedUnits > 0 ? 1 : 0
+
+            if (aHasSales !== bHasSales) return bHasSales - aHasSales
+            return b.sales.totalSales - a.sales.totalSales
+        })
     }
 }
 

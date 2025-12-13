@@ -635,39 +635,6 @@ const productService = {
         })
 
         return !hasRootReferences && !hasItemsReferences
-    },
-
-    getProductStatisticInTimeRange: async (productId: number, startDate: Date, endDate: Date) => {
-        const accountedOrderItems = await prisma.orderItem.findMany({
-            where: {
-                order: {
-                    deliveredAt: { gte: startDate, lt: endDate }
-                },
-                productItem: {
-                    rootProduct: { rootProductId: productId }
-                }
-            }
-        })
-
-        const refundedOrderItems = await prisma.orderItem.findMany({
-            where: {
-                order: {
-                    refundedAt: { gte: startDate, lt: endDate }
-                },
-                productItem: {
-                    rootProduct: { rootProductId: productId }
-                }
-            }
-        })
-
-        const result = {
-            totalSoldUnits: accountedOrderItems.reduce((sum, item) => sum + item.quantity, 0),
-            totalSales: accountedOrderItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
-            totalRefundedUnits: refundedOrderItems.reduce((sum, item) => sum + item.quantity, 0),
-            totalRefundedAmount: refundedOrderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-        }
-
-        return result
     }
 }
 

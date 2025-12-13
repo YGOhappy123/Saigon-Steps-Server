@@ -18,8 +18,8 @@ const statisticController = {
 
     getKeyCustomersStatistic: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { type } = req.query
-            const statisticData = await statisticService.getKeyCustomersStatistic(type as StatisticType)
+            const { from, to } = req.query
+            const statisticData = await statisticService.getKeyCustomersStatistic(from as string | undefined, to as string | undefined)
 
             res.status(200).json({
                 data: statisticData
@@ -31,8 +31,8 @@ const statisticController = {
 
     getRevenuesChart: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { type } = req.query
-            const statisticData = await statisticService.getRevenuesChart(type as StatisticType)
+            const { from, to } = req.query
+            const statisticData = await statisticService.getRevenuesChart(from as string | undefined, to as string | undefined)
 
             res.status(200).json({
                 data: statisticData
@@ -45,8 +45,12 @@ const statisticController = {
     getOrdersChartByCustomerId: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { customerId } = req.params
-            const { type } = req.query
-            const statisticData = await statisticService.getOrdersChartByCustomerId(parseInt(customerId), type as StatisticType)
+            const { from, to } = req.query
+            const statisticData = await statisticService.getOrdersChartByCustomerId(
+                parseInt(customerId),
+                from as string | undefined,
+                to as string | undefined
+            )
 
             res.status(200).json({
                 data: statisticData
@@ -56,10 +60,14 @@ const statisticController = {
         }
     },
 
-    getProductStatistic: async (req: Request, res: Response, next: NextFunction) => {
+    getProductsSalesStatistic: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { productId } = req.params
-            const statisticData = await statisticService.getProductStatistic(parseInt(productId))
+            const { from, to, hasActivity } = req.query
+            const statisticData = await statisticService.getProductsSalesStatistic(
+                from as string | undefined,
+                to as string | undefined,
+                hasActivity === 'false' ? false : true
+            )
 
             res.status(200).json({
                 data: statisticData
