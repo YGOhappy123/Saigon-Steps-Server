@@ -41,8 +41,9 @@ const statisticService = {
     getKeyCustomersStatistic: async (from: string | undefined, to: string | undefined) => {
         if (!from || !to || from > to) return { highestOrderCountCustomers: [], highestSpendingCustomers: [] }
 
+        const isTodaySelected = to === getNow().format('YYYY-MM-DD')
         const startTime = getStartOfTimeByType(from, 'daily')
-        const endTime = getEndOfTimeByType(to, 'daily')
+        const endTime = isTodaySelected ? getNow() : getEndOfTimeByType(to, 'daily')
 
         const highestOrderCountCustomers = await customerService.getCustomersWithHighestOrderCountInTimeRange(startTime.toDate(), endTime.toDate(), 5)
         const highestSpendingCustomers = await customerService.getCustomersWithHighestSpendingInTimeRange(startTime.toDate(), endTime.toDate(), 5)
@@ -58,14 +59,14 @@ const statisticService = {
         const diffDays = endDate.diff(startDate, 'day')
         const diffMonths = endDate.diff(startDate, 'month')
 
-        if (diffHours <= 24) {
+        if (diffHours < 24) {
             return {
                 columns: diffHours + 1,
                 timeUnit: 'hour',
                 format: 'HH:mm'
             }
         }
-        if (diffDays <= 31) {
+        if (diffDays < 31) {
             return {
                 columns: diffDays + 1,
                 timeUnit: 'day',
@@ -124,8 +125,9 @@ const statisticService = {
     getRevenuesChart: async (from: string | undefined, to: string | undefined) => {
         if (!from || !to || from > to) return []
 
+        const isTodaySelected = to === getNow().format('YYYY-MM-DD')
         const startTime = getStartOfTimeByType(from, 'daily')
-        const endTime = getEndOfTimeByType(to, 'daily')
+        const endTime = isTodaySelected ? getNow() : getEndOfTimeByType(to, 'daily')
 
         const accountedOrders = await orderService.getOrdersAccountedInTimeRange(startTime.toDate(), endTime.toDate())
         const refundedOrders = await orderService.getOrdersRefundedInTimeRange(startTime.toDate(), endTime.toDate())
@@ -162,8 +164,9 @@ const statisticService = {
     getOrdersChartByCustomerId: async (customerId: number, from: string | undefined, to: string | undefined) => {
         if (!from || !to || from > to) return { count: { placed: 0, accounted: 0, refunded: 0 }, chart: [] }
 
+        const isTodaySelected = to === getNow().format('YYYY-MM-DD')
         const startTime = getStartOfTimeByType(from, 'daily')
-        const endTime = getEndOfTimeByType(to, 'daily')
+        const endTime = isTodaySelected ? getNow() : getEndOfTimeByType(to, 'daily')
 
         const placedOrders = await orderService.getOrdersPlacedInTimeRange(startTime.toDate(), endTime.toDate(), customerId)
         const accountedOrders = await orderService.getOrdersAccountedInTimeRange(startTime.toDate(), endTime.toDate(), customerId)
@@ -183,13 +186,21 @@ const statisticService = {
     getProductsSalesStatistic: async (from: string | undefined, to: string | undefined, hasActivity: boolean) => {
         if (!from || !to || from > to) return []
 
+        const isTodaySelected = to === getNow().format('YYYY-MM-DD')
         const startTime = getStartOfTimeByType(from, 'daily')
-        const endTime = getEndOfTimeByType(to, 'daily')
+        const endTime = isTodaySelected ? getNow() : getEndOfTimeByType(to, 'daily')
 
         const productSales = await orderService.getProductsStatisticInTimeRange(startTime.toDate(), endTime.toDate())
         const productsData = await prisma.rootProduct.findMany({
-            where: {
-                rootProductId: hasActivity ? { in: productSales.map(data => data.rootProductId) } : undefined
+            where: { rootProductId: hasActivity ? { in: productSales.map(data => data.rootProductId) } : undefined },
+            include: {
+                images: { orderBy: { imageId: 'asc' } },
+                brand: true,
+                shoeFeature: {
+                    include: {
+                        category: true
+                    }
+                }
             }
         })
 
@@ -198,7 +209,13 @@ const statisticService = {
 
             return {
                 rootProductId: product.rootProductId,
-                name: product.name,
+                rootProduct: {
+                    name: product.name,
+                    slug: product.slug,
+                    images: product.images.map(image => image.url),
+                    brand: product.brand || null,
+                    category: product.shoeFeature?.category || null
+                },
                 sales: {
                     totalSoldUnits: salesStatistic ? salesStatistic.totalSoldUnits : 0,
                     totalSales: salesStatistic ? salesStatistic.totalSales : 0,
@@ -208,13 +225,19 @@ const statisticService = {
             }
         })
 
-        return mappedProductsData.sort((a, b) => {
-            const aHasSales = a.sales.totalSoldUnits > 0 || a.sales.totalRefundedUnits > 0 ? 1 : 0
-            const bHasSales = b.sales.totalSoldUnits > 0 || a.sales.totalRefundedUnits > 0 ? 1 : 0
+        return {
+            range: {
+                from: startTime.toDate(),
+                to: endTime.toDate()
+            },
+            sales: mappedProductsData.sort((a, b) => {
+                const aHasSales = a.sales.totalSoldUnits > 0 || a.sales.totalRefundedUnits > 0 ? 1 : 0
+                const bHasSales = b.sales.totalSoldUnits > 0 || a.sales.totalRefundedUnits > 0 ? 1 : 0
 
-            if (aHasSales !== bHasSales) return bHasSales - aHasSales
-            return b.sales.totalSales - a.sales.totalSales
-        })
+                if (aHasSales !== bHasSales) return bHasSales - aHasSales
+                return b.sales.totalSales - a.sales.totalSales
+            })
+        }
     }
 }
 
