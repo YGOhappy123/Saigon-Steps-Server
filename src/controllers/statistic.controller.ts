@@ -18,8 +18,12 @@ const statisticController = {
 
     getKeyCustomersStatistic: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { from, to } = req.query
-            const statisticData = await statisticService.getKeyCustomersStatistic(from as string | undefined, to as string | undefined)
+            const { from, to, limit } = req.query
+            const statisticData = await statisticService.getKeyCustomersStatistic(
+                from as string | undefined,
+                to as string | undefined,
+                parseInt((limit as string) || '5')
+            )
 
             res.status(200).json({
                 data: statisticData

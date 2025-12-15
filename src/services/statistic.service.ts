@@ -38,17 +38,25 @@ const statisticService = {
         }
     },
 
-    getKeyCustomersStatistic: async (from: string | undefined, to: string | undefined) => {
-        if (!from || !to || from > to) return { highestOrderCountCustomers: [], highestSpendingCustomers: [] }
+    getKeyCustomersStatistic: async (from: string | undefined, to: string | undefined, limit: number) => {
+        if (!from || !to || from > to) return { range: { from: '', to: '' }, highestOrderCountCustomers: [], highestSpendingCustomers: [] }
 
         const isTodaySelected = to === getNow().format('YYYY-MM-DD')
         const startTime = getStartOfTimeByType(from, 'daily')
         const endTime = isTodaySelected ? getNow() : getEndOfTimeByType(to, 'daily')
 
-        const highestOrderCountCustomers = await customerService.getCustomersWithHighestOrderCountInTimeRange(startTime.toDate(), endTime.toDate(), 5)
-        const highestSpendingCustomers = await customerService.getCustomersWithHighestSpendingInTimeRange(startTime.toDate(), endTime.toDate(), 5)
+        const highestOrderCountCustomers = await customerService.getCustomersWithHighestOrderCountInTimeRange(
+            startTime.toDate(),
+            endTime.toDate(),
+            limit
+        )
+        const highestSpendingCustomers = await customerService.getCustomersWithHighestSpendingInTimeRange(startTime.toDate(), endTime.toDate(), limit)
 
         return {
+            range: {
+                from: startTime.toDate(),
+                to: endTime.toDate()
+            },
             highestOrderCountCustomers: highestOrderCountCustomers,
             highestSpendingCustomers: highestSpendingCustomers
         }
@@ -70,13 +78,13 @@ const statisticService = {
             return {
                 columns: diffDays + 1,
                 timeUnit: 'day',
-                format: 'DD-MM'
+                format: 'DD/MM'
             }
         }
         return {
             columns: diffMonths + 1,
             timeUnit: 'month',
-            format: 'MM-YYYY'
+            format: 'MM/YYYY'
         }
     },
 
@@ -119,11 +127,11 @@ const statisticService = {
             if (index !== -1) chartData[index].totalDamages -= damage.totalExpectedCost
         })
 
-        return chartData
+        return chartData.map(({ date, ...rest }) => ({ ...rest }))
     },
 
     getRevenuesChart: async (from: string | undefined, to: string | undefined) => {
-        if (!from || !to || from > to) return []
+        if (!from || !to || from > to) return { range: { from: '', to: '' }, chart: [] }
 
         const isTodaySelected = to === getNow().format('YYYY-MM-DD')
         const startTime = getStartOfTimeByType(from, 'daily')
@@ -135,7 +143,13 @@ const statisticService = {
         const damageReports = await damageService.getDamageReportsRecordedInTimeRange(startTime.toDate(), endTime.toDate())
 
         const chartData = statisticService.createRevenuesChart(accountedOrders, refundedOrders, productImports, damageReports, startTime, endTime)
-        return chartData
+        return {
+            range: {
+                from: startTime.toDate(),
+                to: endTime.toDate()
+            },
+            chart: chartData
+        }
     },
 
     createOrdersChart: (accountedOrders: Order[], refundedOrders: Order[], startDate: Dayjs, endDate: Dayjs) => {
@@ -158,11 +172,11 @@ const statisticService = {
             if (index !== -1) chartData[index].totalRefunds -= order.totalAmount
         })
 
-        return chartData
+        return chartData.map(({ date, ...rest }) => ({ ...rest }))
     },
 
     getOrdersChartByCustomerId: async (customerId: number, from: string | undefined, to: string | undefined) => {
-        if (!from || !to || from > to) return { count: { placed: 0, accounted: 0, refunded: 0 }, chart: [] }
+        if (!from || !to || from > to) return { range: { from: '', to: '' }, count: { placed: 0, accounted: 0, refunded: 0 }, chart: [] }
 
         const isTodaySelected = to === getNow().format('YYYY-MM-DD')
         const startTime = getStartOfTimeByType(from, 'daily')
@@ -174,6 +188,10 @@ const statisticService = {
 
         const chartData = statisticService.createOrdersChart(accountedOrders, refundedOrders, startTime, endTime)
         return {
+            range: {
+                from: startTime.toDate(),
+                to: endTime.toDate()
+            },
             count: {
                 placed: placedOrders.length,
                 accounted: accountedOrders.length,
@@ -184,7 +202,7 @@ const statisticService = {
     },
 
     getProductsSalesStatistic: async (from: string | undefined, to: string | undefined, hasActivity: boolean) => {
-        if (!from || !to || from > to) return []
+        if (!from || !to || from > to) return { range: { from: '', to: '' }, sales: [] }
 
         const isTodaySelected = to === getNow().format('YYYY-MM-DD')
         const startTime = getStartOfTimeByType(from, 'daily')
