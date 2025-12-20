@@ -87,6 +87,63 @@ const promotionController = {
         } catch (error) {
             next(error)
         }
+    },
+
+    getAllCoupons: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { skip, limit, sort, filter } = req.query
+            const { coupons, total } = await couponService.getAllCoupons({
+                skip: skip !== undefined ? parseInt(skip as string) : undefined,
+                limit: limit !== undefined ? parseInt(limit as string) : undefined,
+                sort,
+                filter
+            } as ISearchParams)
+
+            res.status(200).json({
+                data: coupons,
+                total,
+                took: coupons.length
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    addNewCoupon: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
+
+            const { userId, roleId } = req.auth!
+            const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.ADD_NEW_COUPON)
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
+
+            const { code, type, amount, maxUsage, expiredAt } = req.body
+            await couponService.addNewCoupon(code, type, amount, maxUsage, expiredAt, userId)
+
+            res.status(201).json({
+                message: successMessage.CREATE_COUPON_SUCCESSFULLY
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    disableCoupon: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
+        try {
+            const { roleId } = req.auth!
+            const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.DISABLE_COUPON)
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
+
+            const { couponId } = req.params
+            await couponService.disableCoupon(parseInt(couponId))
+
+            res.status(200).json({
+                message: successMessage.DISABLE_COUPON_SUCCESSFULLY
+            })
+        } catch (error) {
+            next(error)
+        }
     }
 }
 
