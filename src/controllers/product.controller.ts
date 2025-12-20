@@ -73,6 +73,85 @@ const productController = {
         } catch (error) {
             next(error)
         }
+    },
+
+    addNewProduct: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
+
+            const { userId, roleId } = req.auth!
+            const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.ADD_NEW_PRODUCT)
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
+
+            const { brandId, name, description, price, isAccessory, images, sizes, features } = req.body
+            await productService.addNewProduct(brandId, name, description, price, isAccessory, images, sizes, features, userId)
+
+            res.status(201).json({
+                message: successMessage.CREATE_PRODUCT_SUCCESSFULLY
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    updateProductInfo: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
+
+            const { roleId } = req.auth!
+            const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.UPDATE_PRODUCT_INFORMATION)
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
+
+            const { productId } = req.params
+            const { brandId, name, description, images, features } = req.body
+            await productService.updateProductInfo(parseInt(productId), brandId, name, description, images, features)
+
+            res.status(200).json({
+                message: successMessage.UPDATE_PRODUCT_SUCCESSFULLY
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    updateProductPrice: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
+
+            const { roleId } = req.auth!
+            const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.UPDATE_PRODUCT_PRICE)
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
+
+            const { productId } = req.params
+            const { price } = req.body
+            await productService.updateProductPrice(parseInt(productId), price)
+
+            res.status(200).json({
+                message: successMessage.UPDATE_PRODUCT_SUCCESSFULLY
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    deleteProduct: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
+        try {
+            const { roleId } = req.auth!
+            const hasPermission = await roleService.verifyPermission(roleId!, appPermissions.DELETE_PRODUCT)
+            if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
+
+            const { productId } = req.params
+            await productService.deleteProduct(parseInt(productId))
+
+            res.status(200).json({
+                message: successMessage.DELETE_PRODUCT_SUCCESSFULLY
+            })
+        } catch (error) {
+            next(error)
+        }
     }
 }
 

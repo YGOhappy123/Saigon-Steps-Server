@@ -394,6 +394,247 @@ const productService = {
         if (!productItem) return 0
 
         return Math.max(productItem.stock - productItem.reservedQuantity, 0)
+    },
+    
+    addNewProduct: async (
+        brandId: number,
+        name: string,
+        description: string,
+        price: number,
+        isAccessory: boolean,
+        images: string[],
+        sizes: string[] | undefined,
+        features: ShoeFeatures,
+        staffId: number
+    ) => {
+        const productWithSameName = await prisma.rootProduct.findFirst({ where: { name: name } })
+        if (productWithSameName) throw new HttpException(400, errorMessage.PRODUCT_EXISTED)
+
+        const newProduct = await prisma.rootProduct.create({
+            data: {
+                brandId: brandId,
+                name: capitalizeWords(name, false),
+                slug: getProductSlug(name),
+                description: description,
+                price: price,
+                isAccessory: isAccessory,
+                createdBy: staffId,
+                images: {
+                    createMany: {
+                        data: images.map(url => ({ url: url }))
+                    }
+                }
+            }
+        })
+
+        if (!isAccessory) {
+            await prisma.productItem.createMany({
+                data: sizes!.map(size => ({
+                    rootProductId: newProduct.rootProductId,
+                    size: uppercaseWords(size),
+                    barcode: generateProductBarcode()
+                }))
+            })
+
+            await prisma.shoeFeature.create({
+                data: {
+                    rootProductId: newProduct.rootProductId,
+                    categoryId: features.categoryId!,
+                    gender: features.gender!,
+                    upperMaterial: features.upperMaterial!,
+                    soleMaterial: features.soleMaterial!,
+                    liningMaterial: features.liningMaterial!,
+                    closureType: features.closureType!,
+                    toeShape: features.toeShape!,
+                    waterResistant: features.waterResistant!,
+                    breathability: features.breathability!,
+                    pattern: features.pattern!,
+                    countryOfOrigin: capitalizeWords(features.countryOfOrigin!),
+                    primaryColor: features.primaryColor!,
+                    secondaryColor: features.secondaryColor ?? null,
+                    heelHeight: features.heelHeight!,
+                    durabilityRating: features.durabilityRating!,
+                    releaseYear: features.releaseYear!,
+                    occasionTags: {
+                        create: features.occasionTags!.map(tag => ({
+                            occasionTag: {
+                                connectOrCreate: {
+                                    where: { name: tag },
+                                    create: { name: capitalizeFirstWord(tag) }
+                                }
+                            }
+                        }))
+                    },
+                    designTags: {
+                        create: features.designTags!.map(tag => ({
+                            designTag: {
+                                connectOrCreate: {
+                                    where: { name: tag },
+                                    create: { name: capitalizeFirstWord(tag) }
+                                }
+                            }
+                        }))
+                    }
+                }
+            })
+
+            await flaskService.addProduct(newProduct.rootProductId)
+        } else {
+            await prisma.productItem.create({
+                data: {
+                    rootProductId: newProduct.rootProductId,
+                    barcode: generateProductBarcode()
+                }
+            })
+        }
+    },
+
+    updateProductInfo: async (productId: number, brandId: number, name: string, description: string, images: string[], features: ShoeFeatures) => {
+        const product = await prisma.rootProduct.findFirst({ where: { rootProductId: productId } })
+        if (!product) throw new HttpException(404, errorMessage.PRODUCT_NOT_FOUND)
+
+        const newSlug = getProductSlug(name)
+        const productWithSameNameOrSlug = await prisma.rootProduct.findFirst({
+            where: {
+                OR: [{ name: name }, { slug: newSlug }],
+                NOT: { rootProductId: productId }
+            }
+        })
+        if (productWithSameNameOrSlug) throw new HttpException(400, errorMessage.PRODUCT_EXISTED)
+
+        await prisma.rootProduct.update({
+            where: { rootProductId: productId },
+            data: {
+                brandId: brandId,
+                name: capitalizeWords(name, false),
+                slug: newSlug,
+                description: description
+            }
+        })
+
+        await prisma.productImage.deleteMany({ where: { rootProductId: productId } })
+        await prisma.productImage.createMany({
+            data: images.map(url => ({ rootProductId: productId, url: url }))
+        })
+
+        if (!product.isAccessory) {
+            const existingFeatures = await prisma.shoeFeature.findFirst({ where: { rootProductId: productId } })
+            await prisma.shoeFeatureOccasionTag.deleteMany({ where: { shoeFeatureId: existingFeatures!.shoeFeatureId } })
+            await prisma.shoeFeatureDesignTag.deleteMany({ where: { shoeFeatureId: existingFeatures!.shoeFeatureId } })
+
+            await prisma.shoeFeature.update({
+                where: { shoeFeatureId: existingFeatures!.shoeFeatureId },
+                data: {
+                    categoryId: features.categoryId!,
+                    gender: features.gender!,
+                    upperMaterial: features.upperMaterial!,
+                    soleMaterial: features.soleMaterial!,
+                    liningMaterial: features.liningMaterial!,
+                    closureType: features.closureType!,
+                    toeShape: features.toeShape!,
+                    waterResistant: features.waterResistant!,
+                    breathability: features.breathability!,
+                    pattern: features.pattern!,
+                    countryOfOrigin: capitalizeWords(features.countryOfOrigin!),
+                    primaryColor: features.primaryColor!,
+                    secondaryColor: features.secondaryColor ?? null,
+                    heelHeight: features.heelHeight!,
+                    durabilityRating: features.durabilityRating!,
+                    releaseYear: features.releaseYear!,
+                    occasionTags: {
+                        create: features.occasionTags!.map(tag => ({
+                            occasionTag: {
+                                connectOrCreate: {
+                                    where: { name: tag },
+                                    create: { name: capitalizeFirstWord(tag) }
+                                }
+                            }
+                        }))
+                    },
+                    designTags: {
+                        create: features.designTags!.map(tag => ({
+                            designTag: {
+                                connectOrCreate: {
+                                    where: { name: tag },
+                                    create: { name: capitalizeFirstWord(tag) }
+                                }
+                            }
+                        }))
+                    }
+                }
+            })
+
+            await flaskService.updateProduct(productId)
+        }
+    },
+
+    updateProductPrice: async (productId: number, price: number) => {
+        const product = await prisma.rootProduct.findFirst({ where: { rootProductId: productId } })
+        if (!product) throw new HttpException(404, errorMessage.PRODUCT_NOT_FOUND)
+
+        await prisma.rootProduct.update({
+            where: { rootProductId: productId },
+            data: {
+                price: price
+            }
+        })
+
+        if (!product.isAccessory) {
+            await flaskService.updateProduct(productId)
+        }
+    },
+
+    deleteProduct: async (productId: number) => {
+        const product = await prisma.rootProduct.findFirst({ where: { rootProductId: productId } })
+        if (!product) throw new HttpException(404, errorMessage.PRODUCT_NOT_FOUND)
+
+        const isDeletable = await productService.isProductDeletable(productId)
+        if (!isDeletable) throw new HttpException(400, errorMessage.PRODUCT_BEING_USED)
+
+        await prisma.shoeFeatureOccasionTag.deleteMany({
+            where: { shoeFeature: { rootProductId: productId } }
+        })
+        await prisma.shoeFeatureDesignTag.deleteMany({
+            where: { shoeFeature: { rootProductId: productId } }
+        })
+        await prisma.shoeFeature.delete({
+            where: { rootProductId: productId }
+        })
+
+        await prisma.productImage.deleteMany({
+            where: { rootProductId: productId }
+        })
+        await prisma.cartItem.deleteMany({
+            where: { productItem: { rootProductId: productId } }
+        })
+        await prisma.productItem.deleteMany({
+            where: { rootProductId: productId }
+        })
+        await prisma.rootProduct.delete({
+            where: { rootProductId: productId }
+        })
+
+        if (!product.isAccessory) {
+            await flaskService.deleteProduct(productId)
+        }
+    },
+
+    isProductDeletable: async (rootProductId: number) => {
+        const hasRootReferences = await prisma.rootProduct.findFirst({
+            where: {
+                rootProductId: rootProductId,
+                OR: [{ promotions: { some: {} } }]
+            }
+        })
+
+        const hasItemsReferences = await prisma.productItem.findFirst({
+            where: {
+                rootProductId: rootProductId,
+                OR: [{ orderItems: { some: {} } }, { importItems: { some: {} } }, { damageReportItems: { some: {} } }]
+            }
+        })
+
+        return !hasRootReferences && !hasItemsReferences
     }
 }
 
