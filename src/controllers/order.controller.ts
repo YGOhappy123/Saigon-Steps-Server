@@ -47,6 +47,24 @@ const orderController = {
         }
     },
 
+    placeNewOrder: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
+
+            const { userId } = req.auth!
+            const { note, coupon, recipientName, deliveryAddress, deliveryPhone, items } = req.body
+            const result = await orderService.placeNewOrder(note, coupon, recipientName, deliveryAddress, deliveryPhone, items, userId)
+
+            res.status(201).json({
+                data: { orderId: result.orderId },
+                message: successMessage.PLACE_ORDER_SUCCESSFULLY
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
     processOrder: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
         try {
             const errors = validationResult(req)
@@ -62,24 +80,6 @@ const orderController = {
 
             res.status(200).json({
                 message: successMessage.UPDATE_ORDER_SUCCESSFULLY
-            })
-        } catch (error) {
-            next(error)
-        }
-    },
-
-    placeNewOrder: async (req: RequestWithAuthData, res: Response, next: NextFunction) => {
-        try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) throw new HttpException(422, errorMessage.DATA_VALIDATION_FAILED)
-
-            const { userId } = req.auth!
-            const { note, coupon, recipientName, deliveryAddress, deliveryPhone, items } = req.body
-            const result = await orderService.placeNewOrder(note, coupon, recipientName, deliveryAddress, deliveryPhone, items, userId)
-
-            res.status(201).json({
-                data: { orderId: result.orderId },
-                message: successMessage.PLACE_ORDER_SUCCESSFULLY
             })
         } catch (error) {
             next(error)
