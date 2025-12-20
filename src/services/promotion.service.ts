@@ -3,8 +3,8 @@ import { HttpException } from '@/errors/HttpException'
 import { ISearchParams } from '@/interfaces/params'
 import { buildWhereStatement } from '@/utils/queryHelpers'
 import { getStartOfTimeByType, getEndOfTimeByType } from '@/utils/timeHelpers'
-import errorMessage from '@/configs/errorMessage'
 import { capitalizeWords } from '@/utils/stringHelpers'
+import errorMessage from '@/configs/errorMessage'
 
 const promotionService = {
     getAllPromotions: async ({ skip = 0, limit, filter = '{}', sort = '{}' }: ISearchParams) => {

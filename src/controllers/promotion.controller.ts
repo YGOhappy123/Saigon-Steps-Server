@@ -87,9 +87,7 @@ const promotionController = {
         } catch (error) {
             next(error)
         }
-    },
-
-    
+    }
 }
 
 export default promotionController

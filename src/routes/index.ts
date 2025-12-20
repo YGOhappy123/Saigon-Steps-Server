@@ -29,5 +29,5 @@ export {
     statisticRoutes,
     chatRoutes,
     aiRoutes,
-    promotionRoutes,
+    promotionRoutes
 }
