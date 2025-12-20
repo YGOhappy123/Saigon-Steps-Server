@@ -6,7 +6,6 @@ import staffRoutes from '@/routes/staff.route'
 import brandRoutes from '@/routes/brand.route'
 import categoryRoutes from '@/routes/category.route'
 import productRoutes from '@/routes/product.route'
-import promotionRoutes from '@/routes/promotion.route'
 import orderRoutes from '@/routes/order.route'
 import statusRoutes from '@/routes/status.route'
 import reportRoutes from '@/routes/report.route'
@@ -23,7 +22,6 @@ export {
     brandRoutes,
     categoryRoutes,
     productRoutes,
-    promotionRoutes,
     orderRoutes,
     statusRoutes,
     reportRoutes,
