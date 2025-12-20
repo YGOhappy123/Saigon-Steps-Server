@@ -12,6 +12,7 @@ import reportRoutes from '@/routes/report.route'
 import statisticRoutes from '@/routes/statistic.route'
 import chatRoutes from '@/routes/chat.route'
 import aiRoutes from '@/routes/ai.routes'
+import promotionRoutes from '@/routes/promotion.route'
 
 export {
     authRoutes,
@@ -27,5 +28,6 @@ export {
     reportRoutes,
     statisticRoutes,
     chatRoutes,
-    aiRoutes
+    aiRoutes,
+    promotionRoutes,
 }

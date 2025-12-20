@@ -42,6 +42,7 @@ app.use('/reports', routes.reportRoutes)
 app.use('/statistics', routes.statisticRoutes)
 app.use('/chats', routes.chatRoutes)
 app.use('/ai', routes.aiRoutes)
+app.use('/promotions', routes.promotionRoutes)
 app.use(errorHandler)
 
 app.get('/:id', (req, res) => {
