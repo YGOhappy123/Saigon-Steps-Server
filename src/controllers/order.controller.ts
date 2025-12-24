@@ -99,8 +99,8 @@ const orderController = {
             if (!hasPermission) throw new HttpException(403, errorMessage.NO_PERMISSION)
 
             const { orderId } = req.params
-            const { statusId } = req.body
-            await orderService.processOrder(parseInt(orderId), statusId, userId)
+            const { statusId, explanation } = req.body
+            await orderService.processOrder(parseInt(orderId), statusId, explanation, userId)
 
             res.status(200).json({
                 message: successMessage.UPDATE_ORDER_SUCCESSFULLY

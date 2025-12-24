@@ -32,15 +32,26 @@ export const generateRandomString = (length?: number) => {
     return randomstring.generate(length ?? RANDOM_STRING_LENGTH)
 }
 
-export const generateProductBarcode = (length?: number) => {
-    const prefix = '99'
-    const lengthValue = Math.max(1, (length ?? 12) - prefix.length)
+const calculateEAN13Checksum = (code12: string) => {
+    let sum = 0
 
-    return (
-        prefix +
-        randomstring.generate({
-            length: lengthValue,
-            charset: 'numeric'
-        })
-    )
+    for (let i = 0; i < 12; i++) {
+        const digit = Number(code12[i])
+        sum += i % 2 === 0 ? digit : digit * 3
+    }
+
+    return (10 - (sum % 10)) % 10
+}
+
+export const generateProductBarcode = () => {
+    const prefix = '20'
+    const randomSequence = randomstring.generate({
+        length: 10,
+        charset: 'numeric'
+    })
+
+    const code12 = prefix + randomSequence
+    const checksum = calculateEAN13Checksum(code12)
+
+    return code12 + checksum
 }

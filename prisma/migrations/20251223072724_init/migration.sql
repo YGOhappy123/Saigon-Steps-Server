@@ -90,6 +90,7 @@ CREATE TABLE `order_update_logs` (
     `logId` INTEGER NOT NULL AUTO_INCREMENT,
     `orderId` INTEGER NOT NULL,
     `statusId` INTEGER NOT NULL,
+    `explanation` VARCHAR(191) NULL,
     `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedBy` INTEGER NOT NULL,
 
@@ -103,6 +104,8 @@ CREATE TABLE `order_statuses` (
     `description` TEXT NOT NULL,
     `color` VARCHAR(191) NOT NULL DEFAULT '#f4f4f5',
     `isDefault` BOOLEAN NOT NULL DEFAULT false,
+    `isExplanationRequired` BOOLEAN NOT NULL DEFAULT false,
+    `explanationLabel` VARCHAR(191) NULL,
     `shouldReserveStock` BOOLEAN NOT NULL DEFAULT false,
     `shouldReleaseStock` BOOLEAN NOT NULL DEFAULT false,
     `shouldReduceStock` BOOLEAN NOT NULL DEFAULT false,

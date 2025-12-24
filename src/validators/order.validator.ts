@@ -15,12 +15,14 @@ export const placeNewOrderValidator = [
     body('items.*.quantity').isInt({ min: 1 })
 ]
 
-export const processOrderValidator = [body('statusId').isInt({ min: 1 })]
+export const processOrderValidator = [body('statusId').isInt({ min: 1 }), body('explanation').optional().trim().isString()]
 
 export const addNewOrderStatusValidator = [
     body('name').trim().isString().notEmpty(),
     body('description').trim().isString().notEmpty(),
     body('color').trim().matches(HEX_COLOR_CODE_REGEX_PATTERN),
+    body('isExplanationRequired').isBoolean(),
+    body('explanationLabel').if(body('isExplanationRequired').equals('true')).trim().isString(),
     body('shouldReserveStock').isBoolean(),
     body('shouldReleaseStock').isBoolean(),
     body('shouldReduceStock').isBoolean(),
@@ -34,6 +36,8 @@ export const updateOrderStatusValidator = [
     body('name').trim().isString().notEmpty(),
     body('description').trim().isString().notEmpty(),
     body('color').trim().matches(HEX_COLOR_CODE_REGEX_PATTERN),
+    body('isExplanationRequired').isBoolean(),
+    body('explanationLabel').if(body('isExplanationRequired').equals('true')).trim().isString(),
     body('shouldReserveStock').isBoolean(),
     body('shouldReleaseStock').isBoolean(),
     body('shouldReduceStock').isBoolean(),

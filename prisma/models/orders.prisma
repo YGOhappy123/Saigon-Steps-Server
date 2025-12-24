@@ -39,6 +39,7 @@ model OrderUpdateLog {
     order          Order       @relation(fields: [orderId], references: [orderId])
     statusId       Int
     status         OrderStatus @relation(fields: [statusId], references: [statusId])
+    explanation    String?
     updatedAt      DateTime    @default(now())
     updatedBy      Int
     updatedByStaff Staff       @relation(fields: [updatedBy], references: [staffId])
@@ -52,6 +53,8 @@ model OrderStatus {
     description            String                  @db.Text
     color                  String                  @default("#f4f4f5")
     isDefault              Boolean                 @default(false)
+    isExplanationRequired  Boolean                 @default(false)
+    explanationLabel       String?
     shouldReserveStock     Boolean                 @default(false)
     shouldReleaseStock     Boolean                 @default(false)
     shouldReduceStock      Boolean                 @default(false)

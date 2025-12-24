@@ -36,7 +36,8 @@ const orderService = {
                     statusId: order.status.statusId,
                     name: order.status.name,
                     description: order.status.description,
-                    color: order.status.color
+                    color: order.status.color,
+                    isDefault: order.status.isDefault
                 },
                 availableTransitions: await statusService.getStatusTransitionsByFromStatusId(order.statusId),
                 statusUpdateLogs: await orderService.getStatusUpdateLogs(order.orderId),
@@ -87,6 +88,13 @@ const orderService = {
         const mappedOrders = await Promise.all(
             orders.map(async order => ({
                 ...order,
+                status: {
+                    statusId: order.status.statusId,
+                    name: order.status.name,
+                    description: order.status.description,
+                    color: order.status.color,
+                    isDefault: order.status.isDefault
+                },
                 statusUpdateLogs: await orderService.getStatusUpdateLogs(order.orderId),
                 orderItems: await Promise.all(
                     order.orderItems.map(async item => {
@@ -132,7 +140,8 @@ const orderService = {
                 statusId: log.status.statusId,
                 name: log.status.name,
                 description: log.status.description,
-                color: log.status.color
+                color: log.status.color,
+                explanationLabel: log.status.explanationLabel
             }
         }))
     },
@@ -219,7 +228,7 @@ const orderService = {
         return { orderId: newOrder.orderId }
     },
 
-    processOrder: async (orderId: number, statusId: number, staffId: number) => {
+    processOrder: async (orderId: number, statusId: number, explanation: string | undefined, staffId: number) => {
         const order = await prisma.order.findFirst({ where: { orderId: orderId }, include: { orderItems: true } })
         if (!order) throw new HttpException(404, errorMessage.ORDER_NOT_FOUND)
 
@@ -228,6 +237,7 @@ const orderService = {
 
         const newStatus = await statusService.getOrderStatusById(statusId)
         if (!newStatus) throw new HttpException(400, errorMessage.ORDER_STATUS_NOT_FOUND)
+        if (newStatus.isExplanationRequired && !explanation) throw new HttpException(400, errorMessage.MISSING_EXPLANATION)
 
         if (newStatus.shouldReserveStock) {
             await orderService.handleReserveStock(order)
@@ -254,7 +264,14 @@ const orderService = {
             await chatService.staffSendMessage(
                 order.customerId,
                 staffId,
-                `Đơn hàng của bạn với mã [${orderId}] đã được chuyển sang trạng thái [${newStatus.name}]. Đây là tin nhắn tự động từ Saigon Steps. Chúc bạn một ngày tốt lành!`,
+                [
+                    `Đơn hàng của bạn với mã [${orderId}] đã được chuyển sang trạng thái [${newStatus.name}].`,
+                    newStatus.isExplanationRequired ? `${newStatus.explanationLabel}: ${explanation}.` : null,
+                    'Đây là tin nhắn tự động từ Saigon Steps.',
+                    'Chúc bạn một ngày tốt lành!'
+                ]
+                    .filter(Boolean)
+                    .join(' '),
                 undefined,
                 0
             )
@@ -272,6 +289,7 @@ const orderService = {
             data: {
                 orderId: orderId,
                 statusId: statusId,
+                explanation: newStatus.isExplanationRequired ? explanation! : null,
                 updatedBy: staffId
             }
         })

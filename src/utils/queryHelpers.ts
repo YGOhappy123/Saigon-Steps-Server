@@ -67,8 +67,8 @@ export const buildWhereStatement = (filter: string = '{}') => {
                     where.isActive = [true, 'true', 1].includes(parsedFilter[criteria])
                     break
 
-                case 'isDefault':
-                    where.isDefault = [true, 'true', 1].includes(parsedFilter[criteria])
+                case 'isDelivery':
+                    where.deliveryAddress = [true, 'true', 1].includes(parsedFilter[criteria]) ? { not: null } : null
                     break
 
                 case 'name':
