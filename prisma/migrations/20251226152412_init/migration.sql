@@ -125,7 +125,7 @@ CREATE TABLE `order_status_transitions` (
     `label` VARCHAR(191) NOT NULL,
     `isScanningRequired` BOOLEAN NOT NULL DEFAULT false,
 
-    UNIQUE INDEX `order_status_transitions_label_key`(`label`),
+    UNIQUE INDEX `order_status_transitions_fromStatusId_label_key`(`fromStatusId`, `label`),
     PRIMARY KEY (`fromStatusId`, `toStatusId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

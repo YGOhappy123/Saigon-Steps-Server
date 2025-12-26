@@ -75,9 +75,10 @@ model OrderStatusTransition {
     fromStatus         OrderStatus @relation("fromStatus", fields: [fromStatusId], references: [statusId])
     toStatusId         Int
     toStatus           OrderStatus @relation("toStatus", fields: [toStatusId], references: [statusId])
-    label              String      @unique
+    label              String
     isScanningRequired Boolean     @default(false)
 
     @@id([fromStatusId, toStatusId])
+    @@unique([fromStatusId, label])
     @@map("order_status_transitions")
 }

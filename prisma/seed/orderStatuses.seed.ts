@@ -68,7 +68,7 @@ export const seedOrderStatuses = async (prisma: PrismaClient) => {
                 color: '#5ea500',
                 shouldMarkAsDelivered: true,
                 shouldSendNotification: true
-            } // 9
+            } //9
         ]
     })
 
@@ -82,7 +82,8 @@ export const seedOrderStatuses = async (prisma: PrismaClient) => {
             { fromStatusId: 3, toStatusId: 4, label: 'Giao cho đơn vị vận chuyển' },
             { fromStatusId: 4, toStatusId: 5, label: 'Xác nhận giao hàng thành công' },
             { fromStatusId: 4, toStatusId: 6, label: 'Xác nhận giao hàng thất bại', isScanningRequired: true },
-            { fromStatusId: 5, toStatusId: 8, label: 'Xác nhận hoàn hàng trả tiền', isScanningRequired: true }
+            { fromStatusId: 5, toStatusId: 8, label: 'Xác nhận hoàn hàng trả tiền', isScanningRequired: true },
+            { fromStatusId: 9, toStatusId: 8, label: 'Xác nhận hoàn hàng trả tiền', isScanningRequired: true }
         ]
     })
 }
