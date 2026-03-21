@@ -478,7 +478,7 @@ const productService = {
                 }
             })
 
-            await flaskService.addProduct(newProduct.rootProductId)
+            flaskService.addProduct(newProduct.rootProductId)
         } else {
             await prisma.productItem.create({
                 data: {
@@ -564,7 +564,7 @@ const productService = {
                 }
             })
 
-            await flaskService.updateProduct(productId)
+            flaskService.updateProduct(productId)
         }
     },
 
@@ -580,7 +580,7 @@ const productService = {
         })
 
         if (!product.isAccessory) {
-            await flaskService.updateProduct(productId)
+            flaskService.updateProduct(productId)
         }
     },
 
@@ -615,7 +615,7 @@ const productService = {
         })
 
         if (!product.isAccessory) {
-            await flaskService.deleteProduct(productId)
+            flaskService.deleteProduct(productId)
         }
     },
 
